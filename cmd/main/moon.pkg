@@ -1,0 +1,5 @@
+import {
+  "username/c1" @c1,
+}
+
+pkgtype(kind: "executable")

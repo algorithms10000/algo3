@@ -1,0 +1,4 @@
+import {
+  "username/c1/src/exact" @exact,
+  "username/c1/src/series" @series,
+}

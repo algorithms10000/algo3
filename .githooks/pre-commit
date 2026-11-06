@@ -1,0 +1,11 @@
+#!/bin/sh
+# C1 pre-commit：全域編譯與形式化驗證（若工具鏈可用）
+set -e
+if command -v moon >/dev/null 2>&1; then
+  moon check --deny-warn
+  moon prove --deny-warn
+fi
+if ls src/*/zz_probe.mbt 1>/dev/null 2>&1; then
+  echo "ERROR: 臨時測試題未刪除（即寫即驗即刪）" >&2
+  exit 1
+fi

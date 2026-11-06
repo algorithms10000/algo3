@@ -1,0 +1,2 @@
+// 形式化公理層：由 Z3 放行 .mbtp 義務
+proof_enabled = true

@@ -1,0 +1,84 @@
+# src/compose — 14 種組合手法：Kan、束、纖維積、單子、張量、纖維範疇、推出、交織、博弈
+
+> C1-01 首次開發切片。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+
+## 已獲得定理列表
+
+- **P6** 束的匹配族由限制映射兩兩相容定義
+- **P8** 進位函數為正規化 2-上循環
+- **T-C1** 左 Kan 擴展伴隨 Lan_φ ⊣ φ*
+- **T-C2** 右 Kan 擴展伴隨 φ* ⊣ Ran_φ
+- **T-C3** 纖維積 ℤ/m×_{ℤ/g}ℤ/n 泛性質
+- **T-C4** 共融推出 union-find 泛性質
+- **T-C5** 共融自由交換么半群單項式計數
+- **T-C6** 分配律單子複合仍為單子
+- **T-C7** 全局公理 G 的閉包算子本身為單子
+- **T-C8** Kronecker 混合積 (A⊗B)(C⊗D)=AC⊗BD
+- **T-C9** Kronecker 秩可乘性
+- **T-C10** 管線策略合成結合律
+- **T-C11** 博弈張量積交換律
+- **T-C12** Grothendieck 構造給出纖維範疇
+- **T-C13** 有限 Alexandrov 拓樸之束黏合唯一性
+- **T-C14** 2-上循環交織群結合律與短正合序列
+- **T-C15** 多合一相容性：跨套件定理同時成立
+
+## 已實作演算法列表
+
+- **AL047** lan_poset / ran_poset 有限格 Kan 擴展（O(|C|·|D|)）
+- **AL048** UnionFind 共融推出同餘閉包（O(n α(n))）
+- **AL049** kronecker / relation_tensor 張量積（O(r²c²)）
+- **AL050** gluing_rec 束匹配族枚舉（O(Π|F(U_i)|)）
+- **AL051** weave_mul 2-上循環交織乘法（O(1)）
+- **AL052** monad_closure 閉包單子（O(1) 位元運算）
+
+## 等式
+
+- **E24** Kan 伴隨：`Lan_φ ⊣ φ* ⊣ Ran_φ`
+- **E25** Kronecker 混合積：`(A⊗B)(C⊗D) = (AC)⊗(BD)`
+- **E26** 共融推出泛性質：`|Hom(A ⊔_C B, X)| = |X|^{#classes}`
+- **E27** 2-上循環條件：`φ(a,b)+φ(a+b,c) = φ(b,c)+φ(a,b+c)`
+- **E28** 束黏合：`匹配族 ↔ F(∪U_i) 為雙射`
+
+## 資料夾視角依賴關係圖
+
+```text
+[src/compose]
+  ├─ 依賴 → src/exact
+  ├─ 依賴 → src/galois
+  ├─ 依賴 → src/series
+  ├─ 依賴 → src/algebra
+  ├─ 依賴 → src/graphs
+  └─ 被依賴 ← .
+```
+
+## 動線
+
+有限範疇/布爾格/布林矩陣 → Kan、束、纖維積、單子、張量 → 複合定理 C1..C15。
+
+## 接入／輸出接口
+
+接入：布爾格、布林矩陣、矩陣、Context。輸出：lan_poset/ran_poset、kronecker、relation_tensor、theorem_C*。
+
+實際公開符號（擷取自本資料夾 .mbt）：
+
+```text
+  boolean_lattice  lan_poset  ran_poset  theorem_kan_left_adjunction
+  theorem_kan_right_adjunction  fiber_product_count  theorem_fiber_product_universal  union_find
+  UnionFind::find  UnionFind::union  UnionFind::classes  pushout_classes
+  theorem_pushout_universal  free_comm_monoid_size  theorem_amalgamated_free_product  monad_closure
+  theorem_monad_composition  theorem_galois_monad  kronecker  theorem_kronecker_mixed
+  theorem_kronecker_rank  relation_tensor  theorem_pipeline_associative  theorem_game_interchange
+  fibered  chain_leq  grothendieck_objects  theorem_fibration
+  is_alexandrov_open  submasks  theorem_sheaf_gluing  weave_elem
+  cocycle  weave_mul  theorem_cocycle_condition  theorem_weave_associative
+  theorem_all_in_one  PosetLattice  UnionFind  Fibered
+  WeaveElem
+```
+
+## 驗證
+
+```bash
+export PATH=/tmp/moonhome/bin:$PATH
+cd /home/user/c1
+moon check src/compose --deny-warn
+```

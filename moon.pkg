@@ -1,0 +1,10 @@
+import {
+  "username/c1/src/exact" @exact,
+  "username/c1/src/axioms" @axioms,
+  "username/c1/src/galois" @galois,
+  "username/c1/src/series" @series,
+  "username/c1/src/algebra" @algebra,
+  "username/c1/src/graphs" @graphs,
+  "username/c1/src/compose" @compose,
+  "username/c1/src/catalog" @catalog,
+}

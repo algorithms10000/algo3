@@ -1,0 +1,9 @@
+.DS_Store
+_build/
+target/
+target
+.mooncakes/
+.moonagent/
+# moon check 自動生成之介面檔
+*.mbti
+__pycache__/

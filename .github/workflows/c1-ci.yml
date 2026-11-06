@@ -1,0 +1,74 @@
+name: C1 global CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install latest stable MoonBit toolchain
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh -o /tmp/moonbit-install.sh
+          MOON_HOME="$HOME/.moon" bash /tmp/moonbit-install.sh
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Install Z3 solver for moon prove
+        run: python3 -m pip install --quiet z3-solver
+
+      - name: Report toolchain versions
+        run: |
+          export PATH="$HOME/.moon/bin:$PATH"
+          moon version --all
+          python3 -c "import z3; print('z3', z3.get_version_string())"
+
+      - name: Global compile check (no --release)
+        run: |
+          export PATH="$HOME/.moon/bin:$PATH"
+          moon check --deny-warn
+
+      - name: Global build
+        run: |
+          export PATH="$HOME/.moon/bin:$PATH"
+          moon build
+
+      - name: Formal verification (moon prove)
+        run: |
+          export PATH="$HOME/.moon/bin:$PATH"
+          moon prove --deny-warn
+
+      - name: Inspect report (local compile + inspect, no smoke test)
+        run: |
+          export PATH="$HOME/.moon/bin:$PATH"
+          moon run cmd/main
+
+      - name: Regenerate catalog artifacts and assert determinism
+        run: |
+          python3 tools/build_catalog.py
+          python3 tools/build_readmes.py
+          git diff --exit-code -- \
+            docs/catalog.json src/catalog/catalog.mbt README.md \
+            src/exact/README.md src/axioms/README.md src/galois/README.md \
+            src/series/README.md src/algebra/README.md src/graphs/README.md \
+            src/compose/README.md src/catalog/README.md cmd/main/README.md \
+            docs/README.md tools/README.md
+          if ls src/*/zz_probe.mbt 1>/dev/null 2>&1; then
+            echo "ERROR: temporary probe file remains (即寫即驗即刪)"
+            exit 1
+          fi
+          test -f algorithm.xlsx
+          test -f AGENT.md
+
+      - name: Verify no temporary test files committed
+        run: |
+          if git ls-files | grep -E 'zz_probe\.mbt$|README\.mbt\.md$'; then
+            echo "ERROR: temporary or template file committed"
+            exit 1
+          fi

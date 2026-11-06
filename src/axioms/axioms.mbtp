@@ -1,0 +1,118 @@
+/// C1 / src/axioms — 邏輯側：全局公理 G 與局部公理 L1..L5 之述詞與引理
+/// 本檔所有 lemma 皆為交由 Z3 放行的證明義務（無假設、無 stub）；
+/// 閉包算子的有限冪集版本另由 src/galois 以窮舉計算證明。
+
+/// 整數鏈模型上的反色調極性 F(x) = -x, H(y) = -y：
+/// A ⊆ H(B) ⟺ B ⊆ F(A) 化為 x ≤ -y ⟺ y ≤ -x。
+predicate adjoint_holds(x : Int32, y : Int32) {
+  (x <= -y) == (y <= -x)
+}
+
+/// 伴隨性的線性等價形式。
+predicate adjoint_sum(x : Int32, y : Int32) {
+  (x + y <= 0) == (x <= -y)
+}
+
+/// 極性三次合成：F∘H∘F = F。
+predicate triple_identity(x : Int32) {
+  -(-(-x)) == -x
+}
+
+/// 對偶對合：H∘F = id（Chu 矩陣轉置兩次）。
+predicate chu_involution(x : Int32) {
+  -(-x) == x
+}
+
+/// 截斷商環 ℤ[[t]]/(t²) 之卷積結合律。
+predicate conv2_assoc(a0 : Int32, a1 : Int32, b0 : Int32, b1 : Int32, c0 : Int32, c1 : Int32) {
+  ((a0 * b0) * c1 + (a0 * b1 + a1 * b0) * c0) ==
+    (a0 * (b0 * c1 + b1 * c0) + a1 * (b0 * c0)) &&
+    (a0 * b0) * c0 == a0 * (b0 * c0)
+}
+
+/// Ore σ-導子 Leibniz 的 q-整數恆等式 [5]_q = [2]_q + q²[3]_q。
+predicate ore_q_leibniz(q : Int32) {
+  (1 + q + q * q + q * q * q + q * q * q * q) ==
+    ((1 + q) + q * q * (1 + q + q * q))
+}
+
+/// Ore 一般形式 [i+j]_q = [i]_q + q^i[j]_q 之 i=3,j=2 例。
+predicate ore_q_leibniz2(q : Int32) {
+  (1 + q + q * q + q * q * q + q * q * q * q) ==
+    ((1 + q + q * q) + q * q * q * (1 + q))
+}
+
+/// 全純級數逆元 Newton 一步：(1+a)(2-(1+a)) = 1-a²。
+predicate newton_step(a : Int32) {
+  (1 + a) * (2 - (1 + a)) == 1 - a * a
+}
+
+/// Newton 倍精度：誤差平方再修正得到四次誤差。
+predicate newton_double(a : Int32) {
+  (1 - a * a) * (1 + a * a) == 1 - a * a * a * a
+}
+
+/// 單項式商環 ℤ[t]/(t⁵) 之 Hilbert–Poincaré 級數 (1-t)H(t) = 1-t⁵。
+predicate hilbert_geom(q : Int32) {
+  (1 - q) * (1 + q + q * q + q * q * q + q * q * q * q) == 1 - q * q * q * q * q
+}
+
+/// 冪級數複合結合律的一階係數恆等式。
+predicate compose_assoc(a : Int32, b : Int32, c : Int32, d : Int32) {
+  a * (b * c + d) + d == (a * b) * c + a * d + d
+}
+
+///|
+lemma l_adjoint(x : Int32, y : Int32) where {
+  proof_ensure: adjoint_holds(x, y),
+} {}
+
+///|
+lemma l_adjoint_sum(x : Int32, y : Int32) where {
+  proof_ensure: adjoint_sum(x, y),
+} {}
+
+///|
+lemma l_triple_identity(x : Int32) where {
+  proof_ensure: triple_identity(x),
+} {}
+
+///|
+lemma l_chu_involution(x : Int32) where {
+  proof_ensure: chu_involution(x),
+} {}
+
+///|
+lemma l_conv2_associative(a0 : Int32, a1 : Int32, b0 : Int32, b1 : Int32, c0 : Int32, c1 : Int32) where {
+  proof_ensure: conv2_assoc(a0, a1, b0, b1, c0, c1),
+} {}
+
+///|
+lemma l_ore_leibniz(q : Int32) where {
+  proof_ensure: ore_q_leibniz(q),
+} {}
+
+///|
+lemma l_ore_leibniz2(q : Int32) where {
+  proof_ensure: ore_q_leibniz2(q),
+} {}
+
+///|
+lemma l_newton_step(a : Int32) where {
+  proof_ensure: newton_step(a),
+} {}
+
+///|
+lemma l_newton_double(a : Int32) where {
+  proof_ensure: newton_double(a),
+} {}
+
+///|
+lemma l_hilbert_geom(q : Int32) where {
+  proof_ensure: hilbert_geom(q),
+} {}
+
+///|
+lemma l_compose_assoc(a : Int32, b : Int32, c : Int32, d : Int32) where {
+  proof_ensure: compose_assoc(a, b, c, d),
+} {}
