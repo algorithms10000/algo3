@@ -1386,8 +1386,13 @@ C1 開發流水帳本 (Dev.txt) — 流水式，每回合追加，直到工程�
   產生器決定性：build_catalog.py / build_readmes.py 連跑兩次後
       algorithm.xlsx、docs/catalog.json、src/catalog/catalog.mbt、README.md
       之 sha256 完全相同（DETERMINISTIC OK）。
-  commit：待回合末 git commit 後補登 hash；
+  commit：ac6fb06「C1-06: 量子二維環面 O_q(T²) / Abel–Jacobi /
+      21動詞×14範例相互交織」，22 檔變更、2,935 插入 / 50 刪除；
+      pre-commit 之 moon check／moon prove（17 goals proved）通過；
+      本筆補登為 ac6fb06 之後的第二筆。
       git status --short 為空、git remote -v 為空（未 push）。
+  補記：.git/config 於本回合末因快照排除敏感路徑消失，已重建
+      user.name/user.email/core.hooksPath=.githooks 後方能 commit。
 
 §9''''' C1-06 驗證過程與修正記錄
   - 量子環面交換子公式初版把單項逆寫成 q^{−e−ab}U^{−a}V^{−b}，
