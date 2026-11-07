@@ -1,6 +1,6 @@
 # src/catalog — 定理／演算法／等式機器可讀登錄表
 
-> C1-01 首次開發切片。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回更新。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得定理列表
 

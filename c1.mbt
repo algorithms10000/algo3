@@ -77,6 +77,37 @@ pub fn report() -> String {
     flag(@compose.theorem_sheaf_gluing(3, @compose.chain_leq(3), [0b100UL, 0b110UL])) +
       "/" + flag(@compose.theorem_weave_associative(2L, 3L)))
   push_line(buf, "T-C15 多合一相容性", flag(@compose.theorem_all_in_one()))
+  let pr = @algebra.sfq_sample(3)
+  let ol = @algebra.sfq_gcrd_lclm(pr[0], pr[1])
+  push_line(buf, "T-Ore7 lclm 度數 / Sylvester 秩 / gcrd 度數",
+    ol.deg_lclm.to_string() + "/" + @algebra.sfq_sylvester_rank(pr[0], pr[1]).to_string() +
+      "/" + ol.deg_gcrd.to_string())
+  push_line(buf, "T-Ore7/8/9 Ore 分解新方法",
+    flag(@algebra.theorem_ore_lclm_batch(8)) + "/" +
+      flag(@algebra.theorem_ore_noncommutative()))
+  let gctx = @galois.context(3, 4, [0b1011UL, 0b0110UL, 0b1110UL])
+  let parts = @galois.parallel_intent_partition(gctx)
+  push_line(buf, "T-G9/G10 NextClosures 平行 worker 數 / 正確性",
+    parts.length().to_string() + "/" +
+      flag(@galois.theorem_parallel_next_closure(gctx)))
+  push_line(buf, "T-S9/S10 Karatsuba / Graeffe",
+    flag(@series.theorem_karatsuba_equivalence(40)) + "/" +
+      flag(@series.theorem_graeffe_coeff(10)))
+  let cf : Array[@exact.Rat] = []
+  let cg : Array[@exact.Rat] = []
+  for i in 0..<8 {
+    cf.push(if i == 0 { @series.rat0() } else {
+      @series.rfrac(1L, (i + 1).to_int64())
+    })
+    cg.push(if i < 2 { @series.rat0() } else {
+      @series.rfrac(1L, (i * i).to_int64())
+    })
+  }
+  push_line(buf, "T-S11 Brent–Kung baby-step/giant-step 合成",
+    flag(@series.theorem_bk_composition(
+      @series.Fps::{ coeffs: cf }, @series.Fps::{ coeffs: cg }, 3,
+    )))
+  push_line(buf, "T-C16 前沿方法一致性", flag(@compose.theorem_frontier_all_in_one()))
   push_line(buf, "catalog 登錄筆數 / 一致性",
     @catalog.catalog_size().to_string() + "/" +
       flag(@catalog.theorem_catalog_consistent()))

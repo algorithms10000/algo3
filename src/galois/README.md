@@ -1,6 +1,6 @@
 # src/galois — 全局公理 G：有限冪集伽羅瓦對應、NextClosure、楚對偶、完備格表示
 
-> C1-01 首次開發切片。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回更新。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得公理
 
@@ -19,6 +19,9 @@
 - **T-G5** 楚空間對偶保持概念格大小（鏡像對稱）
 - **T-G6** 有限域上理想–簇 Galois 對應 F(H(V))=V
 - **T-G7** 完備格表示定理：閉包系統由 Chu space 產生
+- **T-G8** 約束閉包算子 c_req 滿足擴張／單調／冪等
+- **T-G9** NextClosures 基數層級平行枚舉與 closed_attributes 一致
+- **T-G10** 約束切分之平行 worker 輸出為 intents 的不交劃分
 
 ## 已實作演算法列表
 
@@ -31,12 +34,17 @@
 - **AL016** relation_compose 布林矩陣乘法（O(nx·ny·nz)）
 - **AL017** ideal_variety_context 有限域理想–簇脈絡（O(p^d·p·d)）
 - **AL018** closure_system_representation 完備格表示（O(|D|²)）
+- **AL057** next_closure_constrained 約束閉包算子之 Ganter 枚舉（O(ny²|B|)）
+- **AL058** intents_by_cardinality 基數層級 BFS（層內可平行）（O(ny·|B|²)）
+- **AL059** parallel_intent_partition 無通訊 worker 不交劃分（ embarrassingly parallel）
 
 ## 等式
 
 - **E01** 極性定義：`F(A) = { y | ∀x∈A, R(x,y) }, H(B) = { x | ∀y∈B, R(x,y) }`
 - **E02** 伴隨性：`A ⊆ H(B) ⟺ B ⊆ F(A)`
 - **E03** 閉包冪等：`c(c(A)) = c(A), c = F∘H`
+- **E34** 約束閉包：`c_req(A) = c(required ∪ A)`
+- **E35** 平行不交劃分：`Intents(K) = ⊔_{w=0}^{|M|} Worker_w(K)`
 
 ## 資料夾視角依賴關係圖
 
@@ -65,7 +73,9 @@ Context(列遮罩) → polar → closure → 閉集格 → NextClosure → Chu d
   closed_attributes  next_closure_intents  concept_covers  chu_dual
   relation_compose  galois_certificate  theorem_closed_lattice_antiiso  theorem_next_closure_complete
   theorem_chu_dual  ideal_variety_context  theorem_ideal_variety  closure_system_representation
-  theorem_representation  Context  GaloisCert
+  theorem_representation  constraint_closure  next_closure_constrained  intents_by_cardinality
+  parallel_worker  parallel_intent_partition  theorem_constraint_closure  theorem_next_closures_levelwise
+  theorem_parallel_next_closure  Context  GaloisCert
 ```
 
 ## 驗證

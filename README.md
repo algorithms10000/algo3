@@ -66,15 +66,50 @@ moon run cmd/main
 | `moon prove --deny-warn` | `1 of 1 packages proved, 17 goals proved` |
 | `moon build` | wasm artifact 生成 |
 | `moon run cmd/main` | 31 行真實 inspect 憑證，全數 OK |
-| 登錄表 | 6 公理／20 定義／8 命題／14 引理／53 定理／52 演算法／30 等式 = 183 筆 |
+| 登錄表 | 6 公理／20 定義／8 命題／14 引理／63 定理／62 演算法／38 等式 = 211 筆；前沿文獻 25 筆 |
 | CI | `.github/workflows/c1-ci.yml` 推送全域編譯與形式化驗證 |
+
+## C1-02：前沿查證與 §6 待辦補回
+
+依《作業規範》「不時聯網搜查及查證最前沿論文」，本回合查證 13 組新文獻（R13..R25），
+完整書目、URL 與理論要點見 `algorithm.xlsx` 之「前沿文獻」工作表、`docs/catalog.json`
+與 `Dev.txt §2`。重點：
+
+- **Ore 分解新法**：Giesbrecht (CASC 2026, arXiv:2607.02751) 量子平面 `K(t)[x;σ], σ(t)=ωt`
+  之中心 `K(t^m)[x^m]`、monic central bound、gcrd 分割、特殊化 → inert prime → 有限域
+  Caruso–Le Borgne 分解 → 插值提升；Ding–Wang–Xiao–Zheng (ISSAC'24) 之 Ore Sylvester
+  矩陣與模組 Gröbner 基底參數 gcrd；Caruso–Le Borgne (2017) reduced norm 與
+  §3.2.2 擴展右歐幾里得；Giesbrecht (1992) 之 `deg lclm = deg f + deg g − deg gcrd`。
+- **NextClosure 平行化**：Kriegel–Borchmann (CLA 2015) 指出 lectic 順序本質序列、無法平行；
+  改以**基數遞增層級**枚舉 intents/pseudo-intents，同層候選獨立且無需通訊；
+  Kriegel (2016) 以第二閉包算子為約束、quasi-rank 函數與平行 Attribute Exploration；
+  de Moraes et al. (2023) 以物件子脈絡 + OpenMP 切分 In-Close 4。
+- **高階乘法**：Kinoshita–Li (FOCS 2024, arXiv:2404.05177) 以 Bostan–Mori Graeffe
+  迭代 + 轉置原理把合成降至 `O(M(n) log m + M(m))`；Puchinger–Wachter-Zeh (2017)
+  次二次 skew 乘法；Lyu 之 KaratsubaSkew；Johansson (2011) 快速反演。
+
+據此把 §6 未完成待辦補回為真實演算法：
+
+| §6 待辦 | 本回合補回 | 憑證 |
+| --- | --- | --- |
+| Ore lclm 完整演算法 | F_25 (θ²=2, σ(θ)=−θ) 上 `sfq_gcrd_lclm` 擴展右歐幾里得、`sfq_sylvester_rank` Ore Sylvester 秩 | T-Ore7/8/9 |
+| 高階常數級優化 | `kar_mul` Karatsuba、`fps_compose_bk` BK baby-step/giant-step、`graeffe_coeff` Graeffe 係數抽取 | T-S9/10/11 |
+| 後續回合聯網查證前沿論文 | R13..R25 共 13 組（含 2024/2025/2026 新法） | algorithm.xlsx「前沿文獻」 |
+| NextClosure 平行化 | `next_closure_constrained`、`intents_by_cardinality`、`parallel_intent_partition` | T-G8/9/10 |
+
+θ²=2 在 F_5 中非平方，故 F_25 為體且 σ ≠ id，實作的是**真正非交換** Ore 環，
+非退化為交換多項式環的玩具模型。
 
 ## 未完成（誠實標記）
 
-- 5,000,000 行程式碼、10,000 條中階以上演算法、集庫成群：本回合僅為首次切片，遠未達成。
-- 高階複雜度仍有多處 `O(N²)` 卷積（尚未接入 FFT／fast multiplication）。
-- 多元優質算法庫之跨回合延伸、更多前沿論文查證與基準測試（沙盒無需）。
-- `docs/` 目前僅有 catalog.json；其餘設計文件待後續回合。
+- 5,000,000 行程式碼、10,000 條中階以上演算法、集庫成群：目前仍為早期切片，遠未達成。
+- Kinoshita–Li 之**完整近線性合成**（Graeffe + 轉置原理）尚未落地；本回合僅實作
+  BK baby-step/giant-step 搭配 Karatsuba，以及 Bostan–Mori 係數抽取之 Graeffe 遞迴。
+- FFT/NTT 完整乘法、Ore bound 演算法、Giesbrecht 兩層模組分解、參數 gcrd Gröbner
+  基底、FCbO 完整 canonicity test 仍待後續回合。
+- 多元優質算法庫之跨回合延伸、δ-Galois 推廣、Kalai–Meshulam 拓樸組合。
+- `docs/` 其餘設計文件：依《工程約束》「非首次開發、創建新文檔前需先獲准」，
+  本回合不另建新文檔，改以既有 `Dev.txt`、`README.md` 與各資料夾 README 記錄。
 
 ## 接入／輸出接口
 

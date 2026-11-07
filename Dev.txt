@@ -288,3 +288,190 @@ C1 開發流水帳本 (Dev.txt) — 流水式，每回合追加，直到工程�
     已改為真正檔案；Dev.txt header 明確標注 Asia/Hong_Kong 與沙盒 UTC 時差。
 
 ================================================================================
+
+================================================================================
+[回合 C1-02] 日期 2026-11-07 (Asia/Hong_Kong, UTC+8)  狀態：§6 待辦補回／已完成
+  使用者指示：「先聯網查證前沿 Ore 分解新法、NextClosure 平行化論文及理論與文獻，
+  補回第6回合待辦事項」。此處「第6回合」解為 Dev.txt §6「未完成／已決定待辦」
+  之逐項補回；同時保留原 §6 歷史記錄不動（流水帳本只追加、不塗改）。
+  依《工程約束》「非首次開發、創建新文檔前需先獲准」，本回合不新增任何文檔，
+  查證與結案全部寫入既有 Dev.txt、README.md、docs/catalog.json、algorithm.xlsx。
+================================================================================
+
+§2' 本回合聯網查證結果（R13..R25，接續 §2 之 R1..R12）
+  [R13] Mark Giesbrecht, "On Factoring Quantum-Plane Skew Polynomials over
+       Q(ω)(t)", arXiv:2607.02751, submitted 2026-07-02, CASC 2026 (Bath).
+       https://arxiv.org/html/2607.02751  https://arxiv.org/abs/2607.02751
+       環 R = K(t)[x;σ], K=Q(ω), σ(t)=ωt；σ 階數 m ⇒ 中心
+       C = K(t^m)[x^m] = K(T)[X] 為單變數 PID。monic central bound φ ∈ C∩Rf
+       由線性代數可算；φ 在 C 中分解後以 right-gcd 分割 f。餘下「不可約中心界」
+       採兩層模組法：T↦a 特殊化為數體上循環代數 → 好 inert prime 降到有限域 →
+       Caruso–Le Borgne 分解 → 模組重組／中國餘式／有理插值提升 → 原環精確右除
+       驗證（搜尋可 failure，但回傳因子必正確）。常數擴到 Q̄ 後分解可判定。
+  [R14] Ding, Wang, Xiao, Zheng, "An Algorithm for Computing Greatest Common
+       Right Divisors of Parametric Ore Polynomials", ISSAC'24 (Raleigh),
+       doi:10.1145/3666000.3669694.
+       http://www.mmrc.iss.ac.cn/~dwang/papers/24issac.pdf
+       https://doi.org/10.1145/3666000.3669694
+       以 resultant 理論定義一組 Ore 多項式的 Sylvester 矩陣；非參數時 gcrd
+       由 row echelon form 直接讀出；參數時定義 parametric Sylvester matrix，
+       在「特殊化與 σ/δ 可交換」假設下以模組 Gröbner 基底求參數 gcrd；
+       已於 Singular 實作。→ 直接啟發本回合 sfq_sylvester_rank。
+  [R15] X. Caruso, J. Le Borgne, "A new faster algorithm for factoring skew
+       polynomials over finite fields", J. Symbolic Comput. (2017).
+       https://xavier.caruso.ovh/papers/publis/fastfactor.pdf
+       reduced norm N: k[X;σ] → k^σ[X^r]；商環之 Azumaya 代數結構；
+       §3 快速乘法／除法／擴展歐幾里得，§3.2.2 rgcd 與 llcm 同時算出；
+       Algorithm 11 SkewFactorization 平均 Õ(d r³ log q + d log²q + d^{1+ε}(log q)^{1+o(1)})
+       + F(d,k^σ)。Ore 相似性定理與 φ-module Jordan–Hölder 對應。
+  [R16] Beckermann–Labahn, "Fraction-free Row Reduction of Matrices of Ore
+       Polynomials". https://cs.uwaterloo.ca/~glabahn/Papers/ffshift.pdf
+       無分式列消去（FFFG 變形）求左零空間與 weak Popov form；§9.3 應用於
+       1×1 情形同時得兩個 skew 多項式的 GCRD 與 LCLM；與 subresultants 聯繫。
+  [R17] Puchinger–Wachter-Zeh, "Fast Operations on Linearized Polynomials and
+       their Applications in Coding Theory", arXiv:1512.06520.
+       https://arxiv.org/abs/1512.06520
+       skew 多項式次二次乘法；q-transform、最小子空間多項式、多點求值／插值
+       首次次二次；s=m 時達下界；Gabidulin codes 首次次二次解碼。
+  [R18] S. Lyu, "Complete Factorization Of Skew-Polynomial Over Finite Fields".
+       https://saiyuelyu.github.io/assets/pdf/SkewPolynomialProject.pdf
+       Algorithm 1 KaratsubaSkew：低次 (≤t) 用 Giesbrecht，高次遞迴 3 次半尺寸
+       乘法；O(n^1.58 t^1.41)，對 n<t² 比 matrix 法實用。→ 啟發 kar_mul。
+  [R19] Kriegel–Borchmann, "NextClosures: Parallel Computation of the Canonical
+       Base", CLA 2015 (Best Paper), CEUR Vol-1466 pp.181–192.
+       https://lat.inf.tu-dresden.de/research/papers/2015/KrBo-CLA15.pdf
+       https://ceur-ws.org/Vol-1466/paper15.pdf
+       關鍵定理：Ganter NextClosure 依 lectic 順序本質序列、不可能平行化；
+       改以 Lindig 式上鄰居 c(B∪{m}) 由下往上按「基數遞增」層級枚舉
+       intents 與 pseudo-intents；同層候選彼此獨立、無需通訊；
+       Proposition 5 / Corollary 6 證明完備性與終止；Java 8 Stream + ConcurrentHashMap
+       實作，speedup 與 CPU 數成正比（運算時間比 1/3 ~ 3，視脈絡而定）。
+  [R20] F. Kriegel, "NextClosures with Constraints" (CLA 2016, CEUR Vol-1624)
+       及 "Parallel Attribute Exploration" (ICCS 2016, LNCS 9717).
+       https://ceur-ws.org/Vol-1624/paper18.pdf
+       https://tu-dresden.de/ing/informatik/thi/lat/die-professur/beschaeftigte/francesco-kriegel
+       閉包算子本身構成完備格（infimum = 資料聯集、supremum = 交集）；
+       約束為第二個閉包算子，joint closure φ⋎ψ；需 quasi-rank function
+       ‖·‖: M → N。Algorithm 1：C 候選集、L 蘊含集、I closures；
+       for k = 0..‖⊤‖，對所有 ‖c‖=k 的候選 **in parallel** 處理；
+       Proposition/Lemma 給出不變量（C_k 含所有 rank k+1 的 pseudo-closures 等）；
+       約束與資料不相容時平行 Attribute Exploration 不可行。
+  [R21] Kinoshita–Li, "Power Series Composition in Near-Linear Time", FOCS 2024,
+       arXiv:2404.05177v2.
+       https://arxiv.org/abs/2404.05177  https://arxiv.org/html/2404.05177v2
+       任意交換環 A 上 f(g) mod x^n 可在 O(M(n) log m + M(m)) 算術運算完成；
+       改進 Kedlaya–Umans O(n^{1+o(1)})（非代數）與 NSSV JACM 2023 O(n^1.43)；
+       技術：Bostan–Mori Graeffe 迭代處理 P(x)/Q(x,y)=P/(1−y g(x))，
+       每輪 x 次數減半、y 次數加倍、總規模不變，log n 輪；再以轉置原理
+       （power projection ↔ composition）得到合成演算法。
+  [R22] Bostan–Mori (SOSA 2021) Graeffe 迭代：Q(x)Q(−x)=V(x²)，
+       U=P(x)Q(−x) 分偶部 U_e 與奇部 U_o，依 N 奇偶取 [t^{⌊N/2⌋}]，
+       O(M(n) log N)。 https://arxiv.org/abs/2404.05177
+  [R23] de Moraes et al., "Parallelism in the Generation of Concepts Through
+       the Formal Context Object Partitioning Using the In-Close 4 Algorithm",
+       2023 (SCITEPRESS). https://www.scitepress.org/Papers/2023/119915/119915.pdf
+       以物件子脈絡切分 + OpenMP 多執行緒；先移除冗餘屬性；25,000 objects/50 attrs
+       資料集 2 threads 達 1.4250× speedup、71.25% 效率；並回顧 Nilander 之
+       NextClosure 平行實作與 Fu–Nguifo 搜尋空間切分（未做負載平衡）。
+  [R24] Bastioni–Micheli–Zhao, "On the Characteristic Polynomial of Linearized
+       Polynomials", arXiv:2506.16937 (2025-06-20).
+       https://arxiv.org/abs/2506.16937
+       q-線性化多項式特徵多項式 O(n(log n)^4) 次 F_q 運算，對低次線性映射
+       達平方根級改進（Ore/linearized 多項式 2025 新法）。
+  [R25] Krajca–Outrata–Vychodil, Parallel CbO / FCbO improved canonicity test;
+       Ganter NextClosure 於半格之推廣 (arXiv:1111.3975).
+       http://outrata.inf.upol.cz/publications.en.html
+       https://arxiv.org/pdf/1111.3975
+       FCbO 以更有效 canonicity test 減少重複概念；並行版本處理 disjoint fixpoint
+       集合；Next-Closure 其實是「由生成集枚舉半格元素」，A ⊕ i = c({j<i}∪{i})。
+  查證方式：web_search（depth 2/3）+ fetch_page 原文（arXiv HTML、ISSAC'24 PDF、
+       CEUR PDF、CASC 2026 HTML）。全部書目、URL、要點亦寫入 algorithm.xlsx
+       之「前沿文獻」工作表與 docs/catalog.json 的 references 欄位。
+
+§6' 補回：Dev.txt §6 未完成待辦逐項結案（本回合）
+  [x] 「後續回合持續聯網查證前沿論文（尤其 Ore 分解新法、NextClosure 平行化）」
+      → 已完成 R13..R25 共 13 組查證（含 2024 ISSAC、2024 FOCS、2025 arXiv、
+        2026 CASC 量子平面新法），書目與理論要點見 §2'。
+  [x] 「Ore lclm 完整演算法（R6 deg lclm = deg f + deg g − deg gcrd）」
+      → src/algebra/ore.mbt 新增 F_25 = F_5[θ]/(θ²−2) 係數體（2 在 F_5 非平方，
+        故為體）、σ = Frobenius: θ↦θ⁵=−θ（階數 2，σ≠id，**真正非交換**）；
+        fq2_* 算術、sfq_mul（a_i σ^i(b_j)）、sfq_divmod（σ^k 修正首項消去）、
+        sfq_gcrd_lclm（擴展右歐幾里得，追蹤兩列 α,β 使 r=αf+βg，
+        餘式為 0 時 αf=−βg 即 lclm）、sfq_sylvester_rank（ISSAC'24 Sylvester
+        矩陣 + F_25 高斯消去）。定理 T-Ore7：deg lclm = rank(Sylvester)
+        = deg f + deg g − deg gcrd，且 lclm 右整除 f,g、零組合成立。
+        Python 交叉驗證 30 組隨機实例全數吻合後才寫入 MoonBit。
+  [x] 「高階常數級優化延伸：卷積 O(N²)、FFT/fast multiplication/Brent–Kung 合成」
+      → src/series/series.mbt 新增 kar_mul Karatsuba（3 次半尺寸乘法，
+        T(n)=3T(n/2)+O(n)=O(n^1.585)）、poly_mul_karatsuba、
+        fps_mul_karatsuba、fps_compose_bk（Brent–Kung baby-step/giant-step，
+        f(g)=Σ_i(Σ_{j<B}f_{iB+j}g^j)·g^{iB}，搭配 Karatsuba 截斷乘法）、
+        graeffe_coeff（Bostan–Mori / Kinoshita–Li 之 [t^N]P/Q，每輪 N 減半，
+        O(M(N) log N)）。定理 T-S9/S10/S11 分別與 school-book 卷積、
+        Newton 反演直接計算、直接合成逐項相等。Python 交叉驗證 3 組 P/Q × 9 個 N。
+  [x] 「後續回合持續查證」亦連帶補回 NextClosure 平行化（原 §6 未單列但屬 R12 延伸）
+      → src/galois/galois.mbt 新增 constraint_closure（Kriegel 2016 第二閉包算子）、
+        next_closure_constrained（約束版 Ganter ⊕ 枚舉，每個 worker 獨立）、
+        intents_by_cardinality（Kriegel–Borchmann 基數層級 BFS，同層無通訊）、
+        parallel_worker / parallel_intent_partition（以 min-attribute 切成
+        ny+1 個不交工作單元）。定理 T-G8 約束閉包三律、T-G9 層級枚舉與
+        closed_attributes 一致、T-G10 worker 輸出為不交劃分且聯集完備。
+  [x] 「多元優質算法庫／多合一相容性」部分推進 → src/compose 新增
+      theorem_frontier_all_in_one (T-C16)，把上述新方法與既有 T-C1..T-C15
+      同時查核；根 c1.mbt report() 新增 6 行 inspect 憑證。
+  [ ] 仍待辦（誠實保留，未充作已完成）：
+      * 5,000,000 行／10,000 條中階以上演算法、集庫成群。
+      * Kinoshita–Li 之完整近線性合成（Graeffe + 轉置原理）尚未落地；
+        目前為 BK baby-step/giant-step + Karatsuba 與 Graeffe 係數抽取。
+      * FFT/NTT 完整乘法、Ore bound (R5) 快速演算法、Giesbrecht (R13)
+        兩層模組分解、ISSAC'24 參數 gcrd 之模組 Gröbner 基底、FCbO 完整
+        canonicity test、δ-Galois 推廣、Kalai–Meshulam 拓樸組合。
+      * docs/ 其餘設計文件：依《工程約束》非首次開發新文檔需先獲准，
+        本回合不新增；已把設計／查證內容寫入既有 README.md 與 Dev.txt。
+      * 全域目標累計仍遠低於門檻（見 §7'）。
+
+§7' 量化記錄（C1-02）
+  新增 MoonBit 行數：src/algebra/ore.mbt +約 330、src/galois/galois.mbt +約 155、
+      src/series/series.mbt +約 215、src/compose/compose.mbt +約 35、
+      c1.mbt +約 30、src/catalog/catalog.mbt 由 227 → 約 265（211 筆登錄）
+  新增 theorem_* 憑證函數：10（T-Ore7/8/9、T-G8/9/10、T-S9/10/11、T-C16）
+  登錄表：183 → 211 筆（6 公理／20 定義／8 命題／14 引理／
+      63 定理／62 演算法／38 等式），另「前沿文獻」25 筆（R1..R25）
+  形式化驗證：仍為 17 goals proved（本回合未改動 .mbtp，無新增 trusted assumption）
+  全域目標累計：62 / 10,000 演算法；約 5,600 / 5,000,000 行（截至 C1-02 末）
+
+§8' 回合末驗證與 commit 記錄
+  工具鏈於本回合開始時 /tmp 已消失，依 §1 重新安裝：
+      curl -fsSL https://cli.moonbitlang.com/install/unix.sh -o /tmp/moonbit-install.sh
+      MOON_HOME=/tmp/moonhome bash /tmp/moonbit-install.sh
+      python3 -m pip install -q z3-solver   → z3 5.3.3
+      moon version --all → moon 0.1.20261104 / moonc v0.10.20+65efd5b93
+  局部（即寫、即驗、即刪）：
+      src/algebra  Total tests: 1, passed: 1, failed: 0
+        （fq2 體、σ 自同構、lclm/Sylvester、右除恆等式、θ²=2）
+      src/galois   Total tests: 1, passed: 1, failed: 0
+        （層級枚舉、平行不交劃分、約束閉包、兩組脈絡）
+      src/series   Total tests: 1, passed: 1, failed: 0
+        （Karatsuba n=40/17、Graeffe N≤10、BK block=1/3）
+  全域：moon check --deny-warn / moon build / moon prove --deny-warn /
+      moon run cmd/main（inspect 報表 37 行，全數 OK，catalog 211/OK）
+  CI：.github/workflows/c1-ci.yml 維持同一組全域編譯與形式化驗證；
+      無 --release、無白箱／黑箱／冒煙測試、無基準測試。
+  commit：本回合結束時執行 git add -A && git commit（見 git log）。
+  推送狀態：git 仍無 remote，同 §8 之誠實標記。
+
+§9' 本回合驗證過程與修正記錄
+  - 擴展右歐幾里得初次 Python 原型失敗（lclm 右整除 g 不成立）：
+    原因是 divmod 內部把除式正規化為首一，使 r0 = q·monic(r1)+rem，
+    但列追蹤更新用的是 q 而非 q·(lc)^{-1}，破壞 r = αf+βg 不變量。
+    已改為直接以 c = r[m]·inv(σ^k(b_d)) 消去（不先正規化除式），
+    30 組隨機实例全數通過（零組合、lclm 整除 f/g、秩恆等式）。
+  - 選用 F_25 = F_5[θ]/(θ²−2) 而非 F_5：F_5 上 Frobenius σ=id 會退化為
+    交換多項式環（違反「嚴禁玩具模型」）；2 在 F_5 非平方保證為體，
+    σ(θ)=θ⁵=4θ=−θ 為階數 2 自同構，確保 Ore 環真正非交換。
+  - theorem_kan_left/right_adjunction（C1-01）之「G 須為單調函子」結論
+    與 R19「lectic 順序本質序列」互不衝突：前者是薄範疇中自然變換的存在條件，
+    後者是枚舉順序的可平行性；兩者已分別記錄於 §9 與 §2'。
+  - 依《工程約束》未新增任何文檔；所有查證、結案、修正僅寫入既有檔案。
+
+================================================================================

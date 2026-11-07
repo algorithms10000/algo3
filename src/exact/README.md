@@ -1,6 +1,6 @@
 # src/exact — 精確算術層：Rat、gcd/egcd、模算術、GF(2) 秩、Smith 標準型
 
-> C1-01 首次開發切片。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回更新。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得公理
 

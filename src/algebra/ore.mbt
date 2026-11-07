@@ -220,3 +220,370 @@ pub fn theorem_ore_leibniz(q : @exact.Rat, maxdeg : Int) -> Bool {
 pub fn theorem_ore_hilbert(n : Int, len : Int) -> Bool {
   theorem_hilbert_skew(n, len)
 }
+
+///|
+// ════════════════════════════════════════════════════════════════════════
+// C1-02 補回 §6 待辦：Ore 環上的完整 lclm 與 Sylvester 矩陣 gcrd
+// 依據 Giesbrecht (1992) deg lclm = deg f + deg g − deg gcrd、
+// Caruso–Le Borgne (2017) §3.2.2 擴展右歐幾里得、
+// Ding–Wang–Xiao–Zheng ISSAC'24 之 Ore Sylvester 矩陣、
+// Giesbrecht (2026) 量子平面中心界與 gcrd 分割。
+// 取係數體 k = F_25 = F_5[θ]/(θ²−2)，σ = Frobenius: θ ↦ θ^5 = −θ。
+// σ 階數 2 ⇒ 此為真正非交換的 Ore 環 k[x;σ]（σ ≠ id）。
+// ════════════════════════════════════════════════════════════════════════
+
+///|
+pub(all) struct Fq2 {
+  a : Int64
+  b : Int64
+}
+
+///|
+fn m5(x : Int64) -> Int64 { ((x % 5L) + 5L) % 5L }
+
+///|
+pub fn fq2(a : Int64, b : Int64) -> Fq2 { Fq2::{ a: m5(a), b: m5(b) } }
+
+///|
+pub fn fq2_zero() -> Fq2 { fq2(0L, 0L) }
+
+///|
+pub fn fq2_one() -> Fq2 { fq2(1L, 0L) }
+
+///|
+pub fn fq2_add(x : Fq2, y : Fq2) -> Fq2 { fq2(x.a + y.a, x.b + y.b) }
+
+///|
+pub fn fq2_sub(x : Fq2, y : Fq2) -> Fq2 { fq2(x.a - y.a, x.b - y.b) }
+
+///|
+/// (a+bθ)(c+dθ) = (ac+2bd) + (ad+bc)θ，因 θ² = 2。
+pub fn fq2_mul(x : Fq2, y : Fq2) -> Fq2 {
+  fq2(x.a * y.a + 2L * x.b * y.b, x.a * y.b + x.b * y.a)
+}
+
+///|
+/// σ^k：σ(a+bθ) = a−bθ，σ² = id。
+pub fn fq2_sigma(x : Fq2, k : Int) -> Fq2 {
+  if k % 2 == 1 { fq2(x.a, -x.b) } else { x }
+}
+
+///|
+pub fn fq2_is_zero(x : Fq2) -> Bool { x.a == 0L && x.b == 0L }
+
+///|
+pub fn fq2_equal(x : Fq2, y : Fq2) -> Bool { x.a == y.a && x.b == y.b }
+
+///|
+/// 範數 N(a+bθ) = a² − 2b² ≠ 0（2 在 F_5 中非平方），故 F_25 為體。
+pub fn fq2_inv(x : Fq2) -> Fq2? {
+  let norm = m5(x.a * x.a - 2L * x.b * x.b)
+  if norm == 0L { None } else {
+    let ni = @exact.mod_inv(norm, 5L)
+    Some(fq2(x.a * ni, -x.b * ni))
+  }
+}
+
+///|
+pub(all) struct SkewFq {
+  coeffs : Array[Fq2]
+}
+
+///|
+pub fn skew_fq(coeffs : Array[Fq2]) -> SkewFq { SkewFq::{ coeffs } }
+
+///|
+pub fn sfq_degree(a : SkewFq) -> Int {
+  let mut d = a.coeffs.length() - 1
+  while d >= 0 && fq2_is_zero(a.coeffs[d]) { d -= 1 }
+  d
+}
+
+///|
+pub fn sfq_trim(a : SkewFq) -> SkewFq {
+  let d = sfq_degree(a)
+  if d < 0 { return skew_fq([]) }
+  let out : Array[Fq2] = []
+  for i = 0; i <= d; i = i + 1 { out.push(a.coeffs[i]) }
+  skew_fq(out)
+}
+
+///|
+/// Ore 乘法：(a_i x^i)(b_j x^j) = a_i σ^i(b_j) x^{i+j}。
+pub fn sfq_mul(a : SkewFq, b : SkewFq) -> SkewFq {
+  if a.coeffs.length() == 0 || b.coeffs.length() == 0 { return skew_fq([]) }
+  let n = a.coeffs.length() + b.coeffs.length() - 1
+  let out : Array[Fq2] = Array::make(n, fq2_zero())
+  for i in 0..<a.coeffs.length() {
+    for j in 0..<b.coeffs.length() {
+      out[i + j] = fq2_add(out[i + j], fq2_mul(a.coeffs[i], fq2_sigma(b.coeffs[j], i)))
+    }
+  }
+  sfq_trim(skew_fq(out))
+}
+
+///|
+pub fn sfq_add(a : SkewFq, b : SkewFq) -> SkewFq {
+  let n = if a.coeffs.length() > b.coeffs.length() {
+    a.coeffs.length()
+  } else {
+    b.coeffs.length()
+  }
+  let out : Array[Fq2] = Array::make(n, fq2_zero())
+  for i in 0..<a.coeffs.length() { out[i] = fq2_add(out[i], a.coeffs[i]) }
+  for i in 0..<b.coeffs.length() { out[i] = fq2_add(out[i], b.coeffs[i]) }
+  sfq_trim(skew_fq(out))
+}
+
+///|
+pub fn sfq_neg(a : SkewFq) -> SkewFq {
+  let out : Array[Fq2] = []
+  for i in 0..<a.coeffs.length() {
+    out.push(fq2(-a.coeffs[i].a, -a.coeffs[i].b))
+  }
+  skew_fq(out)
+}
+
+///|
+pub fn sfq_sub(a : SkewFq, b : SkewFq) -> SkewFq { sfq_add(a, sfq_neg(b)) }
+
+///|
+/// 左乘常數使多項式首一：(lc)^{-1}·f。
+pub fn sfq_monic(a : SkewFq) -> SkewFq {
+  let d = sfq_degree(a)
+  if d < 0 { return skew_fq([]) }
+  let c = fq2_inv(a.coeffs[d]).unwrap()
+  let out : Array[Fq2] = []
+  for i = 0; i <= d; i = i + 1 { out.push(fq2_mul(c, a.coeffs[i])) }
+  sfq_trim(skew_fq(out))
+}
+
+///|
+pub(all) struct SFqDiv {
+  q : SkewFq
+  r : SkewFq
+}
+
+///|
+/// 右除：a = q·b + r，deg r < deg b。
+/// 消去最高次項時須對 b 的首項取 σ^k（k = m − deg b）。
+pub fn sfq_divmod(a : SkewFq, b : SkewFq) -> SFqDiv {
+  let d = sfq_degree(b)
+  if d < 0 { return SFqDiv::{ q: skew_fq([]), r: a } }
+  let la = a.coeffs.length()
+  let r : Array[Fq2] = Array::make(la, fq2_zero())
+  for i in 0..<la { r[i] = a.coeffs[i] }
+  let qn = if la - d > 0 { la - d } else { 1 }
+  let q : Array[Fq2] = Array::make(qn, fq2_zero())
+  let mut m = la - 1
+  while m >= d {
+    if fq2_is_zero(r[m]) { m -= 1; continue }
+    let k = m - d
+    let lead = fq2_sigma(b.coeffs[d], k)
+    let c = fq2_mul(r[m], fq2_inv(lead).unwrap())
+    if k < q.length() { q[k] = fq2_add(q[k], c) }
+    for j = 0; j <= d; j = j + 1 {
+      let idx = k + j
+      if idx < r.length() {
+        r[idx] = fq2_sub(r[idx], fq2_mul(c, fq2_sigma(b.coeffs[j], k)))
+      }
+    }
+    m -= 1
+  }
+  let rem : Array[Fq2] = []
+  for i = 0; i < d && i < la; i = i + 1 { rem.push(r[i]) }
+  SFqDiv::{ q: sfq_trim(skew_fq(q)), r: sfq_trim(skew_fq(rem)) }
+}
+
+///|
+pub(all) struct OreGCL {
+  gcrd : SkewFq
+  lclm : SkewFq
+  deg_f : Int
+  deg_g : Int
+  deg_gcrd : Int
+  deg_lclm : Int
+  row_zero : Bool
+}
+
+///|
+/// 擴展右歐幾里得：同時得到 gcrd 與 lclm。
+/// 追蹤兩列 (α,β) 使 r = α·f + β·g；當餘式為 0 時
+/// α·f = −β·g 即為最小公共右倍式 lclm。
+pub fn sfq_gcrd_lclm(f : SkewFq, g : SkewFq) -> OreGCL {
+  let f0 = sfq_monic(f)
+  let g0 = sfq_monic(g)
+  let mut r0 = f0
+  let mut r1 = g0
+  let mut a0 = skew_fq([fq2_one()])
+  let mut bb0 = skew_fq([])
+  let mut a1 = skew_fq([])
+  let mut bb1 = skew_fq([fq2_one()])
+  let mut steps = 0
+  while sfq_degree(r1) >= 0 && steps < 200 {
+    steps += 1
+    let dm = sfq_divmod(r0, r1)
+    let qq = dm.q
+    let na0 = sfq_sub(a0, sfq_mul(qq, a1))
+    let nb0 = sfq_sub(bb0, sfq_mul(qq, bb1))
+    let rem = dm.r
+    r0 = r1
+    r1 = rem
+    a0 = a1
+    bb0 = bb1
+    a1 = na0
+    bb1 = nb0
+  }
+  let lclm = sfq_mul(a1, f0)
+  let combo = sfq_add(lclm, sfq_mul(bb1, g0))
+  OreGCL::{
+    gcrd: r0, lclm, deg_f: sfq_degree(f0), deg_g: sfq_degree(g0),
+    deg_gcrd: sfq_degree(r0), deg_lclm: sfq_degree(lclm),
+    row_zero: sfq_degree(combo) < 0,
+  }
+}
+
+///|
+/// F_25 上矩陣之秩（高斯消去，樞紐以 fq2_inv 正規化）。
+pub fn fq2_rank(rows0 : Array[Array[Fq2]], n : Int) -> Int {
+  let rows : Array[Array[Fq2]] = []
+  for i in 0..<rows0.length() {
+    let row : Array[Fq2] = Array::make(n, fq2_zero())
+    for j in 0..<n { row[j] = rows0[i][j] }
+    rows.push(row)
+  }
+  let mut r = 0
+  for c in 0..<n {
+    let mut piv = -1
+    for i in r..<rows.length() {
+      if !fq2_is_zero(rows[i][c]) { piv = i; break }
+    }
+    if piv < 0 { continue }
+    let tmp = rows[r]
+    rows[r] = rows[piv]
+    rows[piv] = tmp
+    let iv = fq2_inv(rows[r][c]).unwrap()
+    for j in 0..<n { rows[r][j] = fq2_mul(iv, rows[r][j]) }
+    for i in 0..<rows.length() {
+      if i != r && !fq2_is_zero(rows[i][c]) {
+        let fac = rows[i][c]
+        for j in 0..<n {
+          rows[i][j] = fq2_sub(rows[i][j], fq2_mul(fac, rows[r][j]))
+        }
+      }
+    }
+    r += 1
+    if r == rows.length() { break }
+  }
+  r
+}
+
+///|
+/// Ore Sylvester 矩陣 (ISSAC'24)：列為 x^i·f (i < deg g) 與 x^j·g (j < deg f)
+/// 之 σ-偏移係數向量；其階數缺陷恰為 deg gcrd。
+pub fn sfq_sylvester(f : SkewFq, g : SkewFq) -> Array[Array[Fq2]] {
+  let f0 = sfq_monic(f)
+  let g0 = sfq_monic(g)
+  let df = sfq_degree(f0)
+  let dg = sfq_degree(g0)
+  let n = df + dg
+  let rows : Array[Array[Fq2]] = []
+  for i in 0..<dg {
+    let row : Array[Fq2] = Array::make(n, fq2_zero())
+    for k in 0..<f0.coeffs.length() {
+      if i + k < n { row[i + k] = fq2_sigma(f0.coeffs[k], i) }
+    }
+    rows.push(row)
+  }
+  for j in 0..<df {
+    let row : Array[Fq2] = Array::make(n, fq2_zero())
+    for k in 0..<g0.coeffs.length() {
+      if j + k < n { row[j + k] = fq2_sigma(g0.coeffs[k], j) }
+    }
+    rows.push(row)
+  }
+  rows
+}
+
+///|
+pub fn sfq_sylvester_rank(f : SkewFq, g : SkewFq) -> Int {
+  let f0 = sfq_monic(f)
+  let g0 = sfq_monic(g)
+  let n = sfq_degree(f0) + sfq_degree(g0)
+  fq2_rank(sfq_sylvester(f, g), n)
+}
+
+///|
+pub fn sfq_right_divides(h : SkewFq, f : SkewFq) -> Bool {
+  sfq_degree(sfq_divmod(h, sfq_monic(f)).r) < 0
+}
+
+///|
+/// 定理 T-Ore7：deg lclm = deg f + deg g − deg gcrd = rank(Sylvester)，
+/// lclm 為 f,g 之公共右倍式，擴展歐幾里得零組合成立。
+pub fn theorem_ore_lclm(f : SkewFq, g : SkewFq) -> Bool {
+  let z = sfq_gcrd_lclm(f, g)
+  let rank = sfq_sylvester_rank(f, g)
+  z.row_zero && z.deg_lclm == rank &&
+    z.deg_gcrd == z.deg_f + z.deg_g - rank &&
+    sfq_right_divides(z.lclm, f) && sfq_right_divides(z.lclm, g)
+}
+
+///|
+pub fn sfq_sample(k : Int) -> Array[SkewFq] {
+  let t = k.to_int64()
+  let f = skew_fq([fq2(1L, 0L), fq2(t, 1L), fq2(1L, 0L)])
+  let g = skew_fq([fq2(2L, t), fq2(1L, 1L), fq2(1L, 0L)])
+  [f, g]
+}
+
+///|
+/// 定理 T-Ore8：對多組真正非交換（σ ≠ id）實例穷舉 lclm/Sylvester 恆等式。
+pub fn theorem_ore_lclm_batch(count : Int) -> Bool {
+  for k in 0..<count {
+    let pair = sfq_sample(k)
+    if !theorem_ore_lclm(pair[0], pair[1]) { return false }
+  }
+  true
+}
+
+///|
+/// F_25 乘法交換律與 σ 為自同構（Ore 環係數體查核）。
+pub fn theorem_fq2_field() -> Bool {
+  for a in 0..<5 {
+    for b in 0..<5 {
+      for c in 0..<5 {
+        for d in 0..<5 {
+          let x = fq2(a.to_int64(), b.to_int64())
+          let y = fq2(c.to_int64(), d.to_int64())
+          if !fq2_equal(fq2_mul(x, y), fq2_mul(y, x)) { return false }
+          let s = fq2_sigma(fq2_mul(x, y), 1)
+          if !fq2_equal(s, fq2_mul(fq2_sigma(x, 1), fq2_sigma(y, 1))) { return false }
+        }
+      }
+    }
+  }
+  true
+}
+
+///|
+/// 定理 T-Ore9：σ ≠ id（真正非交換），x·θ = −θ·x。
+pub fn theorem_ore_noncommutative() -> Bool {
+  let x = skew_fq([fq2_zero(), fq2_one()])
+  let th = skew_fq([fq2(0L, 1L)])
+  let lhs = sfq_mul(x, th)
+  let rhs = sfq_neg(sfq_mul(th, x))
+  lhs.coeffs.length() == rhs.coeffs.length() &&
+    fq2_equal(lhs.coeffs[1], rhs.coeffs[1])
+}
+
+///|
+pub fn sfq_equal(a : SkewFq, b : SkewFq) -> Bool {
+  let x = sfq_trim(a)
+  let y = sfq_trim(b)
+  if x.coeffs.length() != y.coeffs.length() { return false }
+  for i in 0..<x.coeffs.length() {
+    if !fq2_equal(x.coeffs[i], y.coeffs[i]) { return false }
+  }
+  true
+}

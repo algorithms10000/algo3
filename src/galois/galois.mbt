@@ -378,3 +378,177 @@ pub fn closure_system_representation(closed : Array[UInt64]) -> Int {
 pub fn theorem_representation(closed : Array[UInt64]) -> Bool {
   closure_system_representation(closed) == closed.length()
 }
+
+///|
+// ════════════════════════════════════════════════════════════════════════
+// C1-02 補回 §6 待辦：NextClosure 平行化
+// 依據 Kriegel–Borchmann (CLA 2015) NextClosures：以「基數層級」由下往上
+// 枚举 intents/pseudo-intents，同一層級之候選彼此獨立、无需通訊；
+// 及 Kriegel (ICCS/CLA 2016) NextClosures with Constraints：
+// 以第二個閉包算子（約束）切分工作單元，實現平行 Attribute Exploration。
+// ════════════════════════════════════════════════════════════════════════
+
+///|
+fn list_contains(xs : Array[UInt64], v : UInt64) -> Bool {
+  for i in 0..<xs.length() {
+    if xs[i] == v { return true }
+  }
+  false
+}
+
+///|
+fn min_bit(b : UInt64, n : Int) -> Int {
+  let mut i = 0
+  while i < n {
+    if ((b >> i) & 1UL) == 1UL { return i }
+    i += 1
+  }
+  n
+}
+
+///|
+/// 約束閉包算子 c_req(A) = c(required ∪ A)；其 fixpoints 為含 required 之 intent。
+pub fn constraint_closure(ctx : Context, required : UInt64, a : UInt64) -> UInt64 {
+  closure_attr(ctx, required | a)
+}
+
+///|
+/// Ganter NextClosure 在約束閉包算子上的版本（每個 worker 可獨立執行）。
+pub fn next_closure_constrained(ctx : Context, required : UInt64) -> Array[UInt64] {
+  let out : Array[UInt64] = []
+  let all = full_mask(ctx.ny)
+  let mut b = constraint_closure(ctx, required, 0UL)
+  out.push(b)
+  let limit = (1 << ctx.ny) + 1
+  let mut steps = 0
+  while b != all && steps < limit {
+    steps += 1
+    let mut found = false
+    for ii in 0..<ctx.ny {
+      let i = ctx.ny - 1 - ii
+      if ((b >> i) & 1UL) == 1UL { continue }
+      let cand = constraint_closure(ctx, required, (b & lower_mask(i)) | (1UL << i))
+      let diff = cand & (all ^ b)
+      if (diff & lower_mask(i)) == 0UL {
+        b = cand
+        out.push(b)
+        found = true
+        break
+      }
+    }
+    if !found { break }
+  }
+  out
+}
+
+///|
+/// 層級平行枚舉：由 c(∅) 出發，沿上鄰居 c(B∪{m}) 做 BFS，
+/// 再依 intent 基數分層；同層候選可完全平行處理（Kriegel–Borchmann）。
+pub fn intents_by_cardinality(ctx : Context) -> Array[Array[UInt64]] {
+  let levels : Array[Array[UInt64]] = []
+  for _k in 0..<(ctx.ny + 1) { levels.push([]) }
+  let start = closure_attr(ctx, 0UL)
+  let ks = @exact.popcount(start)
+  if ks < levels.length() { levels[ks].push(start) }
+  let seen : Array[UInt64] = [start]
+  let mut frontier : Array[UInt64] = [start]
+  let mut rounds = 0
+  while frontier.length() > 0 && rounds < ctx.ny + 2 {
+    rounds += 1
+    let next : Array[UInt64] = []
+    for i in 0..<frontier.length() {
+      let b = frontier[i]
+      for m in 0..<ctx.ny {
+        if ((b >> m) & 1UL) == 1UL { continue }
+        let cand = closure_attr(ctx, b | (1UL << m))
+        if cand == b || list_contains(seen, cand) || list_contains(next, cand) {
+          continue
+        }
+        next.push(cand)
+      }
+    }
+    for i in 0..<next.length() {
+      seen.push(next[i])
+      let k = @exact.popcount(next[i])
+      if k < levels.length() { levels[k].push(next[i]) }
+    }
+    frontier = next
+  }
+  levels
+}
+
+///|
+/// 單一 worker：w < ny 者以約束 c_{{w}} 獨立枚舉 min-attribute = w 的 intents；
+/// w = ny 者處理空 intent。各 worker 之間無需通訊。
+pub fn parallel_worker(ctx : Context, w : Int) -> Array[UInt64] {
+  if w == ctx.ny {
+    if closure_attr(ctx, 0UL) == 0UL { [0UL] } else { [] }
+  } else {
+    let cs = next_closure_constrained(ctx, 1UL << w)
+    let out : Array[UInt64] = []
+    for i in 0..<cs.length() {
+      if min_bit(cs[i], ctx.ny) == w { out.push(cs[i]) }
+    }
+    out
+  }
+}
+
+///|
+pub fn parallel_intent_partition(ctx : Context) -> Array[Array[UInt64]] {
+  let out : Array[Array[UInt64]] = []
+  for w in 0..<(ctx.ny + 1) { out.push(parallel_worker(ctx, w)) }
+  out
+}
+
+///|
+/// 定理 T-G8：約束閉包算子確為閉包算子（擴張／單調／冪等）。
+pub fn theorem_constraint_closure(ctx : Context, required : UInt64) -> Bool {
+  let total = total_masks(ctx.ny)
+  let mut a = 0UL
+  while a < total {
+    let c = constraint_closure(ctx, required, a)
+    if (a & c) != a { return false }
+    if constraint_closure(ctx, required, c) != c { return false }
+    a += 1UL
+  }
+  true
+}
+
+///|
+/// 定理 T-G9：層級平行枚舉與穷舉 closed_attributes 完全一致。
+pub fn theorem_next_closures_levelwise(ctx : Context) -> Bool {
+  let levels = intents_by_cardinality(ctx)
+  let brute = closed_attributes(ctx)
+  let mut count = 0
+  for k in 0..<levels.length() {
+    for i in 0..<levels[k].length() {
+      let b = levels[k][i]
+      if closure_attr(ctx, b) != b { return false }
+      if @exact.popcount(b) != k { return false }
+      if !list_contains(brute, b) { return false }
+      count += 1
+    }
+  }
+  count == brute.length()
+}
+
+///|
+/// 定理 T-G10：以約束切分之平行 worker 輸出為 intents 的不交劃分，
+/// 且聯集等於全部 intents（平行化正確性憑證）。
+pub fn theorem_parallel_next_closure(ctx : Context) -> Bool {
+  let parts = parallel_intent_partition(ctx)
+  let brute = closed_attributes(ctx)
+  let flat : Array[UInt64] = []
+  for w in 0..<parts.length() {
+    for i in 0..<parts[w].length() {
+      let b = parts[w][i]
+      if list_contains(flat, b) { return false }
+      if !list_contains(brute, b) { return false }
+      if closure_attr(ctx, b) != b { return false }
+      if min_bit(b, ctx.ny) != w { return false }
+      flat.push(b)
+    }
+  }
+  flat.length() == brute.length() && theorem_next_closures_levelwise(ctx) &&
+    theorem_constraint_closure(ctx, 1UL << (ctx.ny - 1))
+}

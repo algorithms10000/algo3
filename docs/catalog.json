@@ -1,5 +1,5 @@
 {
-  "round": "C1-01",
+  "round": "C1-02",
   "global_axiom": "伽羅瓦對應",
   "entries": [
     {
@@ -1465,6 +1465,407 @@
       "package": "src/graphs",
       "formula": "χ_f(KG(n,k)) = n/k ≤ χ",
       "verification": "由對應定理憑證驗證"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Ore7",
+      "statement": "deg lclm = deg f + deg g − deg gcrd = rank(Sylvester)，lclm 為公共右倍式",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Ore8",
+      "statement": "F_25 上多組非交換實例的 lclm/Sylvester 恆等式穷舉",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Ore9",
+      "statement": "σ ≠ id：x·θ = −θ·x，Ore 環真正非交換",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+    },
+    {
+      "kind": "定理",
+      "id": "T-G8",
+      "statement": "約束閉包算子 c_req 滿足擴張／單調／冪等",
+      "package": "src/galois",
+      "formula": "",
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+    },
+    {
+      "kind": "定理",
+      "id": "T-G9",
+      "statement": "NextClosures 基數層級平行枚舉與 closed_attributes 一致",
+      "package": "src/galois",
+      "formula": "",
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+    },
+    {
+      "kind": "定理",
+      "id": "T-G10",
+      "statement": "約束切分之平行 worker 輸出為 intents 的不交劃分",
+      "package": "src/galois",
+      "formula": "",
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+    },
+    {
+      "kind": "定理",
+      "id": "T-S9",
+      "statement": "Karatsuba 卷積與 school-book 卷積逐項相等",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+    },
+    {
+      "kind": "定理",
+      "id": "T-S10",
+      "statement": "Bostan–Mori Graeffe 係數抽取與 Newton 反演一致",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+    },
+    {
+      "kind": "定理",
+      "id": "T-S11",
+      "statement": "Brent–Kung baby-step/giant-step 合成與直接合成一致",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+    },
+    {
+      "kind": "定理",
+      "id": "T-C16",
+      "statement": "前沿方法一致性：Ore lclm／NextClosures 平行／Karatsuba／Graeffe 同時成立",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL053",
+      "statement": "sfq_gcrd_lclm 擴展右歐幾里得（同時得 gcrd 與 lclm）",
+      "package": "src/algebra",
+      "formula": "O(deg²) 於 F_25",
+      "verification": "局部編譯 + 即時驗題；困難度 P"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL054",
+      "statement": "sfq_sylvester_rank Ore Sylvester 矩陣秩（ISSAC'24）",
+      "package": "src/algebra",
+      "formula": "O((df+dg)³)",
+      "verification": "局部編譯 + 即時驗題；困難度 P"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL055",
+      "statement": "fq2_rank F_25 高斯消去與 fq2_inv 範數求逆",
+      "package": "src/algebra",
+      "formula": "O(r·c·min(r,c))",
+      "verification": "局部編譯 + 即時驗題；困難度 P"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL056",
+      "statement": "sfq_divmod F_25 上 σ^k 修正之右除",
+      "package": "src/algebra",
+      "formula": "O(deg²)",
+      "verification": "局部編譯 + 即時驗題；困難度 P"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL057",
+      "statement": "next_closure_constrained 約束閉包算子之 Ganter 枚舉",
+      "package": "src/galois",
+      "formula": "O(ny²|B|)",
+      "verification": "局部編譯 + 即時驗題；困難度 P"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL058",
+      "statement": "intents_by_cardinality 基數層級 BFS（層內可平行）",
+      "package": "src/galois",
+      "formula": "O(ny·|B|²)",
+      "verification": "局部編譯 + 即時驗題；困難度 P"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL059",
+      "statement": "parallel_intent_partition 無通訊 worker 不交劃分",
+      "package": "src/galois",
+      "formula": " embarrassingly parallel",
+      "verification": "局部編譯 + 即時驗題；困難度 P"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL060",
+      "statement": "kar_mul Karatsuba 次二次卷積",
+      "package": "src/series",
+      "formula": "O(n^1.585)",
+      "verification": "局部編譯 + 即時驗題；困難度 P"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL061",
+      "statement": "fps_compose_bk Brent–Kung baby-step/giant-step 合成",
+      "package": "src/series",
+      "formula": "O((N/B+B)·M(N))",
+      "verification": "局部編譯 + 即時驗題；困難度 P"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL062",
+      "statement": "graeffe_coeff Bostan–Mori Graeffe 係數抽取",
+      "package": "src/series",
+      "formula": "O(M(N) log N)",
+      "verification": "局部編譯 + 即時驗題；困難度 P"
+    },
+    {
+      "kind": "等式",
+      "id": "E31",
+      "statement": "Ore 度數公式",
+      "package": "src/algebra",
+      "formula": "deg lclm(f,g) = deg f + deg g − deg gcrd(f,g)",
+      "verification": "由對應定理憑證驗證"
+    },
+    {
+      "kind": "等式",
+      "id": "E32",
+      "statement": "Sylvester 秩",
+      "package": "src/algebra",
+      "formula": "deg lclm(f,g) = rank Syl(f,g)",
+      "verification": "由對應定理憑證驗證"
+    },
+    {
+      "kind": "等式",
+      "id": "E33",
+      "statement": "F_25 係數體",
+      "package": "src/algebra",
+      "formula": "θ² = 2, σ(θ) = θ⁵ = −θ, σ² = id",
+      "verification": "由對應定理憑證驗證"
+    },
+    {
+      "kind": "等式",
+      "id": "E34",
+      "statement": "約束閉包",
+      "package": "src/galois",
+      "formula": "c_req(A) = c(required ∪ A)",
+      "verification": "由對應定理憑證驗證"
+    },
+    {
+      "kind": "等式",
+      "id": "E35",
+      "statement": "平行不交劃分",
+      "package": "src/galois",
+      "formula": "Intents(K) = ⊔_{w=0}^{|M|} Worker_w(K)",
+      "verification": "由對應定理憑證驗證"
+    },
+    {
+      "kind": "等式",
+      "id": "E36",
+      "statement": "Karatsuba 遞迴",
+      "package": "src/series",
+      "formula": "T(n) = 3T(n/2) + O(n) = O(n^{log₂3})",
+      "verification": "由對應定理憑證驗證"
+    },
+    {
+      "kind": "等式",
+      "id": "E37",
+      "statement": "Graeffe 減半",
+      "package": "src/series",
+      "formula": "[t^N] P/Q = [t^{⌊N/2⌋}] U_{parity}/V",
+      "verification": "由對應定理憑證驗證"
+    },
+    {
+      "kind": "等式",
+      "id": "E38",
+      "statement": "BK 合成分解",
+      "package": "src/series",
+      "formula": "f(g) = Σ_i (Σ_{j<B} f_{iB+j} g^j) · g^{iB}",
+      "verification": "由對應定理憑證驗證"
     }
+  ],
+  "references": [
+    [
+      "R1",
+      "Bigatti–Caboara–Robbiano, Hilbert–Poincaré series of monomial ideals (1991)",
+      "1991",
+      "https://www.researchgate.net/publication/220537752_On_the_Computation_of_Hilbert-Poincare_Series",
+      "單項式理想 Hilbert 級數演算法 HP"
+    ],
+    [
+      "R2",
+      "Lezama et al., Ore and Goldie theorems for skew PBW extensions",
+      "2013",
+      "https://www.researchgate.net/publication/256327517_Ore_and_Goldie_theorems_for_skew_PBW_extensions",
+      "skew PBW 廣義 Hilbert 級數可計算"
+    ],
+    [
+      "R3",
+      "Giesbrecht, On Factoring Quantum-Plane Skew Polynomials over Q(ω)(t)",
+      "2026",
+      "https://arxiv.org/html/2607.02751",
+      "中心界／gcrd 分割／兩層模組分解"
+    ],
+    [
+      "R4",
+      "Ore extension xr = σ(r)x + δ(r), δ(rs)=δ(r)s+σ(r)δ(s)",
+      "2025",
+      "https://arxiv.org/pdf/2505.21030",
+      "Ore 環為自由右 R-模"
+    ],
+    [
+      "R5",
+      "Gómez-Torrecillas–Lobillo–Navarro, Computing the bound of an Ore polynomial",
+      "2013",
+      "https://arxiv.org/abs/1307.5529",
+      "bound 快速演算法與不可約判準"
+    ],
+    [
+      "R6",
+      "Giesbrecht, Factoring in Skew-Polynomial Rings",
+      "1992/98",
+      "https://cs.uwaterloo.ca/~mwg/files/SkewFactor92.pdf",
+      "deg lclm = deg f + deg g − deg gcrd"
+    ],
+    [
+      "R7",
+      "Brent–Kung, Fast Algorithms for Manipulating Formal Power Series",
+      "1978",
+      "https://dl.acm.org/doi/pdf/10.1145/322092.322099",
+      "composition ≡ reversion, Newton O(M(n) log n)"
+    ],
+    [
+      "R8",
+      "Johansson, A fast algorithm for reversion of power series",
+      "2011",
+      "https://ar5iv.labs.arxiv.org/html/1108.4772",
+      "Lagrange 反演常數因子改進"
+    ],
+    [
+      "R9",
+      "Ganter NextClosure / FCA concept lattices",
+      "—",
+      "https://phoenix.inf.upol.cz/esf/ucebni/formal.pdf",
+      "lectic 枚舉 O(|G||M|²|B|)"
+    ],
+    [
+      "R10",
+      "Zhang / Pratt, Chu spaces, concept lattices, event-state duality",
+      "2004",
+      "https://www.entcs.org/files/mfps19/83018.pdf",
+      "完備格表示與 Chu 對偶"
+    ],
+    [
+      "R11",
+      "Lovász / EKR, Kneser graph chromatic & independence numbers",
+      "1978/1961",
+      "https://mathworld.wolfram.com/KneserGraph.html",
+      "χ=n−2k+2, α=C(n−1,k−1)"
+    ],
+    [
+      "R12",
+      "Kriegel, NextClosures with Constraints",
+      "2016",
+      "https://ceur-ws.org/Vol-1624/paper18.pdf",
+      "閉包算子格、約束與平行探索"
+    ],
+    [
+      "R13",
+      "Giesbrecht, On Factoring Quantum-Plane Skew Polynomials over Q(ω)(t) (CASC 2026)",
+      "2026",
+      "https://arxiv.org/html/2607.02751",
+      "中心 C=K(t^m)[x^m]；monic central bound 由線性代數計算；gcrd 分割；T↦a 特殊化後 inert prime 降到有限域，Caruso–Le Borgne 分解、插值提升、精確右除驗證；代數閉包上可判定"
+    ],
+    [
+      "R14",
+      "Ding–Wang–Xiao–Zheng, An Algorithm for Computing GCRD of Parametric Ore Polynomials (ISSAC'24)",
+      "2024",
+      "http://www.mmrc.iss.ac.cn/~dwang/papers/24issac.pdf",
+      "定義 Ore Sylvester 矩陣；非參數時行階梯形式直接得 gcrd；參數時以模組 Gröbner 基底求參數 gcrd；Singular 實作"
+    ],
+    [
+      "R15",
+      "Caruso–Le Borgne, A new faster algorithm for factoring skew polynomials over finite fields",
+      "2017",
+      "https://xavier.caruso.ovh/papers/publis/fastfactor.pdf",
+      "reduced norm N: k[X;σ]→k^σ[X^r]、Azumaya 代數；快速乘法／除法／擴展歐幾里得；§3.2.2 rgcd 與 llcm；SkewFactorization 平均 Õ(d r³ log q + …)"
+    ],
+    [
+      "R16",
+      "Beckermann–Labahn, Fraction-free Row Reduction of Matrices of Ore Polynomials",
+      "2000s",
+      "https://cs.uwaterloo.ca/~glabahn/Papers/ffshift.pdf",
+      "無分式列消去求左零空間／weak Popov form，同時得 GCRD 與 LCLM；與 subresultants 聯繫"
+    ],
+    [
+      "R17",
+      "Puchinger–Wachter-Zeh, Fast Operations on Linearized Polynomials",
+      "2017",
+      "https://arxiv.org/abs/1512.06520",
+      "skew 多項式次二次乘法、q-transform、多點求值／插值、Gabidulin 解碼"
+    ],
+    [
+      "R18",
+      "Lyu, Complete Factorization of Skew-Polynomials over Finite Fields",
+      "2020s",
+      "https://saiyuelyu.github.io/assets/pdf/SkewPolynomialProject.pdf",
+      "KaratsubaSkew 遞迴：低次用 Giesbrecht、高次 3 次半尺寸乘法，O(n^1.58 t^1.41)"
+    ],
+    [
+      "R19",
+      "Kriegel–Borchmann, NextClosures: Parallel Computation of the Canonical Base (CLA 2015)",
+      "2015",
+      "https://lat.inf.tu-dresden.de/research/papers/2015/KrBo-CLA15.pdf",
+      "NextClosure 本質序列（lectic）無法平行；改以基數遞增層級枚舉 intents/pseudo-intents，同層候選獨立、無需通訊，speedup ∝ CPU 數"
+    ],
+    [
+      "R20",
+      "Kriegel, NextClosures with Constraints / Parallel Attribute Exploration (CLA/ICCS 2016)",
+      "2016",
+      "https://ceur-ws.org/Vol-1624/paper18.pdf",
+      "閉包算子構成完備格；約束為第二閉包算子 φ⋎ψ；quasi-rank 函數；Algorithm 1 每層候選平行處理；約束不相容時平行探索不可行"
+    ],
+    [
+      "R21",
+      "Kinoshita–Li, Power Series Composition in Near-Linear Time (FOCS 2024)",
+      "2024",
+      "https://arxiv.org/abs/2404.05177",
+      "基於 Bostan–Mori Graeffe 迭代與轉置原理；任意交換環上 O(M(n) log m + M(m))；改進 Kedlaya–Umans 與 NSSV O(n^1.43)"
+    ],
+    [
+      "R22",
+      "Bostan–Mori, Graeffe iteration for [x^N] P(x)/Q(x) (SOSA 2021)",
+      "2021",
+      "https://arxiv.org/abs/2404.05177",
+      "Q(x)Q(−x)=V(x²)，U 分偶奇部，N 每輪減半，O(M(n) log N)"
+    ],
+    [
+      "R23",
+      "de Moraes et al., Parallelism in the Generation of Concepts Through Formal Context Object Partitioning (In-Close 4, OpenMP)",
+      "2023",
+      "https://www.scitepress.org/Papers/2023/119915/119915.pdf",
+      "以物件子脈絡切分工作單元；4 threads 最高 1.425× speedup、71% 效率；冗餘屬性先移除"
+    ],
+    [
+      "R24",
+      "Bastioni–Micheli–Zhao, On the Characteristic Polynomial of Linearized Polynomials",
+      "2025",
+      "https://arxiv.org/abs/2506.16937",
+      "O(n(log n)^4) F_q 運算，對低次線性化多項式達平方根級改進"
+    ],
+    [
+      "R25",
+      "Krajca–Outrata–Vychodil, Parallel CbO / FCbO canonicity test",
+      "2010s",
+      "http://outrata.inf.upol.cz/publications.en.html",
+      "改進 canonicity test 減少重複概念；同層 fixpoints 可平行處理"
+    ]
   ]
 }

@@ -709,5 +709,35 @@ pub fn theorem_all_in_one() -> Bool {
     @graphs.theorem_ramsey_33() &&
     @galois.theorem_closed_lattice_antiiso(
       @galois.context(3, 4, [0b1011UL, 0b0110UL, 0b1110UL]),
+    ) &&
+    @algebra.theorem_ore_lclm_batch(4) &&
+    @series.theorem_karatsuba_equivalence(20) &&
+    @series.theorem_graeffe_coeff(8) &&
+    @galois.theorem_parallel_next_closure(
+      @galois.context(3, 4, [0b1011UL, 0b0110UL, 0b1110UL]),
+    )
+}
+
+///|
+/// 定理 T-C16：前沿方法一致性 — Ore lclm/Sylvester、NextClosures 平行化、
+/// Karatsuba/Graeffe/BK 與既有 14 種組合手法同時成立（C1-02 補回）。
+pub fn theorem_frontier_all_in_one() -> Bool {
+  let ctx = @galois.context(3, 4, [0b1011UL, 0b0110UL, 0b1110UL])
+  let f : Array[@exact.Rat] = []
+  let g : Array[@exact.Rat] = []
+  for i in 0..<8 {
+    f.push(if i == 0 { @series.rat0() } else { @series.rfrac(1L, (i + 1).to_int64()) })
+    g.push(if i < 2 { @series.rat0() } else { @series.rfrac(1L, (i * i).to_int64()) })
+  }
+  theorem_all_in_one() &&
+    @algebra.theorem_ore_lclm_batch(6) &&
+    @algebra.theorem_ore_noncommutative() &&
+    @algebra.theorem_fq2_field() &&
+    @galois.theorem_parallel_next_closure(ctx) &&
+    @galois.theorem_next_closures_levelwise(ctx) &&
+    @series.theorem_karatsuba_equivalence(40) &&
+    @series.theorem_graeffe_coeff(10) &&
+    @series.theorem_bk_composition(
+      @series.Fps::{ coeffs: f }, @series.Fps::{ coeffs: g }, 3,
     )
 }

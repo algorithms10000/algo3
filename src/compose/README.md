@@ -1,6 +1,6 @@
 # src/compose — 14 種組合手法：Kan、束、纖維積、單子、張量、纖維範疇、推出、交織、博弈
 
-> C1-01 首次開發切片。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回更新。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得定理列表
 
@@ -21,6 +21,7 @@
 - **T-C13** 有限 Alexandrov 拓樸之束黏合唯一性
 - **T-C14** 2-上循環交織群結合律與短正合序列
 - **T-C15** 多合一相容性：跨套件定理同時成立
+- **T-C16** 前沿方法一致性：Ore lclm／NextClosures 平行／Karatsuba／Graeffe 同時成立
 
 ## 已實作演算法列表
 
@@ -71,8 +72,8 @@
   fibered  chain_leq  grothendieck_objects  theorem_fibration
   is_alexandrov_open  submasks  theorem_sheaf_gluing  weave_elem
   cocycle  weave_mul  theorem_cocycle_condition  theorem_weave_associative
-  theorem_all_in_one  PosetLattice  UnionFind  Fibered
-  WeaveElem
+  theorem_all_in_one  theorem_frontier_all_in_one  PosetLattice  UnionFind
+  Fibered  WeaveElem
 ```
 
 ## 驗證

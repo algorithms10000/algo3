@@ -795,3 +795,204 @@ pub fn theorem_lan_ring_hom(cut : Int) -> Bool {
   let rhs = ds_mul(lan_along_phi(f, cut), lan_along_phi(g, cut))
   lhs.equal(rhs)
 }
+
+///|
+// ════════════════════════════════════════════════════════════════════════
+// C1-02 補回 §6 待辦：高階常數級優化
+// (a) Karatsuba 次二次卷積 O(n^{log2 3})（Lyu 之 KaratsubaSkew /
+//     Puchinger–Wachter-Zeh 快速 skew 乘法之交換係數特例）
+// (b) Brent–Kung baby-step/giant-step 合成，搭配 Karatsuba 乘法
+// (c) Bostan–Mori Graeffe 迭代 / Kinoshita–Li (FOCS 2024) 之
+//     [t^N] P(t)/Q(t) 係數抽取，O(M(N) log N)，每次遞迴把 N 減半
+// ════════════════════════════════════════════════════════════════════════
+
+///|
+fn arr_slice(a : Array[@exact.Rat], from : Int, to : Int) -> Array[@exact.Rat] {
+  let out : Array[@exact.Rat] = []
+  let mut i = from
+  while i < to && i < a.length() {
+    out.push(a[i])
+    i += 1
+  }
+  out
+}
+
+///|
+fn arr_add(a : Array[@exact.Rat], b : Array[@exact.Rat]) -> Array[@exact.Rat] {
+  let n = max_int(a.length(), b.length())
+  let out : Array[@exact.Rat] = Array::make(n, rat0())
+  for i in 0..<a.length() { out[i] = out[i].add(a[i]) }
+  for i in 0..<b.length() { out[i] = out[i].add(b[i]) }
+  out
+}
+
+///|
+fn arr_sub(a : Array[@exact.Rat], b : Array[@exact.Rat]) -> Array[@exact.Rat] {
+  let n = max_int(a.length(), b.length())
+  let out : Array[@exact.Rat] = Array::make(n, rat0())
+  for i in 0..<a.length() { out[i] = out[i].add(a[i]) }
+  for i in 0..<b.length() { out[i] = out[i].sub(b[i]) }
+  out
+}
+
+///|
+/// Karatsuba：3 次半尺寸乘法取代 4 次，遞迴 T(n)=3T(n/2)+O(n)。
+fn kar_mul(a : Array[@exact.Rat], b : Array[@exact.Rat]) -> Array[@exact.Rat] {
+  if a.length() == 0 || b.length() == 0 { return [] }
+  let n = max_int(a.length(), b.length())
+  if n <= 16 {
+    let out : Array[@exact.Rat] = Array::make(a.length() + b.length() - 1, rat0())
+    for i in 0..<a.length() {
+      for j in 0..<b.length() {
+        out[i + j] = out[i + j].add(a[i].mul(b[j]))
+      }
+    }
+    return out
+  }
+  let m = n / 2
+  let a0 = arr_slice(a, 0, m)
+  let a1 = arr_slice(a, m, n)
+  let b0 = arr_slice(b, 0, m)
+  let b1 = arr_slice(b, m, n)
+  let z0 = kar_mul(a0, b0)
+  let z2 = kar_mul(a1, b1)
+  let z1 = kar_mul(arr_add(a0, a1), arr_add(b0, b1))
+  let cross = arr_sub(arr_sub(z1, z0), z2)
+  let out : Array[@exact.Rat] = Array::make(a.length() + b.length() - 1, rat0())
+  for i in 0..<z0.length() {
+    if i < out.length() { out[i] = out[i].add(z0[i]) }
+  }
+  for i in 0..<cross.length() {
+    if i + m < out.length() { out[i + m] = out[i + m].add(cross[i]) }
+  }
+  for i in 0..<z2.length() {
+    if i + 2 * m < out.length() { out[i + 2 * m] = out[i + 2 * m].add(z2[i]) }
+  }
+  out
+}
+
+///|
+pub fn poly_mul_karatsuba(a : Poly, b : Poly) -> Poly {
+  poly(kar_mul(a.coeffs, b.coeffs))
+}
+
+///|
+pub fn fps_mul_karatsuba(a : Fps, b : Fps, cut : Int) -> Fps {
+  let aa = arr_slice(a.coeffs, 0, cut)
+  let bb = arr_slice(b.coeffs, 0, cut)
+  let prod = kar_mul(aa, bb)
+  let out : Array[@exact.Rat] = Array::make(cut, rat0())
+  for i in 0..<min_int(prod.length(), cut) { out[i] = prod[i] }
+  Fps::{ coeffs: out }
+}
+
+///|
+/// 定理 T-S9：Karatsuba 卷積與 school-book 卷積逐項相等。
+pub fn theorem_karatsuba_equivalence(n : Int) -> Bool {
+  let ca : Array[@exact.Rat] = []
+  let cb : Array[@exact.Rat] = []
+  for i in 0..<n {
+    ca.push(rfrac((i + 1).to_int64(), (i % 3 + 2).to_int64()))
+    cb.push(rfrac((i + 2).to_int64(), (i % 4 + 3).to_int64()))
+  }
+  let pa = poly(ca)
+  let pb = poly(cb)
+  if !pa.mul(pb).equal(poly_mul_karatsuba(pa, pb)) { return false }
+  let fa = Fps::{ coeffs: ca }
+  let fb = Fps::{ coeffs: cb }
+  if !fps_mul(fa, fb, n).equal(fps_mul_karatsuba(fa, fb, n)) { return false }
+  true
+}
+
+///|
+/// Brent–Kung baby-step / giant-step 合成：
+/// f(g) = Σ_i (Σ_{j<B} f_{iB+j} g^j) · g^{iB}，以 Karatsuba 做每次截斷乘法。
+pub fn fps_compose_bk(f : Fps, g : Fps, block : Int) -> Fps {
+  let n = min_int(f.coeffs.length(), g.coeffs.length())
+  let b = if block < 1 { 1 } else { block }
+  let powers : Array[Fps] = []
+  let mut cur = fps_one(n)
+  for _j in 0..<b {
+    powers.push(cur)
+    cur = fps_mul_karatsuba(cur, g, n)
+  }
+  let gstep = cur
+  let mut outer = fps_one(n)
+  let out : Array[@exact.Rat] = Array::make(n, rat0())
+  let mut i = 0
+  while i * b < n {
+    let inner : Array[@exact.Rat] = Array::make(n, rat0())
+    for j in 0..<b {
+      let idx = i * b + j
+      if idx < n && !f.coeffs[idx].is_zero() {
+        for k in 0..<n {
+          inner[k] = inner[k].add(f.coeffs[idx].mul(powers[j].coeffs[k]))
+        }
+      }
+    }
+    let chunk = fps_mul_karatsuba(Fps::{ coeffs: inner }, outer, n)
+    for k in 0..<n { out[k] = out[k].add(chunk.coeffs[k]) }
+    outer = fps_mul_karatsuba(outer, gstep, n)
+    i += 1
+  }
+  Fps::{ coeffs: out }
+}
+
+///|
+pub fn theorem_bk_composition(f : Fps, g : Fps, block : Int) -> Bool {
+  fps_compose(f, g).equal(fps_compose_bk(f, g, block))
+}
+
+///|
+fn alternate_negate(q : Array[@exact.Rat]) -> Array[@exact.Rat] {
+  let out : Array[@exact.Rat] = []
+  for i in 0..<q.length() {
+    out.push(if i % 2 == 1 { q[i].neg() } else { q[i] })
+  }
+  out
+}
+
+///|
+/// Bostan–Mori Graeffe 迭代：[t^N] P/Q，遞迴把 N 減半，O(M(N) log N)。
+/// 要求 Q(0) = 1。Q(t)Q(−t) = V(t²) 為偶級數，U = P·Q(−t) 分偶/奇部。
+pub fn graeffe_coeff(p : Array[@exact.Rat], q : Array[@exact.Rat], n : Int) -> @exact.Rat {
+  if n == 0 {
+    if p.length() == 0 { return rat0() }
+    return p[0]
+  }
+  let qn = alternate_negate(q)
+  let u = fps_mul(Fps::{ coeffs: p }, Fps::{ coeffs: qn }, n + 1)
+  let v = fps_mul(Fps::{ coeffs: q }, Fps::{ coeffs: qn }, n + 1)
+  let half = if n % 2 == 0 { n / 2 } else { (n - 1) / 2 }
+  let w : Array[@exact.Rat] = []
+  for k in 0..<(half + 1) {
+    let idx = 2 * k
+    if idx < v.coeffs.length() { w.push(v.coeffs[idx]) } else { w.push(rat0()) }
+  }
+  let un : Array[@exact.Rat] = []
+  for k in 0..<(half + 1) {
+    let idx = if n % 2 == 0 { 2 * k } else { 2 * k + 1 }
+    if idx < u.coeffs.length() { un.push(u.coeffs[idx]) } else { un.push(rat0()) }
+  }
+  graeffe_coeff(un, w, half)
+}
+
+///|
+/// 定理 T-S10：Graeffe 係數抽取與 Newton 反演之直接計算逐項相等。
+pub fn theorem_graeffe_coeff(n : Int) -> Bool {
+  let pp : Array[@exact.Rat] = Array::make(n + 1, rat0())
+  let qq : Array[@exact.Rat] = Array::make(n + 1, rat0())
+  pp[0] = rat1()
+  if n + 1 > 1 { pp[1] = rint(2L) }
+  if n + 1 > 2 { pp[2] = rfrac(1L, 3L) }
+  qq[0] = rat1()
+  if n + 1 > 1 { qq[1] = rint(-1L) }
+  if n + 1 > 2 { qq[2] = rfrac(1L, 2L) }
+  let inv = fps_inv(Fps::{ coeffs: qq })
+  let direct = fps_mul(Fps::{ coeffs: pp }, inv, n + 1)
+  for k in 0..<(n + 1) {
+    let g = graeffe_coeff(pp, qq, k)
+    if !direct.coeffs[k].equal(g) { return false }
+  }
+  true
+}

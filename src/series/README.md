@@ -1,6 +1,6 @@
 # src/series — 局部公理 L1/L2/L3：多項式、形式冪級數、洛朗、狄利克雷、商環、全純
 
-> C1-01 首次開發切片。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回更新。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得公理
 
@@ -21,6 +21,9 @@
 - **T-S8** Kan 擴展 Lan_φ 保持環結構
 - **T-O1** 操作子代入結合律 (P∘Q)∘R=P∘(Q∘R)
 - **T-O2** 多元代入求值同態
+- **T-S9** Karatsuba 卷積與 school-book 卷積逐項相等
+- **T-S10** Bostan–Mori Graeffe 係數抽取與 Newton 反演一致
+- **T-S11** Brent–Kung baby-step/giant-step 合成與直接合成一致
 
 ## 已實作演算法列表
 
@@ -39,6 +42,9 @@
 - **AL031** conv_mul 三種卷積么半群統一乘法（O(N²) 或 O(N log N)）
 - **AL032** lan_along_phi 左 Kan 擴展（纖維和）（O(log N)）
 - **AL033** mpoly_substitute 操作子代入（多項式於指數）
+- **AL060** kar_mul Karatsuba 次二次卷積（O(n^1.585)）
+- **AL061** fps_compose_bk Brent–Kung baby-step/giant-step 合成（O((N/B+B)·M(N))）
+- **AL062** graeffe_coeff Bostan–Mori Graeffe 係數抽取（O(M(N) log N)）
 
 ## 等式
 
@@ -49,6 +55,9 @@
 - **E09** 複合反演：`f(f^{-1}(t)) ≡ t (mod t^N)`
 - **E10** Möbius 反演：`ζ * μ = δ₁，即 Σ_{d|n} μ(d) = [n=1]`
 - **E11** Euler 乘積：`f(n) = Π_{p^e || n} f(p^e)`
+- **E36** Karatsuba 遞迴：`T(n) = 3T(n/2) + O(n) = O(n^{log₂3})`
+- **E37** Graeffe 減半：`[t^N] P/Q = [t^{⌊N/2⌋}] U_{parity}/V`
+- **E38** BK 合成分解：`f(g) = Σ_i (Σ_{j<B} f_{iB+j} g^j) · g^{iB}`
 
 ## 資料夾視角依賴關係圖
 
@@ -91,9 +100,11 @@
   ds_one  ds_zeta  ds_identity  ds_inv
   mobius  ds_mobius  ds_phi  Dirichlet::equal
   theorem_dirichlet_mobius  theorem_euler_product  conv_mul  ConvAlg::equal
-  theorem_conv_associative  lan_along_phi  theorem_lan_ring_hom  Poly
-  Fps  Laurent  Dirichlet  Quot
-  DivMod  ConvAlg
+  theorem_conv_associative  lan_along_phi  theorem_lan_ring_hom  poly_mul_karatsuba
+  fps_mul_karatsuba  theorem_karatsuba_equivalence  fps_compose_bk  theorem_bk_composition
+  graeffe_coeff  theorem_graeffe_coeff  Poly  Fps
+  Laurent  Dirichlet  Quot  DivMod
+  ConvAlg
 ```
 
 ## 驗證
