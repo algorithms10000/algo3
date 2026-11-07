@@ -660,7 +660,11 @@ C1 開發流水帳本 (Dev.txt) — 流水式，每回合追加，直到工程�
   產生器決定性：build_catalog.py / build_readmes.py 重跑後
       docs/catalog.json、src/catalog/catalog.mbt、algorithm.xlsx、12 份 README
       與 commit 內容 byte-identical（xlsx 固定 zip 時間戳，見 C1-02）。
-  commit：本回合結束時 git add -A && git commit（見 git log）；無 remote。
+  commit：de7b02e C1-04: 補齊 §6'' 最前沿數學結構（26 檔變更，
+      4,825 插入 / 336 刪除）；pre-commit 之 moon check／moon prove 通過；
+      git status --short 為空、git remote -v 為空（未 push）。
+  .git/config 於本回合開始時因快照排除敏感路徑而消失，已重建
+      user.name/user.email/core.hooksPath=.githooks 後方能 commit。
 
 §9'' 本回合驗證過程與修正記錄
   - src/exact 初次 zz_probe 誤用 @exact 前綴（同套件不可自我 import）與
@@ -836,8 +840,12 @@ C1 開發流水帳本 (Dev.txt) — 流水式，每回合追加，直到工程�
   形式化驗證：17 goals proved（.mbtp 未改動，無 trusted assumption）
   inspect 報表：42 行 → 51 行，全數 OK；catalog 355/OK
   FCbO 實測：CbO 25 / FCbO 20 / skipped 5（守恆 20+5=25）
-  聚類實測：見 moon run cmd/main 之「T-C25」行（總筆數/群數/
-      多項群/最大群/演算法筆數/憑證）
+  FCbO 實測（6×7 脈絡）：CbO 25 次閉包 / FCbO 20 次 / skipped 5，
+      守恆 20+5=25；K₄ 1-skeleton 之 λ=2、完整單純形 λ=0。
+  聚類實測（Jaccard 門檻 3/4）：355 筆 / 69 群 / 40 個含 ≥2 項之群 /
+      最大群 23 筆 / 110 條演算法 / 憑證 OK；J=1/4 為單一巨團（single-linkage
+      鏈式合併），門檻 1/4→1/2→3/4→1 之群數 1→23→69→70 單調不減。
+  algorithm.xlsx sha256：dc6323b3e96de8af6fc6d8b4d0b183fee7a5b47130140782b0607ebc2734b42d
 
 §8''' C1-04 回合末驗證與 commit
   環境：/tmp 工具鏈與 z3 於回合開始時再度消失，依 §1 重新安裝
@@ -853,7 +861,11 @@ C1 開發流水帳本 (Dev.txt) — 流水式，每回合追加，直到工程�
   產生器決定性：build_catalog.py / build_readmes.py 重跑後
       docs/catalog.json、src/catalog/catalog.mbt、algorithm.xlsx、12 份 README
       與 commit 內容 byte-identical（xlsx 固定 zip 時間戳）。
-  commit：本回合結束時 git add -A && git commit（見 git log）；無 remote。
+  commit：de7b02e C1-04: 補齊 §6'' 最前沿數學結構（26 檔變更，
+      4,825 插入 / 336 刪除）；pre-commit 之 moon check／moon prove 通過；
+      git status --short 為空、git remote -v 為空（未 push）。
+  .git/config 於本回合開始時因快照排除敏感路徑而消失，已重建
+      user.name/user.email/core.hooksPath=.githooks 後方能 commit。
 
 §9''' C1-04 驗證過程與修正記錄
   - 承接 C1-04 初版 `theorem_kl_compose` 之 Array::at 失敗：原因為
