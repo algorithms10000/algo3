@@ -392,7 +392,10 @@ def generate_xlsx():
     from openpyxl.styles import Font, PatternFill, Alignment
     from openpyxl.utils import get_column_letter
 
+    from datetime import datetime
     wb = Workbook()
+    wb.properties.created = datetime(2026, 11, 7, 0, 0, 0)
+    wb.properties.modified = datetime(2026, 11, 7, 0, 0, 0)
     head_font = Font(bold=True, color="FFFFFF")
     head_fill = PatternFill("solid", fgColor="1F4E79")
     wrap = Alignment(wrap_text=True, vertical="top")
@@ -451,7 +454,19 @@ def generate_xlsx():
         sheet.auto_filter.ref = sheet.dimensions
 
     path = os.path.join(ROOT, "algorithm.xlsx")
-    wb.save(path)
+    # 固定 zip 時間戳，讓 xlsx 為可重現（byte-identical）之建置產物
+    import io
+    import zipfile
+    buf = io.BytesIO()
+    wb.save(buf)
+    buf.seek(0)
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as zout:
+        with zipfile.ZipFile(buf) as zin:
+            for item in zin.infolist():
+                zi = zipfile.ZipInfo(item.filename, date_time=(2026, 11, 7, 0, 0, 0))
+                zi.compress_type = zipfile.ZIP_DEFLATED
+                zi.external_attr = item.external_attr
+                zout.writestr(zi, zin.read(item.filename))
     return path
 
 

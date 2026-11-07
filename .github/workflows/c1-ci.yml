@@ -54,7 +54,7 @@ jobs:
           python3 tools/build_catalog.py
           python3 tools/build_readmes.py
           git diff --exit-code -- \
-            docs/catalog.json src/catalog/catalog.mbt README.md \
+            docs/catalog.json src/catalog/catalog.mbt algorithm.xlsx README.md \
             src/exact/README.md src/axioms/README.md src/galois/README.md \
             src/series/README.md src/algebra/README.md src/graphs/README.md \
             src/compose/README.md src/catalog/README.md cmd/main/README.md \
