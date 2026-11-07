@@ -1097,8 +1097,8 @@ pub fn psd_principal_minors(x : @exact.Mat) -> Bool {
       for j in 0..<idx.length() { row.push(x.a[idx[i]][idx[j]]) }
       sub.push(row)
     }
-    let d = @exact.mat_det(@exact.mat_from(sub))
-    if d.n < 0L { return false }
+    let d = @exact.bigrat_sign(@exact.mat_det_bigrat(@exact.mat_from(sub)))
+    if d < 0 { return false }
   }
   true
 }
@@ -1348,4 +1348,472 @@ pub fn theorem_kalai_meshulam() -> Bool {
     if !theorem_euler_poincare(ic) { return false }
   }
   true
+}
+
+///|
+// ════════════════════════════════════════════════════════════════════════
+// C1-05 補回 §6'''：高維 cellular sheaf（q=1）、Persistent 1-st Laplacian、
+// ANM Hessian 對應、環／模值層（R30 arXiv:2505.23993、2610.28455、
+// Hansen–Ghrist；R39 Wei–Wei Prop. 3.1 之 q=1 推廣）
+//
+// 取 R = ℚ[ε]/(ε²)（局部環），每胞腔 σ 之莖為自由 R-模秩 1
+// （≅ ℚ²，基底 1,ε）；限制映射 F_{σ,τ} = 乘以 u_τ u_σ^{-1}，
+// u_σ = 1 + c_σ ε，故 F_{σ,τ} 之 2×2 矩陣為 [[1,0],[c_τ−c_σ,1]]。
+// 由 u_τ u_σ^{-1}·u_ς u_τ^{-1} = u_ς u_σ^{-1} 滿足函子性，
+// 配合單純形入射號可得 δ¹δ⁰ = 0。
+// ════════════════════════════════════════════════════════════════════════
+
+///|
+pub(all) struct Sheaf2 {
+  n : Int
+  edges : Array[Array[Int]]
+  tris : Array[Array[Int]]
+  cv : Array[Int64]
+  ce : Array[Int64]
+  ct : Array[Int64]
+}
+
+///|
+pub fn sheaf2(
+  n : Int,
+  edges : Array[Array[Int]],
+  tris : Array[Array[Int]],
+  cv : Array[Int64],
+  ce : Array[Int64],
+  ct : Array[Int64],
+) -> Sheaf2 {
+  Sheaf2::{ n, edges, tris, cv, ce, ct }
+}
+
+///|
+/// R=ℚ[ε]/(ε²) 中「乘以 1+dε」之 2×2 矩陣。
+fn ring_unit_block(d : Int64) -> Array[Array[@exact.Rat]] {
+  [
+    [@exact.rat_one(), @exact.rat_zero()],
+    [@exact.rat_int(d), @exact.rat_one()],
+  ]
+}
+
+///|
+fn sheaf_edge_index(edges : Array[Array[Int]], i : Int, j : Int) -> Int {
+  for e in 0..<edges.length() {
+    if edges[e][0] == i && edges[e][1] == j { return e }
+  }
+  -1
+}
+
+///|
+fn set_block(
+  m : @exact.Mat,
+  ri : Int,
+  ci : Int,
+  block : Array[Array[@exact.Rat]],
+  s : Int64,
+) -> Unit {
+  let scale = @exact.rat_int(s)
+  for a in 0..<2 {
+    for b in 0..<2 {
+      m.a[ri + a][ci + b] = m.a[ri + a][ci + b].add(block[a][b].mul(scale))
+    }
+  }
+}
+
+///|
+fn mat_is_zero(x : @exact.Mat) -> Bool {
+  for i in 0..<x.a.length() {
+    for j in 0..<x.a[0].length() {
+      if !x.a[i][j].is_zero() { return false }
+    }
+  }
+  true
+}
+
+///|
+/// δ⁰ : C⁰(K;F) → C¹(K;F)，2m×2n；[i:e]=−1、[j:e]=+1（i<j）。
+pub fn sheaf2_delta0(sh : Sheaf2) -> @exact.Mat {
+  let d0 = @exact.mat_new(2 * sh.edges.length(), 2 * sh.n)
+  for e in 0..<sh.edges.length() {
+    let i = sh.edges[e][0]
+    let j = sh.edges[e][1]
+    let bi = ring_unit_block(sh.ce[e] - sh.cv[i])
+    let bj = ring_unit_block(sh.ce[e] - sh.cv[j])
+    set_block(d0, 2 * e, 2 * i, bi, -1L)
+    set_block(d0, 2 * e, 2 * j, bj, 1L)
+  }
+  d0
+}
+
+///|
+/// δ¹ : C¹(K;F) → C²(K;F)，2t×2m；
+/// [e:f] = +1 對 [i,j]、−1 對 [i,k]、+1 對 [j,k]。
+pub fn sheaf2_delta1(sh : Sheaf2) -> @exact.Mat {
+  let d1 = @exact.mat_new(2 * sh.tris.length(), 2 * sh.edges.length())
+  for t in 0..<sh.tris.length() {
+    let i = sh.tris[t][0]
+    let j = sh.tris[t][1]
+    let k = sh.tris[t][2]
+    let eij = sheaf_edge_index(sh.edges, i, j)
+    let eik = sheaf_edge_index(sh.edges, i, k)
+    let ejk = sheaf_edge_index(sh.edges, j, k)
+    if eij >= 0 {
+      set_block(d1, 2 * t, 2 * eij,
+        ring_unit_block(sh.ct[t] - sh.ce[eij]), 1L)
+    }
+    if eik >= 0 {
+      set_block(d1, 2 * t, 2 * eik,
+        ring_unit_block(sh.ct[t] - sh.ce[eik]), -1L)
+    }
+    if ejk >= 0 {
+      set_block(d1, 2 * t, 2 * ejk,
+        ring_unit_block(sh.ct[t] - sh.ce[ejk]), 1L)
+    }
+  }
+  d1
+}
+
+///|
+/// 1-st Hodge sheaf Laplacian L¹_F = δ⁰(δ⁰)ᵀ + (δ¹)ᵀδ¹。
+pub fn sheaf2_laplacian1(sh : Sheaf2) -> @exact.Mat {
+  let d0 = sheaf2_delta0(sh)
+  let d1 = sheaf2_delta1(sh)
+  @exact.mat_add(
+    @exact.mat_mul(d0, @exact.mat_transpose(d0)),
+    @exact.mat_mul(@exact.mat_transpose(d1), d1),
+  )
+}
+
+///|
+/// H¹(K;F) = ker δ¹ / im δ⁰ 之維度（δ¹δ⁰=0 故為 dim ker δ¹ − rank δ⁰）。
+pub fn sheaf2_betti1(sh : Sheaf2) -> Int {
+  let d0 = sheaf2_delta0(sh)
+  let d1 = sheaf2_delta1(sh)
+  (2 * sh.edges.length() - @exact.mat_rank(d1)) - @exact.mat_rank(d0)
+}
+
+///|
+pub fn sheaf2_demo() -> Sheaf2 {
+  let edges : Array[Array[Int]] = [
+    [0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3],
+  ]
+  let tris : Array[Array[Int]] = [[0, 1, 2]]
+  let ce : Array[Int64] = []
+  for e in 0..<edges.length() {
+    ce.push((edges[e][0] * 3 + edges[e][1] * 5).to_int64())
+  }
+  sheaf2(4, edges, tris, [0L, 1L, 2L, 3L], ce,
+    [(0 * 7 + 1 * 11 + 2 * 13).to_int64()])
+}
+
+///|
+/// 定理 T-Gph17（高維 sheaf Hodge，R30 Thm.1）：
+/// δ¹δ⁰=0、L¹ 對稱且半正定（全主子式 ≥0）、ker L¹ ≅ H¹(K;F)。
+pub fn theorem_sheaf2_hodge(sh : Sheaf2) -> Bool {
+  let d0 = sheaf2_delta0(sh)
+  let d1 = sheaf2_delta1(sh)
+  if !mat_is_zero(@exact.mat_mul(d1, d0)) { return false }
+  let lap = @exact.mat_add(
+    @exact.mat_mul(d0, @exact.mat_transpose(d0)),
+    @exact.mat_mul(@exact.mat_transpose(d1), d1),
+  )
+  if !@exact.mat_equal(lap, @exact.mat_transpose(lap)) { return false }
+  if !psd_principal_minors(lap) { return false }
+  let nullity = 2 * sh.edges.length() - @exact.mat_rank(lap)
+  nullity == sheaf2_betti1(sh)
+}
+
+///|
+pub(all) struct Sheaf1Persistent {
+  sh : Sheaf2
+  xedges : Array[Int]
+}
+
+///|
+pub fn sheaf1_persistent(sh : Sheaf2, xedges : Array[Int]) -> Sheaf1Persistent {
+  Sheaf1Persistent::{ sh, xedges }
+}
+
+///|
+pub fn sheaf1_demo() -> Sheaf1Persistent {
+  sheaf1_persistent(sheaf2_demo(), [0, 2, 3, 4, 5])
+}
+
+///|
+fn xedge_rows(x : @exact.Mat, idx : Array[Int]) -> @exact.Mat {
+  let out : Array[Array[@exact.Rat]] = []
+  for i in 0..<idx.length() {
+    out.push(x.a[2 * idx[i]])
+    out.push(x.a[2 * idx[i] + 1])
+  }
+  @exact.mat_from(out)
+}
+
+///|
+/// Persistent 1-st sheaf Laplacian（Wei–Wei Prop. 3.1 之 q=1）：
+/// Δ₁^{X,Y} = δ⁰_X(δ⁰_X)ᵀ + M·Proj_Θ·Mᵀ，
+/// M = π(δ¹_Y)ᵀ、Θ = ker((I−π)(δ¹_Y)ᵀ)。
+pub fn sheaf1_persistent_laplacian(p : Sheaf1Persistent) -> @exact.Mat {
+  let d0 = sheaf2_delta0(p.sh)
+  let d1 = sheaf2_delta1(p.sh)
+  let d1t = @exact.mat_transpose(d1)
+  let d0x = xedge_rows(d0, p.xedges)
+  let mm = xedge_rows(d1t, p.xedges)
+  let newedges : Array[Int] = []
+  for e in 0..<p.sh.edges.length() {
+    let mut inx = false
+    for i in 0..<p.xedges.length() {
+      if p.xedges[i] == e { inx = true; break }
+    }
+    if !inx { newedges.push(e) }
+  }
+  let aa = xedge_rows(d1t, newedges)
+  let proj = kernel_projector(aa, 2 * p.sh.tris.length())
+  let up = @exact.mat_mul(@exact.mat_mul(mm, proj), @exact.mat_transpose(mm))
+  @exact.mat_add(@exact.mat_mul(d0x, @exact.mat_transpose(d0x)), up)
+}
+
+///|
+/// persistent Betti β₁^{X,Y} = dim ker((δ⁰_X)ᵀ) − rank(M·Proj_Θ)。
+pub fn sheaf1_persistent_betti(p : Sheaf1Persistent) -> Int {
+  let d0 = sheaf2_delta0(p.sh)
+  let d1t = @exact.mat_transpose(sheaf2_delta1(p.sh))
+  let d0x = xedge_rows(d0, p.xedges)
+  let mm = xedge_rows(d1t, p.xedges)
+  let newedges : Array[Int] = []
+  for e in 0..<p.sh.edges.length() {
+    let mut inx = false
+    for i in 0..<p.xedges.length() {
+      if p.xedges[i] == e { inx = true; break }
+    }
+    if !inx { newedges.push(e) }
+  }
+  let aa = xedge_rows(d1t, newedges)
+  let proj = kernel_projector(aa, 2 * p.sh.tris.length())
+  let rk = @exact.mat_rank(@exact.mat_mul(mm, proj))
+  (2 * p.xedges.length() - @exact.mat_rank(d0x)) - rk
+}
+
+///|
+/// 定理 T-Gph18（Persistent 1-st sheaf Laplacian）：
+/// 對偶化鏈複合滿足 d₁d₂=0、Δ 對稱 PSD、nullity = β₁^{X,Y}。
+pub fn theorem_sheaf1_persistent(p : Sheaf1Persistent) -> Bool {
+  let lap = sheaf1_persistent_laplacian(p)
+  if !@exact.mat_equal(lap, @exact.mat_transpose(lap)) { return false }
+  if !psd_principal_minors(lap) { return false }
+  let nullity = 2 * p.xedges.length() - @exact.mat_rank(lap)
+  if nullity != sheaf1_persistent_betti(p) { return false }
+  // d₁ = (δ⁰_X)ᵀ、d₂ = M·Proj_Θ；鏈條件 d₁d₂ = 0
+  let d0 = sheaf2_delta0(p.sh)
+  let d1t = @exact.mat_transpose(sheaf2_delta1(p.sh))
+  let d0x = xedge_rows(d0, p.xedges)
+  let mm = xedge_rows(d1t, p.xedges)
+  let newedges : Array[Int] = []
+  for e in 0..<p.sh.edges.length() {
+    let mut inx = false
+    for i in 0..<p.xedges.length() {
+      if p.xedges[i] == e { inx = true; break }
+    }
+    if !inx { newedges.push(e) }
+  }
+  let aa = xedge_rows(d1t, newedges)
+  let proj = kernel_projector(aa, 2 * p.sh.tris.length())
+  mat_is_zero(
+    @exact.mat_mul(
+      @exact.mat_transpose(d0x),
+      @exact.mat_mul(mm, proj),
+    ),
+  )
+}
+
+///|
+// ─── ANM Hessian 對應（R30 Example 3/4、A Physics-informed Sheaf Model）───
+// 頂點莖 ℚ³、邊莖 ℚ，F_{i,[i,j]} = w_{ij}(r_j−r_i)ᵀ（1×3 列）。
+// L⁰_F = (C⁰)ᵀC⁰ = ANM Hessian H（3×3 區塊
+// H_{ij} = −w²(r_j−r_i)(r_j−r_i)ᵀ）；6 個剛體零模 = H⁰(K;F)。
+// C⁰(C⁰)ᵀ 為 L¹_F 之下部，其 3×3 資訊由方向向量內積給出。
+
+///|
+pub(all) struct AnmSheaf {
+  pos : Array[Array[@exact.Rat]]
+  edges : Array[Array[Int]]
+  w : Array[@exact.Rat]
+}
+
+///|
+pub fn anm_sheaf(
+  pos : Array[Array[@exact.Rat]],
+  edges : Array[Array[Int]],
+  w : Array[@exact.Rat],
+) -> AnmSheaf {
+  AnmSheaf::{ pos, edges, w }
+}
+
+///|
+pub fn anm_demo() -> AnmSheaf {
+  let pos : Array[Array[@exact.Rat]] = [
+    [@exact.rat_zero(), @exact.rat_zero(), @exact.rat_zero()],
+    [@exact.rat_one(), @exact.rat_zero(), @exact.rat_zero()],
+    [@exact.rat_zero(), @exact.rat_one(), @exact.rat_zero()],
+    [@exact.rat_zero(), @exact.rat_zero(), @exact.rat_one()],
+  ]
+  let edges : Array[Array[Int]] = [
+    [0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3],
+  ]
+  let w : Array[@exact.Rat] = [
+    @exact.rat_one(), @exact.rat_checked(1L, 2L).unwrap(),
+    @exact.rat_int(2L), @exact.rat_checked(3L, 2L).unwrap(),
+    @exact.rat_checked(1L, 3L).unwrap(), @exact.rat_checked(2L, 5L).unwrap(),
+  ]
+  anm_sheaf(pos, edges, w)
+}
+
+///|
+fn anm_direction(a : AnmSheaf, e : Int) -> Array[@exact.Rat] {
+  let i = a.edges[e][0]
+  let j = a.edges[e][1]
+  [
+    a.pos[j][0].sub(a.pos[i][0]),
+    a.pos[j][1].sub(a.pos[i][1]),
+    a.pos[j][2].sub(a.pos[i][2]),
+  ]
+}
+
+///|
+pub fn anm_coboundary(a : AnmSheaf) -> @exact.Mat {
+  let n = a.pos.length()
+  let c0 = @exact.mat_new(a.edges.length(), 3 * n)
+  for e in 0..<a.edges.length() {
+    let i = a.edges[e][0]
+    let j = a.edges[e][1]
+    let d = anm_direction(a, e)
+    for k in 0..<3 {
+      c0.a[e][3 * i + k] = d[k].mul(a.w[e]).neg()
+      c0.a[e][3 * j + k] = d[k].mul(a.w[e])
+    }
+  }
+  c0
+}
+
+///|
+/// 明確建構之 ANM Hessian（不由 C⁰ 推導，作為獨立對照）。
+pub fn anm_hessian(a : AnmSheaf) -> @exact.Mat {
+  let n = a.pos.length()
+  let h = @exact.mat_new(3 * n, 3 * n)
+  for e in 0..<a.edges.length() {
+    let i = a.edges[e][0]
+    let j = a.edges[e][1]
+    let d = anm_direction(a, e)
+    let w2 = a.w[e].mul(a.w[e])
+    for p in 0..<3 {
+      for q in 0..<3 {
+        let v = d[p].mul(d[q]).mul(w2)
+        h.a[3 * i + p][3 * i + q] = h.a[3 * i + p][3 * i + q].add(v)
+        h.a[3 * j + p][3 * j + q] = h.a[3 * j + p][3 * j + q].add(v)
+        h.a[3 * i + p][3 * j + q] = h.a[3 * i + p][3 * j + q].sub(v)
+        h.a[3 * j + p][3 * i + q] = h.a[3 * j + p][3 * i + q].sub(v)
+      }
+    }
+  }
+  h
+}
+
+///|
+fn anm_cross(w : Array[@exact.Rat], r : Array[@exact.Rat]) -> Array[@exact.Rat] {
+  [
+    w[1].mul(r[2]).sub(w[2].mul(r[1])),
+    w[2].mul(r[0]).sub(w[0].mul(r[2])),
+    w[0].mul(r[1]).sub(w[1].mul(r[0])),
+  ]
+}
+
+///|
+/// 6 個剛體零模：3 平移 + 3 旋轉（ω×r_i）。
+pub fn anm_rigid_modes(a : AnmSheaf) -> Array[Array[@exact.Rat]] {
+  let n = a.pos.length()
+  let modes : Array[Array[@exact.Rat]] = []
+  for axis in 0..<3 {
+    let v : Array[@exact.Rat] = []
+    for _i in 0..<n {
+      for k in 0..<3 {
+        v.push(if k == axis { @exact.rat_one() } else { @exact.rat_zero() })
+      }
+    }
+    modes.push(v)
+  }
+  for axis in 0..<3 {
+    let wv : Array[@exact.Rat] = []
+    for k in 0..<3 {
+      wv.push(if k == axis { @exact.rat_one() } else { @exact.rat_zero() })
+    }
+    let v : Array[@exact.Rat] = []
+    for i in 0..<n {
+      let cr = anm_cross(wv, a.pos[i])
+      for k in 0..<3 { v.push(cr[k]) }
+    }
+    modes.push(v)
+  }
+  modes
+}
+
+///|
+/// L¹_F 之下部 C⁰(C⁰)ᵀ 之明確對照：Σ_{v∈e∩f} [v:e][v:f] w_e w_f ⟨d_e,d_f⟩。
+pub fn anm_down_laplacian(a : AnmSheaf) -> @exact.Mat {
+  let m = a.edges.length()
+  let down = @exact.mat_new(m, m)
+  for e in 0..<m {
+    for f in 0..<m {
+      let de = anm_direction(a, e)
+      let df = anm_direction(a, f)
+      let mut dot = @exact.rat_zero()
+      for k in 0..<3 { dot = dot.add(de[k].mul(df[k])) }
+      let s = dot.mul(a.w[e]).mul(a.w[f])
+      let ie = a.edges[e][0]
+      let je = a.edges[e][1]
+      let kf = a.edges[f][0]
+      let lf = a.edges[f][1]
+      for v in 0..<4 {
+        let se = if v == ie { -1L } else if v == je { 1L } else { 0L }
+        let sf = if v == kf { -1L } else if v == lf { 1L } else { 0L }
+        if se != 0L && sf != 0L {
+          down.a[e][f] = down.a[e][f].add(s.mul(@exact.rat_int(se * sf)))
+        }
+      }
+    }
+  }
+  down
+}
+
+///|
+/// 定理 T-Gph19（ANM Hessian = 0-th sheaf Laplacian）：
+/// (C⁰)ᵀC⁰ 與明確 Hessian 逐項相等、PSD、6 剛體零模在 ker C⁰、
+/// rank C⁰ = 3n−6（連通且方向生成 ℚ³）、C⁰(C⁰)ᵀ 保留 Hessian 方向內積。
+pub fn theorem_anm_hessian(a : AnmSheaf) -> Bool {
+  let c0 = anm_coboundary(a)
+  let l0 = @exact.mat_mul(@exact.mat_transpose(c0), c0)
+  let h = anm_hessian(a)
+  if !@exact.mat_equal(l0, h) { return false }
+  if !@exact.mat_equal(h, @exact.mat_transpose(h)) { return false }
+  if !psd_principal_minors(h) { return false }
+  let modes = anm_rigid_modes(a)
+  if modes.length() != 6 { return false }
+  for q in 0..<modes.length() {
+    for e in 0..<a.edges.length() {
+      let mut acc = @exact.rat_zero()
+      for k in 0..<(3 * a.pos.length()) {
+        acc = acc.add(c0.a[e][k].mul(modes[q][k]))
+      }
+      if !acc.is_zero() { return false }
+    }
+  }
+  if @exact.mat_rank(c0) != 3 * a.pos.length() - 6 { return false }
+  let down = @exact.mat_mul(c0, @exact.mat_transpose(c0))
+  @exact.mat_equal(down, anm_down_laplacian(a))
+}
+
+///|
+/// 定理 T-Gph20（C1-05 合取）：高維環值層 1-st Laplacian、
+/// persistent q=1 Hodge、ANM Hessian 三組憑證同時成立。
+pub fn theorem_sheaf_certificates() -> Bool {
+  theorem_sheaf2_hodge(sheaf2_demo()) &&
+    theorem_sheaf1_persistent(sheaf1_demo()) &&
+    theorem_anm_hessian(anm_demo())
 }

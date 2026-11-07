@@ -928,3 +928,265 @@ C1 開發流水帳本 (Dev.txt) — 流水式，每回合追加，直到工程�
     並把 §6'' 十項待辦逐項標註補回結果與憑證編號。
 
 ================================================================================
+
+================================================================================
+[回合 C1-05] 日期 2026-11-08 (Asia/Hong_Kong, UTC+8)
+  狀態：§6''' 剩餘待辦補回／已完成（誠實保留未達最終規模與無限維命題）
+  使用者指示：「開始進行上次未完成事項，最大責任補齊所需數學結構」。
+  解為續做 Dev.txt §6''' 所列 7 項；依《工程約束》「非首次開發、創建新文檔前
+  需先獲准」，本回合僅修改既有檔案，未新增任何文檔；查證、結案與實測全部寫入
+  Dev.txt、README.md（由 tools/build_readmes.py 產生）、docs/catalog.json、
+  src/catalog/catalog.mbt、algorithm.xlsx 與既有 6 個套件。
+  本回合不使用 --release、不做白箱/黑箱/冒煙測試、不做基準測試、無 stub/mock/
+  fake/玩具模型/恆真式；每組皆「Python 交叉原型 → MoonBit 局部 zz_probe 即寫即驗
+  即刪 → 全域 check/build/prove/run → commit」。
+================================================================================
+
+§2'''' 本回合聯網查證結果（R46..R55，接續 §2''' 之 R37..R45）
+  [R46] arXiv:2505.23993v1「高維 cellular sheaf Laplacian」：
+      https://arxiv.org/pdf/2505.23993v1  （chunk 2：Theorem 1
+      H^q(K;F) ≃ ker Δ^q；Example 1 常數層回復 graph Laplacian；
+      Example 2 λ²L₀_F⊗I₃。chunk 4：Example 4/5 給
+      C⁰(C⁰)ᵀ 保留 Hessian-like 3×3 方向內積、
+      L¹_F = C⁰(C⁰)ᵀ + (C¹)ᵀC¹、
+      L⁰_{F⊗G} = L⁰_F⊗I₃；2-simplex 與 ringed-space module sheaf。）
+  [R47] Pith review https://pith.science/paper/2505.23993 明確提醒：
+      Hessian recovery 只在 graph Example 3 成立，高維應稱「1-st Laplacian
+      保留 Hessian-like blocks」；https://pith.science/paper/2501.06197
+      給 ANM sheaf L⁰_F = H_ANM、6 rigid modes = H⁰。
+      → 據此把本回合 T-Gph19 命名為「ANM Hessian 對應（有限層）」而非宣稱
+      一般 Hessian 重建，避免過度宣稱。
+  [R48] arXiv:2610.28455v1 https://arxiv.org/html/2610.28455v1：
+      H_1^F = δ₀δ₀* + δ₁*δ₁ 之 Bochner/Forman 離散曲率分解，
+      與 R46 之 L¹ 分解一致，作為 d¹d⁰=0 ⇒ L¹ 對稱 PSD 的理論依據。
+  [R49] Weil/Hasse–Weil：
+      https://grokipedia.com/page/Weil_conjectures 、
+      https://grokipedia.com/page/Hasse%E2%80%93Weil_zeta_function 、
+      https://gkorpal.github.io/files/fall2020-slides-weil_conjecture_elliptic_curve-gaurish.pdf
+      給 Z(E,T)=(1−aT+qT²)/((1−T)(1−qT))、N_n=qⁿ+1−αⁿ−βⁿ、
+      Hasse |a|≤2√q、genus 1 函數方程 Z(1/(qT))=Z(T)、
+      αβ=q 且 a²−4q≤0 ⇒ |α|=|β|=√q（有限域曲線 RH）。
+  [R50] Hisato Matsukawa, "Higher Noncommutative Motives and Higher K-theory",
+      arXiv:2611.07262（2026-11-05 提交，本回合開始前 3 日）：
+      https://arxiv.org/abs/2611.07262
+      stable (∞,n)-categories 之 higher additive motives；exact sequences 之
+      泛性質；兩種等價構造（enriched presheaves 局部化、weighted Waldhausen
+      S-construction on complete exact flags）。→ 列為 higher motives 待辦依據。
+  [R51] Kaif Hilman, "Parametrised noncommutative motives and equivariant
+      cubical descent in algebraic K-theory", arXiv:2202.02591v3 (2026-03-16)：
+      https://www.sas.rochester.edu/mth/sites/doug-ravenel/otherpapers/hilman-parametrised-motives.pdf
+      NMot^pw corepresents K-theory；additive spectral invariant on Karoubi
+      sequences；Q-construction motivically local；pointwise split Karoubi。
+  [R52] Bachmann–Elmanto–Morrow, "A¹-invariant motivic cohomology of schemes",
+      arXiv:2508.09915 (2025-08-14)：https://arxiv.org/pdf/2508.09915
+      slice filtration、cdh-motivic cohomology、zeroth slice 與 KH 之關係；
+      支撐本回合 KH 之 A¹-同倫不變性有限層憑證。
+  [R53] Tabuada / Blumberg–Gepner–Tabuada universal additive invariant：
+      https://arxiv.org/html/1511.03589v3 、Weibel K-book（idempotent lifting）、
+      https://arxiv.org/pdf/2012.07130（derived K/G nil-invariance、continuity、
+      KH(X)→KH(Z) invertible、K^B 至 K₁）。→ U_add、Waldhausen 可加性、
+      冪等元提升之根據。
+  [R54] Spectral Picard–Vessiot / differential Galois：
+      https://arxiv.org/pdf/2503.03429 、https://arxiv.org/pdf/2307.14948 、
+      https://arxiv.org/html/2510.07323（classical groups 之 direct problem、
+      LCLM 與 Wronskian、Levi decomposition、G_a-tower）、
+      https://arxiv.org/html/2504.04846（unipotent PV 與 iterated integrals）。
+  [R55] Kovacic algorithm / Picard–Vessiot notes：
+      https://hal.science/hal-04117227v1/document
+      Theorem 2.5：Liouvillian 解 ⟺ Riccati 有次數 1（可約 I）、2（非本原 II）、
+      {4,6,12}（本原 III）代數解；SL₂(C) 子群分類。
+  查證方式：web_search（depth 2/3）+ fetch_page 原文（arXiv PDF/HTML、
+      Pith review、Grokipedia、HAL）；全部書目與要點寫入 algorithm.xlsx
+      「前沿文獻」工作表（55 筆）與 docs/catalog.json 之 references。
+
+§3'''' 動手前詳盡規劃（本回合）
+  1. 承接上回合未結案之 §6'''：先修復高維 sheaf 之 PSD 憑證（已定位為
+     exact.mat_det 之 Int64 溢位），再補環值層／persistent q=1／ANM 三組。
+  2. 底層結構補齊：以 BigInt Bareiss 取代有理高斯消去，提供任意精度
+     mat_det_bigrat / bigrat_sign / mat_det，並讓超出 Int64 之 det 不靜默截斷
+     （abort 指向任意精度版本）。
+  3. Connes/Spec Z：不做無限維解析宣稱，改以逐條有限域橢圓曲線之
+     精確點數／Frobenius 冪和／zeta／函數方程／Hasse–Weil 界／Weil 顯式公式
+     與有理餘項界，作為「解析極限之可計算憑證」。
+  4. 非交換動機／導出 K：以 F_p[t,u]/(t^k,u^l) 之 Newton–Hensel 冪等元提升
+     （K₀ 冪零不變）、塔之連續性、u↦0 之 KH A¹ 不變、關係矩陣回代求 U_add
+     之泛性質，給出有限層 K₀ 憑證；high K 與 (∞,n)-categories 誠實列為待辦。
+  5. 一般 PV/δ-Galois：以 Euler 導數 δ=t d/dt 之任意二階 δ-模 ∇=δ−A(t)，
+     實算解空間維度、基本解矩陣與 Abel 恆等式、gauge 群階數、
+     Riccati 根／不變直線／dim V 之有限 Galois 對應，並把 C1-04 的
+     G_a(F_5) 嵌入為階 p 加法子群。
+  6. 每組先 Python 原型交叉驗證，再 MoonBit 局部 zz_probe 即寫即驗即刪；
+     最後更新 c1.mbt / build_catalog.py / build_readmes.py / Dev.txt，
+     重跑產生器、全域 check/build/prove/run、決定性檢查、commit。
+
+§4'''' 逐套件落地（本回合，全部修改既有檔案）
+  src/exact/exact.mbt
+    BigRat{n:BigInt,d:BigInt}、big_of_i64 / big_abs / big_gcd / br_norm /
+    br_sub / br_mul / br_div / br_is_zero / bigrat_sign、
+    mat_det_bigrat（BigInt Bareiss + 列交換）、mat_det（轉回 Rat 且溢位即 abort）、
+    theorem_bareiss_determinant（T-X6）。
+  src/graphs/graphs.mbt
+    （承接上回合已寫入之 Sheaf2 / sheaf2_delta0/1 / sheaf2_laplacian1 /
+    Sheaf1Persistent / AnmSheaf / anm_*、T-Gph17/18/19）
+    psd_principal_minors 改呼叫 mat_det_bigrat；新增 theorem_sheaf_certificates
+    合取（T-Gph20）。
+  src/series/series.mbt
+    WeilCurve、weil_pow_mod / weil_legendre / weil_point_count /
+    weil_power_sum / weil_counts / weil_poly_p / weil_poly_q /
+    weil_poly_mul / weil_poly_sub / weil_twist /
+    weil_log_derivative_identity（T-W1）/ weil_functional_equation（T-W2）/
+    weil_hasse（T-W3）/ weil_rh_modulus（T-W4）/
+    weil_explicit_formula（T-W5）/ weil_tail_bound（T-W6）/
+    theorem_weil_explicit_tail（T-W6）/ theorem_weil_curve（T-W7）。
+  src/compose/compose.mbt
+    NilRing（雙變數截斷環）、nr_* / nm_* 矩陣算術、
+    idempotent_lift / idempotent_is_exact / idempotent_rank /
+    theorem_nilinvariance（T-NCM1）/ theorem_k0_continuity（T-NCM2）/
+    theorem_kh_homotopy（T-NCM3）/ k0_rref / k0_kernel /
+    k0_relation_matrix / nm_block_sum /
+    theorem_universal_additive_invariant（T-NCM4）/
+    theorem_noncomm_motives（T-NCM5）。
+  src/algebra/ore.mbt
+    DiffModule（Euler δ 之二階 δ-模）、dr_* / dm_* 截斷環與 2×2 矩陣算術、
+    diff_fundamental / theorem_pv_wronskian（T-PV1）/
+    diff_solution_nullity / dm_gl2 / diff_gauge_group /
+    theorem_pv_gauge_group（T-PV2）/ diff_invariant_lines /
+    diff_riccati_roots / theorem_pv_kovacic（T-PV3）/
+    theorem_pv_additive_subgroup（T-PV4）。
+  c1.mbt：report 由 51 行增至 56 行，接入 5 行新憑證。
+  tools/build_catalog.py：新增 D40..D49、21 定理、AL111..AL130、E66..E80、
+      R46..R55；ROUND="C1-05"、catalog.json round="C1-05"、
+      索引「回合 C1-05」與文獻範圍字串。
+  tools/build_readmes.py：根 README 新增「C1-05」章節、更新所有計數，
+      12 份資料夾 README 重新產生（含新定理／演算法／等式列表）。
+
+§5'''' 完成項目（本回合）
+  [x] §6''' 之「高維 sheaf 1-st persistent Laplacian、環／模值層、ANM Hessian」
+      → T-Gph17/18/19/20 與 T-X6 皆通過；R=ℚ[ε]/ε² 秩 1 環值層
+      d¹d⁰=0、rank d⁰=6、rank d¹=2、β¹=4、L¹ 對稱 PSD、
+      rank L¹=8、nullity L¹=4；ANM L⁰_F=H_ANM、6 rigid modes、
+      rank C⁰=3n−6；persistent q=1 鏈條件與 nullity=β_p。
+  [x] §6''' 之「Connes/Spec Z 解析極限之可計算憑證」
+      → 六條 F_q（q=5,7,11,13,17,19）逐條精確；
+      例 q=5,A=2,B=0：N₁=2,a=4,discr=−4；
+      q=19,A=0,B=1：N₁=12,a=8；函數方程、顯式公式、餘項界全過。
+  [x] §6''' 之「非交換動機、導出方案連續 K 理論」
+      → K₀ 冪零不變（k=1..4,l=1..3,rank=0/1/2,6 seeds 全過）、
+      塔連續性、雙變數 KH A¹、U_add 關係矩陣秩 5／核一維／回代得
+      U([R^i])=i／Morita 穩定化與塊直和 rank 可加。
+  [x] §6''' 之「一般 Picard–Vessiot/δ-Galois」
+      → 任意二階 δ-模之解空間維度、基本解矩陣、Abel 恆等式、
+      gauge 群階數 480/20/16/480、Kovacic 第一型
+      「Riccati 根數 = G 不變直線數 = dim V」於 (3,2)/(1,1)/(0,0)
+      三型分別為 2/0/1、C1-04 G_a(F₅) 嵌入階 5 加法子群。
+  [x] 局部「即寫、即驗、即刪」六份 zz_probe（exact/series/algebra/
+      galois/graphs/compose）全數 Total tests: 1, passed: 1；回合末無殘留。
+
+§6''' 逐項結案（C1-05）
+  [x] 高維 sheaf 1-st persistent Laplacian／環模值層／ANM Hessian → §5'''' 第 1 項。
+  [x] Connes/Spec Z 解析極限之可計算憑證 → §5'''' 第 2 項
+      （有限精確憑證，不是無限維解析極限證明；見 §6''''）。
+  [x] 非交換動機／導出方案連續 K 理論（K₀ 有限層）→ §5'''' 第 3 項
+      （高階 K 與 (∞,n) higher motives 見 §6''''）。
+  [x] δ-Galois 之一般 PV（有限維 δ-模）→ §5'''' 第 4 項
+      （無限維複數域 PV／解析單值群見 §6''''）。
+  [ ] 5,000,000 行／10,000 條演算法：110→130 條，仍未達最終規模。
+  [ ] docs/ 其餘設計文件：需先獲准，本回合未建立新文檔。
+  [ ] git 無 remote，CI workflow 與 commit 僅本機落地，未 push。
+
+§6'''' C1-05 後仍待做（誠實保留）
+  [ ] 5,000,000 行、10,000 條中階以上演算法：目前 130/10,000 條、
+      11,800 行；集庫成群聚類已落地（421 筆／71 群／43 個含 ≥2 項群／
+      最大群 29 筆／130 演算法／OK），但庫規模仍遠未達最終目標。
+  [ ] Connes 譜 triple 之無限維解析極限／RH 一般等價證明、
+      Spec Z 之 archimedean adelic Abel–Jacobi 解析：
+      本回合是逐條有限域曲線與有理餘項界之有限精確憑證。
+  [ ] 高階 K 理論、導出方案之 ∞-範疇極限、Matsukawa 2026 之
+      higher additive motives（(∞,n)-category、weighted Waldhausen
+      S-construction on complete exact flags）：本回合只到 K₀ 有限層。
+  [ ] 無限維複數域 PV 擴張、代數閉包上完整 δ-Galois 群、解析單值群、
+      Kovacic case II/III（次數 2 與 {4,6,12} 代數解）：
+      本回合為 F_5[t]/(t⁵) 上任意二階 δ-模之有限精確模型。
+  [ ] docs/ 其餘設計文件：非首次開發需先獲准，本回合未建立新文檔。
+  [ ] git 無 remote：不得聲稱 push；需使用者提供 remote。
+
+§7'''' C1-05 量化記錄
+  MoonBit / .mbtp 總行數：9,924 → 11,800（cat 全部 .mbt/.mbtp 實測）
+  theorem_* 憑證函數：125 → 141（grep -h "^pub fn theorem_"）
+  登錄表：355 → 421 筆（6 公理／42 定義／8 命題／14 引理／
+      141 定理／130 演算法／80 等式），前沿文獻 45 → 55 筆
+  形式化驗證：17 goals proved（.mbtp 未改動，無 trusted assumption）
+  inspect 報表：51 行 → 56 行，全數 OK；catalog 421/OK
+  BigInt Bareiss 實測：6×6 矩陣 det=16231235440（Bareiss 第 5 步
+      中介量 1.5005·10^19 > 2^63−1，舊 Int64 路徑溢出）；
+      5×5 原爆點主子式 det=308323452；diag(10^10)^5 det=10^50。
+  Weil 實測：q=5 N₁=2/a=4/discr=−4；q=19 N₁=12/a=8；
+      |qt|=1/4 時 N=8 之餘項界 4·(1/4)^9/(9·3/4) < 1/1000。
+  K₀ 實測：關係矩陣秩 5／核一維；gauge 群 480/20/16/480；
+      Riccati 三型 (2,0,1) 與不變直線數、dim V 全數吻合。
+  聚類實測（J=3/4）：421 筆／71 群／43 個含 ≥2 項之群／最大群 29 筆／
+      130 條演算法／OK。
+  algorithm.xlsx sha256：
+      f08b1e7057f38d831f67b047fe1d48bc96e15d4b9a93e8de24bf2df3d0496e32
+
+§8'''' C1-05 回合末驗證與 commit
+  環境：/tmp 工具鏈與 z3 於回合開始時再度消失，依 §1 重新安裝
+      curl -fsSL https://cli.moonbitlang.com/install/unix.sh ...
+      MOON_HOME=/tmp/moonhome bash /tmp/moonbit-install.sh
+      python3 -m pip install -q z3-solver (z3 5.3.3)
+      moon 0.1.20261104 / moonc v0.10.20+65efd5b93
+      .git/config 亦重建 user.name=C1 Agent / user.email=c1-agent@arena.ai /
+      core.hooksPath=.githooks；.githooks/pre-commit 重新 chmod +x。
+  局部：exact / series / algebra / galois / graphs / compose 六份 zz_probe
+      各 Total tests: 1, passed: 1, failed: 0，驗畢全數刪除。
+  全域：moon check --deny-warn（Finished, 12 tasks）／
+      moon build（wasm artifact）／moon prove --deny-warn（17 goals proved）／
+      moon run cmd/main（56 行全 OK，catalog 421/OK）。
+  產生器決定性：build_catalog.py / build_readmes.py 連跑兩次後
+      algorithm.xlsx、docs/catalog.json、src/catalog/catalog.mbt、README.md
+      之 sha256 完全相同（DETERMINISTIC OK）。
+  commit：待回合末 git commit 後補登 hash（見下節補登）；
+      git status --short 為空、git remote -v 為空（未 push）。
+
+§9'''' C1-05 驗證過程與修正記錄
+  - 承接上回合未結案診斷：theorem_sheaf2_hodge / theorem_sheaf1_persistent
+    為 false，因 psd_principal_minors 對 12×12 L¹ 回 false。
+    5×5 主子矩陣 idx [0,1,3,5,6] 真值 det=308323452，
+    舊 @exact.mat_det（有理高斯消去）卻回
+    -380800329214353228/292689867397753139 → Int64 溢位。
+  - 第一次修復：把 mat_det 改為 Int64 Bareiss 無分式消去；
+    5×5 修好，但 6×6 主子矩陣（idx [0,1,3,5,7,11]）仍回
+    -860416618919253904/231114225，Python 真值 16231235440。
+    Python 逐步追蹤 Bareiss 中介量：k=4 時
+    |num| = 15005077598032536000 = 1.50·10^19 > 2^63−1 = 9.22·10^18，
+    故 Int64 Bareiss 仍溢位；此路不可再宣稱 PSD。
+  - 最終修復：MoonBit 核心提供 BigInt（BigInt::from_string(Int64.to_string())、
+    + − * / %、比較、to_int64()）。新增 BigRat 與 big_gcd/br_norm，
+    以 BigInt Bareiss 承載全部中介子式，mat_det_bigrat 回任意精度有理數，
+    bigrat_sign 供 PSD 主子式判定；mat_det 轉回 Rat 時以
+    BigInt::from_string(nn.to_string()) != r.n 檢查是否截斷，
+    若超出範圍則 abort 並指向 mat_det_bigrat，不再靜默給錯值。
+  - psd_principal_minors 改呼叫 bigrat_sign(mat_det_bigrat(...))；
+    修復後 lap sym=true psd=true rank=8 dim=12 null=4 betti=4，
+    theorem_sheaf2_hodge / theorem_sheaf1_persistent / anm 全數 true。
+  - weil_functional_equation 初版把「對任意 d 次多項式 tw 是對合」
+    誤寫為 tw²(c)=q^{d+1}·c 且用長度 4 樣本（d=3 時 qT²c(1/(qT))
+    會出現負次冪）；Python 推導得 tw(c)[j]=c_{d−j}q^{j}、
+    tw²(c)=q^d·c。改為僅對二次（長度 3）樣本驗證 tw²=q²·c，
+    並對 P、Q 驗證 tw(c)=q·c；修復後 fe=true。
+  - theorem_universal_additive_invariant 初版含
+    「if i + j != i + j」之恆真檢查（違反「嚴禁恆真永綠假象」），
+    已移除，改為由關係矩陣實算 k0_rref / k0_kernel 回代核向量 u，
+    正規化 u[1]=1 後逐項檢查 u[i]=i；此為真正由矩陣求出 U_add。
+  - dm_commutes 初版帶未使用參數 a（unused_value 使 --deny-warn 失敗）→
+    移除參數並更新所有呼叫點；nm_reduce 之 r 未使用 → 更名 _r。
+  - 同套件 zz_probe 內不可用 @galois 前綴（套件別名只在跨套件可見）→
+    galois probe 去掉 @galois. 前綴。
+  - build_catalog.py 新定理 ID T-M1/T-M2 與 C1-01 既有 ID 撞名，
+    dup=2 → 全數更名為 T-NCM1..T-NCM5，並還原 C1-01 之 T-M1/T-M2；
+    最終 421 筆 ID 無重複。
+  - Python heredoc 以 r'''...''' 包住含 §6''' 之字串會提前終止
+    （SyntaxError）→ 改以 bash heredoc 寫入 /tmp 暫存檔再以 Python 讀取。
+  - build_catalog.py 之 catalog.json round、xlsx 索引回合、
+    文獻範圍字串全數由 C1-04 更新為 C1-05；README 之
+    355/110/51/45 等舊數字全數更新為 421/130/56/55。

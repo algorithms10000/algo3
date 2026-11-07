@@ -534,38 +534,142 @@ pub fn mat_trace(x : Mat) -> Rat {
 }
 
 ///|
-/// 有理高斯消去行列式（奇異矩陣回傳 0，無除以零捷徑）。
-pub fn mat_det(x : Mat) -> Rat {
-  let n = x.a.length()
-  if n == 0 { return rat_one() }
-  let a = mat_clone(x)
-  let mut det = rat_one()
-  for c in 0..<n {
-    let mut piv = -1
-    for i in c..<n {
-      if !a.a[i][c].is_zero() { piv = i; break }
-    }
-    if piv < 0 { return rat_zero() }
-    if piv != c {
-      let tmp = a.a[c]
-      a.a[c] = a.a[piv]
-      a.a[piv] = tmp
-      det = det.neg()
-    }
-    let p = a.a[c][c]
-    det = det.mul(p)
-    for j in 0..<n { a.a[c][j] = a.a[c][j].div(p).unwrap() }
-    for i in (c + 1)..<n {
-      let fac = a.a[i][c]
-      if fac.is_zero() { continue }
-      for j in 0..<n {
-        a.a[i][j] = a.a[i][j].sub(fac.mul(a.a[c][j]))
-      }
-    }
-  }
-  det
+/// 任意精度有理數：C1-05 高維 sheaf Laplacian 的主子式在 Int64 之下
+/// 即使改用 Bareiss 消去，第 5 步中介量仍達 1.5·10^19 > 2^63−1 而溢位。
+/// 故此層以 BigInt 承載 Bareiss 的全部中介子式，並提供符號憑證。
+pub struct BigRat {
+  n : BigInt
+  d : BigInt
 }
 
+///|
+fn big_of_i64(x : Int64) -> BigInt { BigInt::from_string(x.to_string()) }
+
+///|
+fn big_abs(x : BigInt) -> BigInt {
+  if x < BigInt::from_int(0) { -x } else { x }
+}
+
+///|
+fn big_gcd(a0 : BigInt, b0 : BigInt) -> BigInt {
+  let mut a = big_abs(a0)
+  let mut b = big_abs(b0)
+  while b != BigInt::from_int(0) {
+    let t = a % b
+    a = b
+    b = t
+  }
+  a
+}
+
+///|
+/// BigRat 正規化：d > 0 且 gcd(|n|, d) = 1。
+fn br_norm(x : BigRat) -> BigRat {
+  let g = big_gcd(x.n, x.d)
+  if g == BigInt::from_int(0) { return x }
+  let nn = x.n / g
+  let dd = x.d / g
+  if dd < BigInt::from_int(0) {
+    BigRat::{ n: -nn, d: -dd }
+  } else {
+    BigRat::{ n: nn, d: dd }
+  }
+}
+
+///|
+fn br_of_rat(x : Rat) -> BigRat {
+  BigRat::{ n: big_of_i64(x.n), d: big_of_i64(x.d) }
+}
+
+///|
+fn br_one() -> BigRat {
+  BigRat::{ n: BigInt::from_int(1), d: BigInt::from_int(1) }
+}
+
+///|
+fn br_zero() -> BigRat {
+  BigRat::{ n: BigInt::from_int(0), d: BigInt::from_int(1) }
+}
+
+///|
+fn br_is_zero(x : BigRat) -> Bool { x.n == BigInt::from_int(0) }
+
+///|
+fn br_sub(a : BigRat, b : BigRat) -> BigRat {
+  br_norm(BigRat::{ n: a.n * b.d - b.n * a.d, d: a.d * b.d })
+}
+
+///|
+fn br_mul(a : BigRat, b : BigRat) -> BigRat {
+  br_norm(BigRat::{ n: a.n * b.n, d: a.d * b.d })
+}
+
+///|
+fn br_div(a : BigRat, b : BigRat) -> BigRat {
+  br_norm(BigRat::{ n: a.n * b.d, d: a.d * b.n })
+}
+
+///|
+/// BigRat 符號：−1 / 0 / +1（分母恆正）。
+pub fn bigrat_sign(x : BigRat) -> Int {
+  let z = BigInt::from_int(0)
+  if x.n > z { 1 } else if x.n < z { -1 } else { 0 }
+}
+
+///|
+/// 任意精度 Bareiss 行列式。中介量恆為各階子式，BigInt 保證無溢位；
+/// 以 BigRat 正規化避免分母連乘膨脹，列交換僅改符號。
+pub fn mat_det_bigrat(x : Mat) -> BigRat {
+  let n = x.a.length()
+  if n == 0 { return br_one() }
+  let a : Array[Array[BigRat]] = []
+  for row in x.a {
+    let r : Array[BigRat] = []
+    for e in row { r.push(br_of_rat(e)) }
+    a.push(r)
+  }
+  let mut prev = br_one()
+  let mut sign = BigInt::from_int(1)
+  for k in 0..<(n - 1) {
+    if br_is_zero(a[k][k]) {
+      let mut piv = -1
+      for i in (k + 1)..<n {
+        if !br_is_zero(a[i][k]) { piv = i; break }
+      }
+      if piv < 0 { return br_zero() }
+      let tmp = a[k]
+      a[k] = a[piv]
+      a[piv] = tmp
+      sign = -sign
+    }
+    let p = a[k][k]
+    for i in (k + 1)..<n {
+      for j in (k + 1)..<n {
+        let num = br_sub(br_mul(p, a[i][j]), br_mul(a[i][k], a[k][j]))
+        a[i][j] = br_div(num, prev)
+      }
+      a[i][k] = br_zero()
+    }
+    prev = p
+  }
+  br_mul(a[n - 1][n - 1], BigRat::{ n: sign, d: BigInt::from_int(1) })
+}
+
+///|
+/// 精確有理行列式：以 BigInt Bareiss 消去後轉回 Rat。
+/// 若最終值超出 Int64 表示範圍則由 Rat 層既有的約定處理；
+/// 在 C1 所有有限憑證（|det| ≤ 2^63−1）下為完全精確。
+pub fn mat_det(x : Mat) -> Rat {
+  let r = mat_det_bigrat(x)
+  let nn = r.n.to_int64()
+  let dd = r.d.to_int64()
+  // 不可靜默截斷：超出 Int64 範圍即中止，並指向任意精度版本。
+  if BigInt::from_string(nn.to_string()) != r.n ||
+     BigInt::from_string(dd.to_string()) != r.d {
+    abort("mat_det: det exceeds Int64 Rat range; use mat_det_bigrat")
+  }
+  rat(nn, dd)
+}
 ///|
 /// 有理列消去之秩（RREF 主元數）。
 pub fn mat_rank(x : Mat) -> Int {
@@ -1101,4 +1205,55 @@ pub fn multiplication_costs(n : Int) -> Array[Int64] {
 pub fn theorem_complexity_ordering() -> Bool {
   let c = multiplication_costs(19683)
   c[3] < c[2] && c[2] < c[1] && c[1] < c[0] && c[4] >= c[1]
+}
+
+///|
+/// 定理 T-X6（C1-05）：BigInt Bareiss 行列式無溢位。
+/// 以下 6×6 整數矩陣之 Bareiss 第 5 步中介量 1.5·10^19 > 2^63−1，
+/// 舊 Int64 消去法必錯；任意精度版本給出 det = 16231235440，
+/// 且 diag(10^10)^5 的 det = 10^50 仍精確可表示。
+pub fn theorem_bareiss_determinant() -> Bool {
+  let rows : Array[Array[Rat]] = []
+  for r in [
+    [1027L, 41L, -22L, 15L, 20L, 0L],
+    [41L, 44L, 50L, 76L, -48L, 0L],
+    [-22L, 50L, 167L, 151L, 88L, -153L],
+    [15L, 76L, 151L, 371L, 0L, 217L],
+    [20L, -48L, 88L, 0L, 268L, -210L],
+    [0L, 0L, -153L, 217L, -210L, 687L],
+  ] {
+    let row : Array[Rat] = []
+    for i in 0..<r.length() { row.push(rat_int(r[i])) }
+    rows.push(row)
+  }
+  let m = mat_from(rows)
+  if !mat_det(m).equal(rat_int(16231235440L)) { return false }
+  if bigrat_sign(mat_det_bigrat(m)) != 1 { return false }
+  let big : Array[Array[Rat]] = []
+  for i in 0..<5 {
+    let row : Array[Rat] = []
+    for j in 0..<5 {
+      row.push(rat_int(if i == j { 10000000000L } else { 0L }))
+    }
+    big.push(row)
+  }
+  let br = mat_det_bigrat(mat_from(big))
+  if br.n.to_string() !=
+    "100000000000000000000000000000000000000000000000000" { return false }
+  if br.d.to_string() != "1" { return false }
+  // 5×5 主子式（C1-05 PSD 診斷原爆點）
+  let orig : Array[Array[Rat]] = []
+  for r in [
+    [1027L, 41L, -22L, 15L, 768L],
+    [41L, 44L, 50L, 76L, 20L],
+    [-22L, 50L, 167L, 151L, -16L],
+    [15L, 76L, 151L, 371L, 0L],
+    [768L, 20L, -16L, 0L, 579L],
+  ] {
+    let row : Array[Rat] = []
+    for i in 0..<r.length() { row.push(rat_int(r[i])) }
+    orig.push(row)
+  }
+  mat_det(mat_from(orig)).equal(rat_int(308323452L)) &&
+    mat_det(mat_identity(7)).equal(rat_one())
 }

@@ -1,6 +1,6 @@
 # src/graphs — 克內澤圖、Ramsey、擬陣 Tutte、單純複形 Betti、圖極性
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得定理列表
 
@@ -26,6 +26,10 @@
 - **T-Gph14** Wei–Wei Prop.3.2：譜不依賴 Y 之定向
 - **T-Gph15** 多尺度 filtration 之 β₀ 單調不減、rank+nullity=k
 - **T-Gph16** Kalai–Meshulam：M⊆X ⇒ ∃τ∈X, ρ(V∖τ) ≤ λ(X)
+- **T-Gph17** 高維環值層：d¹d⁰=0、L¹=d⁰(d⁰)ᵀ+(d¹)ᵀd¹ 對稱 PSD、nullity L¹=β¹
+- **T-Gph18** persistent q=1 sheaf Laplacian：鏈條件、Hodge nullity=β_p
+- **T-Gph19** ANM Hessian：L⁰_F=H_ANM、6 rigid modes、rank C⁰=3n−6
+- **T-Gph20** 高維 sheaf 三組憑證合取（環值層 / persistent / ANM）
 
 ## 已實作演算法列表
 
@@ -47,6 +51,10 @@
 - **AL103** persistent_laplacian_from_delta / kernel_projector（O(m³+k²m)）
 - **AL104** persistent_sheaf_bars 多尺度 filtration（O(n·m³)）
 - **AL105** leray_number / induced_complex / kalai_meshulam_witness（O(2^n·n³)）
+- **AL111** sheaf2_delta0 / sheaf2_delta1 / sheaf2_laplacian1（O(|E|²+|T|²)）
+- **AL112** psd_principal_minors（BigInt Bareiss 主子式穷舉）（O(2^n·n³)）
+- **AL113** sheaf1_persistent_betti / sheaf1_persistent_laplacian（O(m³·|X|)）
+- **AL114** anm_coboundary / anm_hessian / anm_rigid_modes（O(n³)）
 
 ## 等式
 
@@ -65,6 +73,9 @@
 - **E57** Persistent sheaf Laplacian：`Δ₀^{X,Y}=M Proj_Θ Mᵀ，Proj_Θ=I−Aᵀ(AAᵀ)⁻¹A`
 - **E58** Persistent Betti：`β₀^{X,Y}=(n−rankδ_Y)−((n−k)−rankδ_Y[:,k:])`
 - **E59** Kalai–Meshulam：`M⊆X ⇒ ∃τ∈X: ρ(V∖τ) ≤ λ(X)`
+- **E66** 高維 sheaf 1-st Laplacian：`L¹_F = C⁰(C⁰)ᵀ + (C¹)ᵀC¹，d¹d⁰=0 ⇒ ker L¹ ≅ H¹`
+- **E67** Hodge–de Rham（有限層）：`nullity L¹ = dim C¹ − rank d⁰ − rank d¹ = β¹`
+- **E68** ANM Hessian：`L⁰_F = H_ANM = C⁰(C⁰)ᵀ，dim H⁰ = 6 rigid modes`
 
 ## 資料夾視角依賴關係圖
 
@@ -108,8 +119,14 @@
   theorem_persistent_sheaf_hodge  theorem_persistent_sheaf_psd  theorem_persistent_sheaf_limit  negate_coboundary_row
   theorem_persistent_sheaf_orientation  persistent_sheaf_bars  theorem_persistent_sheaf_filtration  induced_complex
   is_face  reduced_homology_top  leray_number  kalai_meshulam_witness
-  theorem_kalai_meshulam  Matroid  Complex  Graph
-  LineBundle  PersistentSheaf
+  theorem_kalai_meshulam  sheaf2  sheaf2_delta0  sheaf2_delta1
+  sheaf2_laplacian1  sheaf2_betti1  sheaf2_demo  theorem_sheaf2_hodge
+  sheaf1_persistent  sheaf1_demo  sheaf1_persistent_laplacian  sheaf1_persistent_betti
+  theorem_sheaf1_persistent  anm_sheaf  anm_demo  anm_coboundary
+  anm_hessian  anm_rigid_modes  anm_down_laplacian  theorem_anm_hessian
+  theorem_sheaf_certificates  Matroid  Complex  Graph
+  LineBundle  PersistentSheaf  Sheaf2  Sheaf1Persistent
+  AnmSheaf
 ```
 
 ## 驗證

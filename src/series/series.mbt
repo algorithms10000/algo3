@@ -1770,3 +1770,288 @@ pub fn theorem_spec_z_adelic(n : Int64) -> Bool {
   }
   true
 }
+
+///|
+/// ═══════════════════════════════════════════════════════════════════════
+/// C1-05 §6'''(A) — Connes / Spec Z 解析極限之「有限精確憑證」
+/// E/F_q : y² = x³ + ac·x + bc；逐條算 N₁、Frobenius trace a、全部 N_n、
+/// Z(E,T) = (1 − aT + qT²) / ((1−T)(1−qT))、對稱函數方程、Hasse–Weil 界
+/// （= 有限域曲線 RH：αβ=q, α+β=a, a²≤4q ⇒ |α|=|β|=√q）、
+/// Weil 顯式公式 log Z = Σ_{n≥1} N_n Tⁿ/n 與其精確有理餘項上界。
+/// 誠實邊界：此處是逐條有限域曲線的完全精確計算憑證，
+/// 不是 Spec Z 之 archimedean 無限維解析極限、也不是 RH 的一般證明。
+/// ═══════════════════════════════════════════════════════════════════════
+
+///|
+pub(all) struct WeilCurve {
+  q : Int64
+  ac : Int64
+  bc : Int64
+  a : Int64
+  n1 : Int64
+  discr : Int64
+}
+
+///|
+fn weil_pow_mod(base0 : Int64, e0 : Int64, p : Int64) -> Int64 {
+  let mut base = ((base0 % p) + p) % p
+  let mut e = e0
+  let mut out = 1L
+  while e > 0L {
+    if (e & 1L) == 1L { out = (out * base) % p }
+    base = (base * base) % p
+    e = e >> 1
+  }
+  out
+}
+
+///|
+/// Legendre 符號 χ_p(x) ∈ {−1,0,1}，由 Euler 判準 x^{(p−1)/2} mod p。
+fn weil_legendre(x : Int64, p : Int64) -> Int64 {
+  let v = ((x % p) + p) % p
+  if v == 0L { return 0L }
+  if weil_pow_mod(v, (p - 1L) / 2L, p) == 1L { 1L } else { -1L }
+}
+
+///|
+/// 演算法 A-Weil1：穷舉 x ∈ F_q 數點 N₁ = q + 1 + Σ_x χ(x³+ac x+bc)。
+pub fn weil_point_count(q : Int64, ac : Int64, bc : Int64) -> Int64 {
+  let mut s = 0L
+  for x in 0..<q.to_int() {
+    let xi = x.to_int64()
+    let f = ((((xi * xi) % q) * xi) % q + (ac * xi + bc) % q) % q
+    s = s + weil_legendre(f, q)
+  }
+  q + 1L + s
+}
+
+///|
+pub fn weil_curve(q : Int64, ac : Int64, bc : Int64) -> WeilCurve {
+  let n1 = weil_point_count(q, ac, bc)
+  let a = q + 1L - n1
+  WeilCurve::{ q, ac, bc, a, n1, discr: a * a - 4L * q }
+}
+
+///|
+/// 演算法 A-Weil2：αⁿ+βⁿ 由 s₀=2, s₁=a, sₙ=a·sₙ₋₁−q·sₙ₋₂ 精確遞推。
+pub fn weil_power_sum(q : Int64, a : Int64, n : Int) -> Int64 {
+  if n == 0 { return 2L }
+  if n == 1 { return a }
+  let mut sm2 = 2L
+  let mut sm1 = a
+  for _i in 2..<n {
+    let sn = a * sm1 - q * sm2
+    sm2 = sm1
+    sm1 = sn
+  }
+  a * sm1 - q * sm2
+}
+
+///|
+/// 演算法 A-Weil3：Nₙ = #E(F_{qⁿ}) = qⁿ + 1 − sₙ（Weil 公式）。
+pub fn weil_counts(q : Int64, a : Int64, cut : Int) -> Array[Int64] {
+  let out : Array[Int64] = []
+  let mut pw = 1L
+  let mut sm2 = 2L
+  let mut sm1 = a
+  for n in 1..<(cut + 1) {
+    pw = pw * q
+    let sn = if n == 1 { a } else { a * sm1 - q * sm2 }
+    if n > 1 { sm2 = sm1 }
+    sm1 = sn
+    out.push(pw + 1L - sn)
+  }
+  out
+}
+
+///|
+pub fn weil_poly_p(q : Int64, a : Int64) -> Array[Int64] { [1L, -a, q] }
+
+///|
+pub fn weil_poly_q(q : Int64) -> Array[Int64] { [1L, -(1L + q), q] }
+
+///|
+fn weil_poly_deriv(c : Array[Int64]) -> Array[Int64] {
+  let out : Array[Int64] = []
+  for i in 1..<c.length() { out.push((i.to_int64()) * c[i]) }
+  out
+}
+
+///|
+/// 截斷整係數多項式乘法（係數為 Int64；C1-05 憑證範圍內無溢位）。
+fn weil_poly_mul(a : Array[Int64], b : Array[Int64], cut : Int) -> Array[Int64] {
+  let out : Array[Int64] = Array::make(cut, 0L)
+  for i in 0..<a.length() {
+    for j in 0..<b.length() {
+      if i + j < cut { out[i + j] = out[i + j] + a[i] * b[j] }
+    }
+  }
+  out
+}
+
+///|
+fn weil_poly_sub(a : Array[Int64], b : Array[Int64], cut : Int) -> Array[Int64] {
+  let out : Array[Int64] = Array::make(cut, 0L)
+  for i in 0..<cut {
+    let x = if i < a.length() { a[i] } else { 0L }
+    let y = if i < b.length() { b[i] } else { 0L }
+    out[i] = x - y
+  }
+  out
+}
+
+///|
+/// 定理 T-W1：log Z 之導數恆等式 S·P·Q = P′Q − PQ′（mod T^cut），
+/// S(T) = Σ_{n≥1} Nₙ Tⁿ⁻¹。此式等價於 Weil 顯式公式的係數級聯。
+pub fn weil_log_derivative_identity(q : Int64, a : Int64, cut : Int) -> Bool {
+  let ns = weil_counts(q, a, cut)
+  let p = weil_poly_p(q, a)
+  let qq = weil_poly_q(q)
+  let sp = weil_poly_mul(ns, p, cut)
+  let lhs = weil_poly_mul(sp, qq, cut)
+  let dpq = weil_poly_mul(weil_poly_deriv(p), qq, cut)
+  let pdq = weil_poly_mul(p, weil_poly_deriv(qq), cut)
+  let rhs = weil_poly_sub(dpq, pdq, cut)
+  for i in 0..<cut {
+    if lhs[i] != rhs[i] { return false }
+  }
+  true
+}
+
+///|
+/// T ↦ 1/(qT) 的「qT² 扭轉」：q·(qT²)·c(1/(qT)) 之係數（整數化，無負冪）。
+fn weil_twist(q : Int64, c : Array[Int64]) -> Array[Int64] {
+  let d = c.length() - 1
+  let out : Array[Int64] = Array::make(c.length(), 0L)
+  for i in 0..<c.length() {
+    let mut w = 1L
+    for _k in 0..<(d + 1 - i) { w = w * q }
+    out[d - i] = c[i] * w / q
+  }
+  out
+}
+
+///|
+/// 定理 T-W2：genus 1 函數方程 Z(E, 1/(qT)) = Z(E,T)。
+/// 因 qT²P(1/(qT)) = P(T) 且 qT²Q(1/(qT)) = Q(T)，
+/// 等價於扭轉算子 tw 作用後 P、Q 同乘 q；並驗證 tw² = q^{d}·id 為對合。
+pub fn weil_functional_equation(q : Int64, a : Int64) -> Bool {
+  let p = weil_poly_p(q, a)
+  let qq = weil_poly_q(q)
+  let tp = weil_twist(q, p)
+  let tq = weil_twist(q, qq)
+  for i in 0..<3 {
+    if tp[i] != q * p[i] { return false }
+    if tq[i] != q * qq[i] { return false }
+  }
+  // 對任意二次係數向量 tw 是對合：tw²(c) = q^{d}·c（d = deg c = 2）。
+  let samples = [[1L, 2L, 3L], [q, -a, 0L], [0L, 1L, -q], [1L, 0L, q]]
+  for c in samples {
+    let once = weil_twist(q, c)
+    let twice = weil_twist(q, once)
+    let mut scale = 1L
+    for _k in 0..<(c.length() - 1) { scale = scale * q }
+    for i in 0..<c.length() {
+      if twice[i] != c[i] * scale { return false }
+    }
+  }
+  true
+}
+
+///|
+/// 定理 T-W3：Hasse–Weil 界 |a| ≤ 2√q（等價 a² ≤ 4q），且 a = q+1−N₁。
+pub fn weil_hasse(c : WeilCurve) -> Bool {
+  c.n1 >= 0L && c.a == c.q + 1L - c.n1 && c.discr <= 0L &&
+    c.discr == c.a * c.a - 4L * c.q &&
+    weil_point_count(c.q, c.ac, c.bc) == c.n1
+}
+
+///|
+/// 定理 T-W4：有限域曲線 RH 之代數憑證。α+β=a, αβ=q, a²−4q≤0
+/// ⇒ α,β 為共軛複根且 |α|²=|β|²=αβ=q。另驗 Newton 恆等式
+/// s₂ = a²−2q, s₃ = a³−3aq。
+pub fn weil_rh_modulus(c : WeilCurve) -> Bool {
+  if c.discr > 0L { return false }
+  let s2 = weil_power_sum(c.q, c.a, 2)
+  let s3 = weil_power_sum(c.q, c.a, 3)
+  c.a * c.a - 2L * c.q == s2 &&
+    c.a * c.a * c.a - 3L * c.a * c.q == s3 &&
+    s2 * s2 - 4L * c.q * c.q == (c.a * c.a - 4L * c.q) * (c.a * c.a) &&
+    weil_power_sum(c.q, c.a, 1) == c.a
+}
+
+///|
+/// 定理 T-W5：Weil 顯式公式之形式冪級數憑證
+/// exp(Σ_{n=1}^{N} Nₙ Tⁿ/n) · Q(T) ≡ P(T) (mod T^{N+1})。
+pub fn weil_explicit_formula(q : Int64, a : Int64, cut : Int) -> Bool {
+  let ns = weil_counts(q, a, cut)
+  let lg : Array[@exact.Rat] = Array::make(cut + 1, rat0())
+  for n in 1..<(cut + 1) { lg[n] = @exact.rat(ns[n - 1], n.to_int64()) }
+  let e = fps_exp(Fps::{ coeffs: lg })
+  let qq : Array[@exact.Rat] = []
+  for x in weil_poly_q(q) { qq.push(rint(x)) }
+  let pp : Array[@exact.Rat] = Array::make(cut + 1, rat0())
+  let pco = weil_poly_p(q, a)
+  for i in 0..<3 { pp[i] = rint(pco[i]) }
+  let lhs = fps_mul(e, Fps::{ coeffs: qq }, cut + 1)
+  lhs.equal(Fps::{ coeffs: pp })
+}
+
+///|
+/// 演算法 A-Weil4：顯式公式截斷餘項之精確有理上界。
+/// 由 |Nₙ| ≤ 4qⁿ 與 |qt| < 1 得
+/// |Σ_{n>N} Nₙ tⁿ/n| ≤ 4(qt)^{N+1} / ((N+1)(1−qt))。
+pub fn weil_tail_bound(q : Int64, cut : Int, t : @exact.Rat) -> @exact.Rat {
+  let qt = t.mul(rint(q))
+  let one = rat1()
+  let den = one.sub(qt)
+  if den.n <= 0L { return rat0() }
+  let mut pw = den
+  for _k in 0..<(cut + 1) { pw = pw.mul(qt) }
+  @exact.rat(4L, (cut + 1).to_int64()).mul(pw).div(den).unwrap()
+}
+
+///|
+/// 定理 T-W6：解析極限之可計算憑證。取 t = 1/(4q)，
+/// 餘項界隨 N 嚴格遞減且 N=8 時小於 1/1000；
+/// 同時 N 項截斷顯式公式在所有抽樣曲線成立。
+pub fn theorem_weil_explicit_tail() -> Bool {
+  let q = 19L
+  let t = @exact.rat(1L, 4L * q)
+  let b8 = weil_tail_bound(q, 8, t)
+  let b9 = weil_tail_bound(q, 9, t)
+  if b8.n <= 0L || !(b9.n * b8.d < b8.n * b9.d) { return false }
+  if b8.mul(rint(1000L)).n * 1L >= b8.d { return false }
+  for c in [q, 5L, 7L, 11L, 13L, 17L] {
+    if !weil_explicit_formula(c, weil_curve(c, 0L, 1L).a, 8) { return false }
+  }
+  true
+}
+
+///|
+/// 定理 T-W7：六條 F_q 橢圓曲線之全套有限精確憑證。
+/// 每條檢查點數、Hasse、RH 代數式、對數導數恆等式、函數方程、
+/// 顯式公式，以及 Frobenius 特徵多項式之判別式 ≤ 0。
+pub fn theorem_weil_curve() -> Bool {
+  let curves = [
+    (5L, 2L, 0L, 4L), (7L, 0L, 3L, -5L), (11L, 1L, 3L, -6L),
+    (13L, 0L, 4L, -7L), (17L, 3L, 0L, -8L), (19L, 0L, 1L, 8L),
+  ]
+  for (q, ac, bc, a0) in curves {
+    let c = weil_curve(q, ac, bc)
+    if c.a != a0 { return false }
+    if !weil_hasse(c) { return false }
+    if !weil_rh_modulus(c) { return false }
+    if !weil_log_derivative_identity(q, c.a, 8) { return false }
+    if !weil_functional_equation(q, c.a) { return false }
+    if !weil_explicit_formula(q, c.a, 8) { return false }
+    // Newton 恆等式另一形式：s_{n+2} = a·s_{n+1} − q·s_n
+    for n in 0..<6 {
+      if weil_power_sum(q, c.a, n + 2) !=
+         c.a * weil_power_sum(q, c.a, n + 1) - q * weil_power_sum(q, c.a, n) {
+        return false
+      }
+    }
+  }
+  true
+}

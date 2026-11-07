@@ -541,6 +541,108 @@ REFS = REFS + [
     ("R45", "Oberwolfach Report 36/2025 Algebraic K-theory / Quillen–Suslin / Bass fundamental theorem", "2025", "https://publications.mfo.de/bitstream/handle/mfo/4320/OWR_2025_36.pdf", "A¹-同倫不變性 K₀(R[t])≅K₀(R)；K₀(R[t,t⁻¹])≅K₀(R)⊕K₋₁(R)；么模列補全；非交換動機"),
 ]
 
+# ── C1-05：補回 §6''' 剩餘結構（高維 sheaf / Weil / 非交換動機 / 一般 PV）──
+ROUND = "C1-05"
+
+new_defs5 = [
+    ("D40", "Sheaf2：R=ℚ[ε]/ε² 秩 1 環值層，限制映射 M₂(d)=[[1,0],[d,1]]", "src/graphs"),
+    ("D41", "Sheaf1Persistent：q=1 子複形過濾之 persistent 1-st sheaf Laplacian", "src/graphs"),
+    ("D42", "AnmSheaf：ANM 剛性模態層，L⁰_F = H_ANM = C⁰(C⁰)ᵀ", "src/graphs"),
+    ("D43", "BigRat / Bareiss 任意精度行列式（BigInt 中介子式）", "src/exact"),
+    ("D44", "WeilCurve：E/F_q 之 q, ac, bc, a=q+1−N₁, discr=a²−4q", "src/series"),
+    ("D45", "Hasse–Weil zeta：Z(E,T)=(1−aT+qT²)/((1−T)(1−qT))", "src/series"),
+    ("D46", "NilRing：R_{k,l}=F_p[t,u]/(t^k,u^l) 與 u↦0 求值", "src/compose"),
+    ("D47", "U_add：有限生成投影模之泛可加不變（K₀ 關係矩陣之核）", "src/compose"),
+    ("D48", "DiffModule：Euler 導數 δ=t d/dt 下之二階 δ-模 ∇=δ−A(t)", "src/algebra"),
+    ("D49", "PV gauge 群 G=⋂_k Z_{GL₂}(A_k) 與 Riccati 方程 δu+u²+a₁u+a₀=0", "src/algebra"),
+]
+for id_, stmt, pkg in new_defs5:
+    add("定義", id_, stmt, pkg, "", "moon check --deny-warn + 即寫即驗即刪")
+
+new_theorems5 = [
+    ("T-Gph17", "高維環值層：d¹d⁰=0、L¹=d⁰(d⁰)ᵀ+(d¹)ᵀd¹ 對稱 PSD、nullity L¹=β¹", "src/graphs"),
+    ("T-Gph18", "persistent q=1 sheaf Laplacian：鏈條件、Hodge nullity=β_p", "src/graphs"),
+    ("T-Gph19", "ANM Hessian：L⁰_F=H_ANM、6 rigid modes、rank C⁰=3n−6", "src/graphs"),
+    ("T-Gph20", "高維 sheaf 三組憑證合取（環值層 / persistent / ANM）", "src/graphs"),
+    ("T-X6", "BigInt Bareiss 行列式無溢位：6×6 中介量 1.5·10¹⁹ 仍給 det=16231235440", "src/exact"),
+    ("T-W1", "log Z 導數恆等式 S·P·Q=P′Q−PQ′（mod T^N）", "src/series"),
+    ("T-W2", "genus 1 函數方程 Z(E,1/(qT))=Z(E,T)，扭轉算子為對合", "src/series"),
+    ("T-W3", "Hasse–Weil 界 |a|≤2√q（a²≤4q）與 a=q+1−N₁", "src/series"),
+    ("T-W4", "有限域曲線 RH 之代數憑證 |α|=|β|=√q 與 Newton 恆等式", "src/series"),
+    ("T-W5", "Weil 顯式公式 exp(Σ_{n≤N}NₙTⁿ/n)·Q≡P (mod T^{N+1})", "src/series"),
+    ("T-W6", "解析極限可計算憑證：4(qt)^{N+1}/((N+1)(1−qt)) 有理餘項界", "src/series"),
+    ("T-W7", "六條 F_q 橢圓曲線全套有限精確憑證", "src/series"),
+    ("T-NCM1", "K₀ 冪零不變性：Newton 提升 E←E+(1−2E)(E²−E) 且 rank 不變", "src/compose"),
+    ("T-NCM2", "導出 K 連續性：塔 R_k→R_{k−1} 之 K₀≅holim K₀≅ℤ", "src/compose"),
+    ("T-NCM3", "KH 之 A¹-同倫不變性（有限層）：u↦0 不改變冪等元秩", "src/compose"),
+    ("T-NCM4", "U_add 泛性質：關係矩陣秩 5、核一維、Waldhausen 可加與 Morita 穩定", "src/compose"),
+    ("T-NCM5", "非交換動機有限層四項憑證合取", "src/compose"),
+    ("T-PV1", "一般 δ-模基本解矩陣與 Abel 恆等式 δ(det Y)=tr(A)det Y", "src/algebra"),
+    ("T-PV2", "δ-Galois gauge 群精確階數：480 / 20 / 16 / 480 與乘法封閉", "src/algebra"),
+    ("T-PV3", "Kovacic 第一型有限 Galois 對應：Riccati 根數 = 不變直線數 = dim V", "src/algebra"),
+    ("T-PV4", "C1-04 G_a(F₅) 模型嵌入一般 gauge 群之階 p 加法子群", "src/algebra"),
+]
+for id_, stmt, pkg in new_theorems5:
+    add("定理", id_, stmt, pkg, "", "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證")
+
+new_algos5 = [
+    ("AL111", "sheaf2_delta0 / sheaf2_delta1 / sheaf2_laplacian1", "src/graphs", "O(|E|²+|T|²)"),
+    ("AL112", "psd_principal_minors（BigInt Bareiss 主子式穷舉）", "src/graphs", "O(2^n·n³)"),
+    ("AL113", "sheaf1_persistent_betti / sheaf1_persistent_laplacian", "src/graphs", "O(m³·|X|)"),
+    ("AL114", "anm_coboundary / anm_hessian / anm_rigid_modes", "src/graphs", "O(n³)"),
+    ("AL115", "big_gcd / br_norm / mat_det_bigrat / bigrat_sign", "src/exact", "O(n³·log‖det‖)"),
+    ("AL116", "weil_pow_mod / weil_legendre / weil_point_count", "src/series", "O(q log p)"),
+    ("AL117", "weil_power_sum / weil_counts（Frobenius 冪和遞推）", "src/series", "O(N)"),
+    ("AL118", "weil_log_derivative_identity / weil_poly_mul", "src/series", "O(N²)"),
+    ("AL119", "weil_twist / weil_functional_equation", "src/series", "O(deg²)"),
+    ("AL120", "weil_explicit_formula（fps_exp 之形式冪級數驗證）", "src/series", "O(N²)"),
+    ("AL121", "weil_tail_bound / theorem_weil_explicit_tail", "src/series", "O(N)"),
+    ("AL122", "nr_mul（雙變數截斷卷積）/ nr_eval_u0", "src/compose", "O((kl)²)"),
+    ("AL123", "idempotent_lift（Newton–Hensel 冪等元提升）", "src/compose", "O(n³·log(kl))"),
+    ("AL124", "k0_rref / k0_kernel（關係矩陣回代求 U_add）", "src/compose", "O(n³)"),
+    ("AL125", "nm_block_sum（Waldhausen 分裂直和）/ idempotent_rank", "src/compose", "O(n²)"),
+    ("AL126", "dr_mul / dr_der（Euler δ=t d/dt 之截斷環）", "src/algebra", "O(m²)"),
+    ("AL127", "diff_fundamental（基本解矩陣 Picard 遞推）", "src/algebra", "O(m²)"),
+    ("AL128", "diff_solution_nullity（2m×2m F_p 線性映射秩）", "src/algebra", "O(m³)"),
+    ("AL129", "dm_gl2 / diff_gauge_group / diff_invariant_lines", "src/algebra", "O(p⁴·m+p²·|G|)"),
+    ("AL130", "diff_riccati_roots / theorem_pv_kovacic", "src/algebra", "O(p·m²)"),
+]
+for id_, stmt, pkg, cx in new_algos5:
+    add("演算法", id_, stmt, pkg, cx, "困難度 P；局部 moon test --deny-warn + inspect")
+
+new_eqs5 = [
+    ("E66", "高維 sheaf 1-st Laplacian", "L¹_F = C⁰(C⁰)ᵀ + (C¹)ᵀC¹，d¹d⁰=0 ⇒ ker L¹ ≅ H¹", "src/graphs"),
+    ("E67", "Hodge–de Rham（有限層）", "nullity L¹ = dim C¹ − rank d⁰ − rank d¹ = β¹", "src/graphs"),
+    ("E68", "ANM Hessian", "L⁰_F = H_ANM = C⁰(C⁰)ᵀ，dim H⁰ = 6 rigid modes", "src/graphs"),
+    ("E69", "Bareiss 消去", "a_{ij}^{(k)} = (p·a_{ij} − a_{ik}a_{kj}) / prev，中介量恆為子式", "src/exact"),
+    ("E70", "Weil 點數", "N₁ = q+1+Σ_x χ_q(x³+ac·x+bc)，a = q+1−N₁", "src/series"),
+    ("E71", "Frobenius 冪和", "s₀=2, s₁=a, sₙ=a·sₙ₋₁−q·sₙ₋₂；Nₙ=qⁿ+1−sₙ", "src/series"),
+    ("E72", "Hasse–Weil zeta", "Z(E,T)=(1−aT+qT²)/((1−T)(1−qT))，P(T)=1−aT+qT²", "src/series"),
+    ("E73", "對數導數恆等式", "S·P·Q = P′Q − PQ′，S(T)=Σ_{n≥1}NₙTⁿ⁻¹", "src/series"),
+    ("E74", "Weil 函數方程", "qT²P(1/(qT))=P(T)，qT²Q(1/(qT))=Q(T) ⇒ Z(1/(qT))=Z(T)", "src/series"),
+    ("E75", "Weil 顯式公式", "log Z(E,T)=Σ_{n≥1}NₙTⁿ/n；exp(L_N)·Q≡P (mod T^{N+1})", "src/series"),
+    ("E76", "顯式公式餘項界", "|Σ_{n>N}Nₙtⁿ/n| ≤ 4(qt)^{N+1}/((N+1)(1−qt))，|qt|<1", "src/series"),
+    ("E77", "RH 代數式（有限域曲線）", "α+β=a, αβ=q, a²−4q≤0 ⇒ |α|²=|β|²=q", "src/series"),
+    ("E78", "Newton–Hensel 冪等元提升", "E ← E + (1−2E)(E²−E)，(E²−E)∈I^{2^s} ⇒ K₀(R)≅K₀(R/I)", "src/compose"),
+    ("E79", "Waldhausen 可加性 / U_add", "[B]=[A]+[C]；K₀=ℤ·[R]，U([R^i])=i；rank(E⊕F)=rank E+rank F", "src/compose"),
+    ("E80", "δ-Galois / Abel / Kovacic", "δ(det Y)=tr(A)det Y；G=⋂Z_{GL₂}(A_k)；δu+u²+a₁u+a₀=0", "src/algebra"),
+]
+for id_, name, formula, pkg in new_eqs5:
+    add("等式", id_, name, pkg, formula, "由對應定理憑證驗證")
+
+REFS = REFS + [
+    ("R46", "Hansen–Ghrist / Wei–Wei 高維 sheaf Laplacian (arXiv:2505.23993v1)", "2025/26", "https://arxiv.org/pdf/2505.23993v1", "Theorem 1 H^q(K;F)≃ker Δ^q；Example 4/5：L¹_F=C⁰(C⁰)ᵀ+(C¹)ᵀC¹、L⁰_{F⊗G}=L⁰_F⊗I₃；ringed-space module sheaf 與 2-simplex"),
+    ("R47", "Pith review of arXiv:2505.23993 / arXiv:2501.06197 (ANM sheaf)", "2026", "https://pith.science/paper/2505.23993", "審查提醒 Hessian recovery 只在 graph Example 3 成立，高維應稱 1-st Laplacian 保留 Hessian-like blocks；ANM 層 L⁰_F=H_ANM、6 rigid modes=H⁰"),
+    ("R48", "Bochner/Forman 離散曲率與 H₁^F=δ₀δ₀*+δ₁*δ₁ (arXiv:2610.28455v1)", "2026", "https://arxiv.org/html/2610.28455v1", "高維 cellular sheaf 之 1-st Laplacian 分解；Weitzenböck/Bochner 型曲率恆等式"),
+    ("R49", "Weil conjectures / Hasse–Weil zeta of elliptic curves over F_q", "1949/1974", "https://grokipedia.com/page/Weil_conjectures", "Z(E,T)=(1−aT+qT²)/((1−T)(1−qT))、N_n=qⁿ+1−αⁿ−βⁿ、Hasse |a|≤2√q、函數方程與 RH（有限域曲線）"),
+    ("R50", "Matsukawa, Higher Noncommutative Motives and Higher K-theory, arXiv:2611.07262", "2026", "https://arxiv.org/abs/2611.07262", "2026-11-05 提交；stable (∞,n)-categories 之 higher additive motives；exact sequences 之泛性質；enriched presheaves 局部化與 weighted Waldhausen S-construction on complete exact flags"),
+    ("R51", "Hilman, Parametrised noncommutative motives and equivariant cubical descent (arXiv:2202.02591v3)", "2026", "https://www.sas.rochester.edu/mth/sites/doug-ravenel/otherpapers/hilman-parametrised-motives.pdf", "parametrised perfect–stable categories；NMot^pw corepresents K-theory；additive spectral invariant on Karoubi sequences；Q-construction motivically local"),
+    ("R52", "Bachmann–Elmanto–Morrow, A¹-invariant motivic cohomology of schemes, arXiv:2508.09915", "2025", "https://arxiv.org/pdf/2508.09915", "Voevodsky slice filtration、cdh-motivic cohomology、zeroth slice 與 homotopy K-theory KH 之關係；A¹-不變性與 KH(X×A¹)≅KH(X)"),
+    ("R53", "Tabuada / Blumberg–Gepner–Tabuada, universal additive invariant U_add (arXiv:1511.03589v3)", "2015/2020", "https://arxiv.org/html/1511.03589v3", "U_add 為 universal additive invariant；Morita equivalences、Waldhausen additivity、K-theory corepresentable、split-exact sequences"),
+    ("R54", "Spectral Picard–Vessiot / differential Galois theory, arXiv:2503.03429 & arXiv:2510.07323", "2025", "https://arxiv.org/pdf/2503.03429", "PV extensions、LCLM 與 Wronskian、classical groups 之 direct problem、Levi decomposition 與 G_a-tower"),
+    ("R55", "Kovacic algorithm / Picard–Vessiot lecture notes (HAL hal-04117227v1)", "1986/2023", "https://hal.science/hal-04117227v1/document", "Theorem 2.5：Liouvillian solutions ⟺ Riccati 有次數 1/2/{4,6,12} 代數解；Kovacic cases I/II/III 與 SL₂(C) 子群分類"),
+]
+
 def mb_escape(s: str) -> str:
     return s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ")
 
@@ -618,7 +720,7 @@ def generate_xlsx():
     # 索引
     ws = wb.active
     ws.title = "索引"
-    ws.append(["C1 algorithm.xlsx", "全局公理：伽羅瓦對應", "回合 C1-04", "2026-11-08"])
+    ws.append(["C1 algorithm.xlsx", "全局公理：伽羅瓦對應", "回合 C1-05", "2026-11-08"])
     ws.append([])
     ws.append(["類別", "筆數", "來源", "驗證"])
     for c in ws[3]:
@@ -629,7 +731,7 @@ def generate_xlsx():
         n = sum(1 for e in A if e["kind"] == k)
         ws.append([k, n, "docs/catalog.json / src/catalog", "moon check + moon prove + 即時驗題"])
     ws.append(["合計", len(A), "", ""])
-    ws.append(["前沿文獻", len(REFS), "docs/catalog.json / Dev.txt §2", "聯網查證（C1-01 R1..R12 + C1-02 R13..R25 + C1-03 R26..R36 + C1-04 R37..R45）"])
+    ws.append(["前沿文獻", len(REFS), "docs/catalog.json / Dev.txt §2", "聯網查證（C1-01 R1..R12 + C1-02 R13..R25 + C1-03 R26..R36 + C1-04 R37..R45 + C1-05 R46..R55）"])
     ws.column_dimensions["A"].width = 22
     ws.column_dimensions["B"].width = 10
     ws.column_dimensions["C"].width = 36
@@ -699,7 +801,7 @@ def generate_xlsx():
 def main():
     os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
     with open(os.path.join(ROOT, "docs/catalog.json"), "w", encoding="utf-8") as f:
-        json.dump({"round": "C1-04", "global_axiom": "伽羅瓦對應",
+        json.dump({"round": "C1-05", "global_axiom": "伽羅瓦對應",
                    "entries": A, "references": REFS}, f, ensure_ascii=False, indent=2)
     generate_mbt()
     p = generate_xlsx()

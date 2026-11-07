@@ -1624,3 +1624,436 @@ pub fn theorem_a1_laurent() -> Bool {
   }
   true
 }
+
+///|
+/// ═══════════════════════════════════════════════════════════════════════
+/// C1-05 §6'''(C) — 一般 Picard–Vessiot / δ-Galois 有限精確模型
+/// F_p 上微分環 R = F_p[t]/(t^m)，Euler 導數 δ = t·d/dt（δ(t^j)=j t^j）。
+/// 對任意二階 δ-模 ∇ = δ − A(t)，A(t)=Σ_k A_k t^k：
+///   • 以 2m×2m 的 F_p 線性映射實算解空間 V = ker ∇；
+///   • 以 Picard 遞推造基本解矩陣 Y，驗證 Abel 恆等式 δ(det Y)=tr(A)det Y；
+///   • δ-Galois（Tannakian gauge）群 G = ⋂_k Z_{GL_2}(A_k) 由穷舉精確算出；
+///   • Kovacic 第一型：Riccati 方程 δu+u²+a₁u+a₀=0 之根 ↔
+///     G 之不變直線 ↔ 方程可約，三者數量逐例相等（有限 Galois 對應）。
+/// 誠實邊界：此為有限維／有限域 δ-模的完全精確憑證，
+/// 無限維複數域 PV 擴張、代數 closure 與解析單值群仍屬待辦。
+/// ═══════════════════════════════════════════════════════════════════════
+
+///|
+pub(all) struct DiffModule {
+  p : Int64
+  m : Int
+  coeffs : Array[Array[Int64]]
+}
+
+///|
+/// 由各 t^k 次係數矩陣 [a00,a01,a10,a11] 造 δ-模；補齊至 m 次。
+pub fn diff_module(p : Int64, m : Int, layers : Array[Array[Int64]]) -> DiffModule {
+  let coeffs : Array[Array[Int64]] = []
+  for k in 0..<m {
+    let row : Array[Int64] = [0L, 0L, 0L, 0L]
+    if k < layers.length() {
+      for z in 0..<4 { row[z] = ((layers[k][z] % p) + p) % p }
+    }
+    coeffs.push(row)
+  }
+  DiffModule::{ p, m, coeffs }
+}
+
+///|
+fn dm_at(d : DiffModule, k : Int, i : Int, j : Int) -> Int64 {
+  d.coeffs[k][i * 2 + j]
+}
+
+///|
+type DMat = Array[Array[Array[Int64]]]
+
+///|
+fn dr_zero(d : DiffModule) -> Array[Int64] { Array::make(d.m, 0L) }
+
+///|
+fn dr_embed(d : DiffModule, c : Int64) -> Array[Int64] {
+  let a = dr_zero(d)
+  a[0] = ((c % d.p) + d.p) % d.p
+  a
+}
+
+///|
+fn dr_add(d : DiffModule, a : Array[Int64], b : Array[Int64]) -> Array[Int64] {
+  let out = dr_zero(d)
+  for i in 0..<d.m { out[i] = ((a[i] + b[i]) % d.p + d.p) % d.p }
+  out
+}
+
+///|
+fn dr_sub(d : DiffModule, a : Array[Int64], b : Array[Int64]) -> Array[Int64] {
+  let out = dr_zero(d)
+  for i in 0..<d.m { out[i] = ((a[i] - b[i]) % d.p + d.p) % d.p }
+  out
+}
+
+///|
+fn dr_mul(d : DiffModule, a : Array[Int64], b : Array[Int64]) -> Array[Int64] {
+  let out = dr_zero(d)
+  for i in 0..<d.m {
+    if a[i] == 0L { continue }
+    for j in 0..<(d.m - i) {
+      out[i + j] = (out[i + j] + a[i] * b[j]) % d.p
+    }
+  }
+  out
+}
+
+///|
+fn dr_der(d : DiffModule, a : Array[Int64]) -> Array[Int64] {
+  let out = dr_zero(d)
+  for j in 0..<d.m { out[j] = (j.to_int64() * a[j]) % d.p }
+  out
+}
+
+///|
+fn dr_is_zero(d : DiffModule, a : Array[Int64]) -> Bool {
+  for i in 0..<d.m {
+    if a[i] != 0L { return false }
+  }
+  true
+}
+
+///|
+fn dm_zero(d : DiffModule) -> DMat {
+  let out : DMat = []
+  for _i in 0..<2 {
+    let row : Array[Array[Int64]] = [dr_zero(d), dr_zero(d)]
+    out.push(row)
+  }
+  out
+}
+
+///|
+fn dm_layer_matrix(d : DiffModule) -> DMat {
+  let out = dm_zero(d)
+  for i in 0..<2 {
+    for j in 0..<2 {
+      let e = dr_zero(d)
+      for k in 0..<d.m { e[k] = dm_at(d, k, i, j) }
+      out[i][j] = e
+    }
+  }
+  out
+}
+
+///|
+fn dm_mat_mul(d : DiffModule, a : DMat, b : DMat) -> DMat {
+  let out = dm_zero(d)
+  for i in 0..<2 {
+    for k in 0..<2 {
+      for j in 0..<2 {
+        out[i][j] = dr_add(d, out[i][j], dr_mul(d, a[i][k], b[k][j]))
+      }
+    }
+  }
+  out
+}
+
+///|
+fn dm_mat_der(d : DiffModule, a : DMat) -> DMat {
+  let out = dm_zero(d)
+  for i in 0..<2 {
+    for j in 0..<2 { out[i][j] = dr_der(d, a[i][j]) }
+  }
+  out
+}
+
+///|
+fn dm_mat_equal(d : DiffModule, a : DMat, b : DMat) -> Bool {
+  for i in 0..<2 {
+    for j in 0..<2 {
+      if !dr_is_zero(d, dr_sub(d, a[i][j], b[i][j])) { return false }
+    }
+  }
+  true
+}
+
+///|
+fn dm_det(d : DiffModule, a : DMat) -> Array[Int64] {
+  dr_sub(d, dr_mul(d, a[0][0], a[1][1]), dr_mul(d, a[0][1], a[1][0]))
+}
+
+///|
+fn dm_trace(d : DiffModule, a : DMat) -> Array[Int64] {
+  dr_add(d, a[0][0], a[1][1])
+}
+
+///|
+/// 演算法 A-PV1：基本解矩陣的 Picard 遞推（δY=AY, Y(0)=I）。
+/// 每層解 (j·I − A₀)Y_j = Σ_{k=1}^{j} A_k Y_{j−k}；此處用於 A₀=0 之情形。
+pub fn diff_fundamental(d : DiffModule) -> DMat {
+  let y = dm_zero(d)
+  for i in 0..<2 { for j in 0..<2 { y[i][j] = dr_embed(d, if i == j { 1L } else { 0L }) } }
+  let layers : Array[Array[Int64]] = []
+  layers.push([1L, 0L, 0L, 1L])
+  for deg in 1..<d.m {
+    let acc : Array[Int64] = [0L, 0L, 0L, 0L]
+    for k in 1..<(deg + 1) {
+      for i in 0..<2 {
+        for j in 0..<2 {
+          for s in 0..<2 {
+            let v = dm_at(d, k, i, s) * layers[deg - k][s * 2 + j]
+            acc[i * 2 + j] = (acc[i * 2 + j] + v) % d.p
+          }
+        }
+      }
+    }
+    let inv = @exact.mod_inv(deg.to_int64(), d.p)
+    let cur : Array[Int64] = []
+    for z in 0..<4 { cur.push((acc[z] * inv) % d.p) }
+    layers.push(cur)
+    for i in 0..<2 {
+      for j in 0..<2 { y[i][j][deg] = cur[i * 2 + j] }
+    }
+  }
+  y
+}
+
+///|
+/// 定理 T-PV1（Wronskian / Abel）：δ(det Y) = tr(A)·det Y，
+/// 且 δY = A·Y 於 R 中精確成立；對多個 A(t) 逐例驗證。
+pub fn theorem_pv_wronskian() -> Bool {
+  let samples = [
+    [[0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L]],
+    [[0L, 0L, 0L, 0L], [0L, 1L, 0L, 0L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L]],
+    [[0L, 0L, 0L, 0L], [1L, 0L, 0L, 2L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L]],
+    [[0L, 0L, 0L, 0L], [0L, 1L, 0L, 0L], [0L, 0L, 0L, 3L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L]],
+  ]
+  for layers in samples {
+    let d = diff_module(5L, 5, layers)
+    let y = diff_fundamental(d)
+    if !dm_mat_equal(d, dm_mat_der(d, y), dm_mat_mul(d, dm_layer_matrix(d), y)) {
+      return false
+    }
+    let w = dm_det(d, y)
+    if !dr_is_zero(d, dr_sub(d, dr_der(d, w), dr_mul(d, dm_trace(d, dm_layer_matrix(d)), w))) {
+      return false
+    }
+    if w[0] != 1L { return false }
+  }
+  true
+}
+
+///|
+/// 演算法 A-PV2：解空間 V = ker(δ − A) 之維度。
+/// 把 R² ≅ F_p^{2m} 展開成 2m×2m 線性映射，以 rank_mod_p 取零空間維。
+pub fn diff_solution_nullity(d : DiffModule) -> Int {
+  let n = 2 * d.m
+  let rows : Array[Array[Int64]] = []
+  for i in 0..<2 {
+    for deg in 0..<d.m {
+      let row : Array[Int64] = Array::make(n, 0L)
+      row[i * d.m + deg] = deg.to_int64() % d.p
+      for c in 0..<2 {
+        for e in 0..<d.m {
+          let k = deg - e
+          if k >= 0 && k < d.m {
+            let v = (row[c * d.m + e] - dm_at(d, k, i, c)) % d.p
+            row[c * d.m + e] = (v + d.p) % d.p
+          }
+        }
+      }
+      rows.push(row)
+    }
+  }
+  n - @exact.rank_mod_p(rows, d.p)
+}
+
+///|
+/// 穷舉 GL₂(F_p)（4 個係數，行列式 ≠ 0）。
+fn dm_gl2(d : DiffModule) -> Array[Array[Int64]] {
+  let out : Array[Array[Int64]] = []
+  let pi = d.p.to_int()
+  for a in 0..<pi {
+    for b in 0..<pi {
+      for c in 0..<pi {
+        for e in 0..<pi {
+          let det = ((a * e - b * c) % pi + pi) % pi
+          if det != 0 {
+            out.push([a.to_int64(), b.to_int64(), c.to_int64(), e.to_int64()])
+          }
+        }
+      }
+    }
+  }
+  out
+}
+
+///|
+/// g 與 A_k 交換（對所有 k）⇒ g 保持 ∇，即 δ-Galois 群之一員。
+fn dm_commutes(d : DiffModule, g : Array[Int64]) -> Bool {
+  for k in 0..<d.m {
+    for i in 0..<2 {
+      for j in 0..<2 {
+        let mut v1 = 0L
+        let mut v2 = 0L
+        for s in 0..<2 {
+          v1 = v1 + g[i * 2 + s] * d.coeffs[k][s * 2 + j]
+          v2 = v2 + d.coeffs[k][i * 2 + s] * g[s * 2 + j]
+        }
+        if ((v1 - v2) % d.p + d.p) % d.p != 0L { return false }
+      }
+    }
+  }
+  true
+}
+
+///|
+/// 演算法 A-PV3：δ-Galois（gauge）群 G = {g ∈ GL₂(F_p) | ∀k, gA_k = A_k g}。
+pub fn diff_gauge_group(d : DiffModule) -> Array[Array[Int64]] {
+  let out : Array[Array[Int64]] = []
+  for g in dm_gl2(d) {
+    if dm_commutes(d, g) { out.push(g) }
+  }
+  out
+}
+
+///|
+fn dm_mat2_mul_mod(d : DiffModule, x : Array[Int64], y : Array[Int64]) -> Array[Int64] {
+  let out : Array[Int64] = [0L, 0L, 0L, 0L]
+  for i in 0..<2 {
+    for j in 0..<2 {
+      let mut v = 0L
+      for s in 0..<2 { v = v + x[i * 2 + s] * y[s * 2 + j] }
+      out[i * 2 + j] = ((v % d.p) + d.p) % d.p
+    }
+  }
+  out
+}
+
+///|
+fn dm_line_stable(d : DiffModule, g : Array[Int64], v : Array[Int64]) -> Bool {
+  let w0 = (g[0] * v[0] + g[1] * v[1]) % d.p
+  let w1 = (g[2] * v[0] + g[3] * v[1]) % d.p
+  ((w0 * v[1] - w1 * v[0]) % d.p + d.p) % d.p == 0L
+}
+
+///|
+/// 演算法 A-PV4：G 於 F_p² 上的不變直線數（射影直線共 p+1 條）。
+pub fn diff_invariant_lines(d : DiffModule) -> Int {
+  let g = diff_gauge_group(d)
+  let lines : Array[Array[Int64]] = []
+  for k in 0..<d.p.to_int() { lines.push([1L, k.to_int64()]) }
+  lines.push([0L, 1L])
+  let mut out = 0
+  for v in lines {
+    let mut ok = true
+    for h in g {
+      if !dm_line_stable(d, h, v) { ok = false; break }
+    }
+    if ok { out = out + 1 }
+  }
+  out
+}
+
+///|
+/// 演算法 A-PV5：二階純量方程 δ²y + a₁δy + a₀y = 0 之 Riccati 根
+/// u² + a₁u + a₀ = 0（u 為常數 ⇒ y = t^u）；逐根實代驗證。
+pub fn diff_riccati_roots(p : Int64, m : Int, a1 : Int64, a0 : Int64) -> Array[Int64] {
+  let out : Array[Int64] = []
+  for r in 0..<p.to_int() {
+    let ri = r.to_int64()
+    let v = (((ri * ri + a1 * ri + a0) % p) + p) % p
+    if v == 0L && r < m {
+      // y = t^r 實代 δ²y + a₁δy + a₀y = (r² + a₁r + a₀) t^r
+      out.push(ri)
+    }
+  }
+  out
+}
+
+///|
+/// 定理 T-PV2（一般 δ-Galois 群之精確計算）：
+/// G = ⋂ Z(A_k)；A=0 ⇒ GL₂(F₅) 480；A=N·t ⇒ 20；
+/// A=diag(1,2)t ⇒ 16；A=3I·t ⇒ 480；並驗證群對乘法封閉。
+pub fn theorem_pv_gauge_group() -> Bool {
+  let cases = [
+    ([[0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L]], 480),
+    ([[0L, 0L, 0L, 0L], [0L, 1L, 0L, 0L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L]], 20),
+    ([[0L, 0L, 0L, 0L], [1L, 0L, 0L, 2L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L]], 16),
+    ([[0L, 0L, 0L, 0L], [3L, 0L, 0L, 3L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L], [0L, 0L, 0L, 0L]], 480),
+  ]
+  for (layers, want) in cases {
+    let d = diff_module(5L, 5, layers)
+    let g = diff_gauge_group(d)
+    if g.length() != want { return false }
+    // 封閉性：抽樣乘積仍屬 G
+    for x in 0..<g.length() {
+      for y in 0..<g.length() {
+        if (x * 7 + y * 3) % 11 != 0 { continue }
+        let prod = dm_mat2_mul_mod(d, g[x], g[y])
+        if !dm_commutes(d, prod) { return false }
+      }
+    }
+    // 單位元素保持連線
+    if !dm_commutes(d, [1L, 0L, 0L, 1L]) { return false }
+  }
+  true
+}
+
+///|
+/// 定理 T-PV3（Kovacic 第一型／有限 Galois 對應）：
+/// 對二階方程，Riccati 根數 = G 不變直線數 = 解空間維度 − 1 之補數，
+/// 此處精確為 dim V = 根數 = 不變直線數；並檢查可約／不可約／重根三型。
+pub fn theorem_pv_kovacic() -> Bool {
+  let cases = [
+    (3L, 2L, 2),   // (r+1)(r+2)=0：兩個相異根，可約
+    (1L, 1L, 0),   // r²+r+1 於 F₅ 不可約
+    (0L, 0L, 1),   // r²=0：重根，冪零單值
+  ]
+  for (a1, a0, want) in cases {
+    let d = diff_module(5L, 5, [[0L, 1L, -a0, -a1]])
+    let roots = diff_riccati_roots(5L, 5, a1, a0)
+    let lines = diff_invariant_lines(d)
+    let nullity = diff_solution_nullity(d)
+    if roots.length() != want || lines != want || nullity != want { return false }
+    // 每條不變直線 (1,r) 恰對應一個 Riccati 根 r
+    for r in roots {
+      let v = [1L, r]
+      let mut stable = true
+      for g in diff_gauge_group(d) {
+        if !dm_line_stable(d, g, v) { stable = false; break }
+      }
+      if !stable { return false }
+      // y = t^r 實代 δ²y + a₁δy + a₀y = 0
+      let y = dr_zero(d)
+      y[r.to_int()] = 1L
+      let dy = dr_der(d, y)
+      let ddy = dr_der(d, dy)
+      let lhs = dr_add(d, ddy, dr_add(d,
+        dr_mul(d, dr_embed(d, a1), dy),
+        dr_mul(d, dr_embed(d, a0), y)))
+      if !dr_is_zero(d, lhs) { return false }
+    }
+  }
+  true
+}
+
+///|
+/// 定理 T-PV4：C1-04 的 G_a(F₅) 有限模型嵌入一般 gauge 群。
+/// 對 A=N·t（N²=0），I+cN (c ∈ F₅) 構成階 p 的加法子群；
+/// 其階整除 |G|=p(p−1)=20，且與 C1-04 的加法群階數一致。
+pub fn theorem_pv_additive_subgroup() -> Bool {
+  let d = diff_module(5L, 5, [[0L, 0L, 0L, 0L], [0L, 1L, 0L, 0L]])
+  let g = diff_gauge_group(d)
+  let mut cnt = 0
+  let mut closed = true
+  for c in 0..<5 {
+    let h = [1L, c.to_int64(), 0L, 1L]
+    if !dm_commutes(d, h) { return false }
+    cnt = cnt + 1
+    for e in 0..<5 {
+      let h2 = [1L, e.to_int64(), 0L, 1L]
+      let prod = dm_mat2_mul_mod(d, h, h2)
+      if !dm_commutes(d, prod) { closed = false }
+    }
+  }
+  cnt == 5 && closed && g.length() == 20 && g.length() % cnt == 0 &&
+    theorem_pv_wronskian() && theorem_pv_gauge_group() && theorem_pv_kovacic()
+}

@@ -1,5 +1,5 @@
 {
-  "round": "C1-04",
+  "round": "C1-05",
   "global_axiom": "伽羅瓦對應",
   "entries": [
     {
@@ -3196,6 +3196,600 @@
       "formula": "K₀(F_5[u])≅K₀(F_5)≅ℤ；det[[a,b],[−q,p]]=1",
       "verification": "由對應定理憑證驗證",
       "round": "C1-04"
+    },
+    {
+      "kind": "定義",
+      "id": "D40",
+      "statement": "Sheaf2：R=ℚ[ε]/ε² 秩 1 環值層，限制映射 M₂(d)=[[1,0],[d,1]]",
+      "package": "src/graphs",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定義",
+      "id": "D41",
+      "statement": "Sheaf1Persistent：q=1 子複形過濾之 persistent 1-st sheaf Laplacian",
+      "package": "src/graphs",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定義",
+      "id": "D42",
+      "statement": "AnmSheaf：ANM 剛性模態層，L⁰_F = H_ANM = C⁰(C⁰)ᵀ",
+      "package": "src/graphs",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定義",
+      "id": "D43",
+      "statement": "BigRat / Bareiss 任意精度行列式（BigInt 中介子式）",
+      "package": "src/exact",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定義",
+      "id": "D44",
+      "statement": "WeilCurve：E/F_q 之 q, ac, bc, a=q+1−N₁, discr=a²−4q",
+      "package": "src/series",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定義",
+      "id": "D45",
+      "statement": "Hasse–Weil zeta：Z(E,T)=(1−aT+qT²)/((1−T)(1−qT))",
+      "package": "src/series",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定義",
+      "id": "D46",
+      "statement": "NilRing：R_{k,l}=F_p[t,u]/(t^k,u^l) 與 u↦0 求值",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定義",
+      "id": "D47",
+      "statement": "U_add：有限生成投影模之泛可加不變（K₀ 關係矩陣之核）",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定義",
+      "id": "D48",
+      "statement": "DiffModule：Euler 導數 δ=t d/dt 下之二階 δ-模 ∇=δ−A(t)",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定義",
+      "id": "D49",
+      "statement": "PV gauge 群 G=⋂_k Z_{GL₂}(A_k) 與 Riccati 方程 δu+u²+a₁u+a₀=0",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Gph17",
+      "statement": "高維環值層：d¹d⁰=0、L¹=d⁰(d⁰)ᵀ+(d¹)ᵀd¹ 對稱 PSD、nullity L¹=β¹",
+      "package": "src/graphs",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Gph18",
+      "statement": "persistent q=1 sheaf Laplacian：鏈條件、Hodge nullity=β_p",
+      "package": "src/graphs",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Gph19",
+      "statement": "ANM Hessian：L⁰_F=H_ANM、6 rigid modes、rank C⁰=3n−6",
+      "package": "src/graphs",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Gph20",
+      "statement": "高維 sheaf 三組憑證合取（環值層 / persistent / ANM）",
+      "package": "src/graphs",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-X6",
+      "statement": "BigInt Bareiss 行列式無溢位：6×6 中介量 1.5·10¹⁹ 仍給 det=16231235440",
+      "package": "src/exact",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-W1",
+      "statement": "log Z 導數恆等式 S·P·Q=P′Q−PQ′（mod T^N）",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-W2",
+      "statement": "genus 1 函數方程 Z(E,1/(qT))=Z(E,T)，扭轉算子為對合",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-W3",
+      "statement": "Hasse–Weil 界 |a|≤2√q（a²≤4q）與 a=q+1−N₁",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-W4",
+      "statement": "有限域曲線 RH 之代數憑證 |α|=|β|=√q 與 Newton 恆等式",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-W5",
+      "statement": "Weil 顯式公式 exp(Σ_{n≤N}NₙTⁿ/n)·Q≡P (mod T^{N+1})",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-W6",
+      "statement": "解析極限可計算憑證：4(qt)^{N+1}/((N+1)(1−qt)) 有理餘項界",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-W7",
+      "statement": "六條 F_q 橢圓曲線全套有限精確憑證",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-NCM1",
+      "statement": "K₀ 冪零不變性：Newton 提升 E←E+(1−2E)(E²−E) 且 rank 不變",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-NCM2",
+      "statement": "導出 K 連續性：塔 R_k→R_{k−1} 之 K₀≅holim K₀≅ℤ",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-NCM3",
+      "statement": "KH 之 A¹-同倫不變性（有限層）：u↦0 不改變冪等元秩",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-NCM4",
+      "statement": "U_add 泛性質：關係矩陣秩 5、核一維、Waldhausen 可加與 Morita 穩定",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-NCM5",
+      "statement": "非交換動機有限層四項憑證合取",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-PV1",
+      "statement": "一般 δ-模基本解矩陣與 Abel 恆等式 δ(det Y)=tr(A)det Y",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-PV2",
+      "statement": "δ-Galois gauge 群精確階數：480 / 20 / 16 / 480 與乘法封閉",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-PV3",
+      "statement": "Kovacic 第一型有限 Galois 對應：Riccati 根數 = 不變直線數 = dim V",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "定理",
+      "id": "T-PV4",
+      "statement": "C1-04 G_a(F₅) 模型嵌入一般 gauge 群之階 p 加法子群",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL111",
+      "statement": "sheaf2_delta0 / sheaf2_delta1 / sheaf2_laplacian1",
+      "package": "src/graphs",
+      "formula": "O(|E|²+|T|²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL112",
+      "statement": "psd_principal_minors（BigInt Bareiss 主子式穷舉）",
+      "package": "src/graphs",
+      "formula": "O(2^n·n³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL113",
+      "statement": "sheaf1_persistent_betti / sheaf1_persistent_laplacian",
+      "package": "src/graphs",
+      "formula": "O(m³·|X|)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL114",
+      "statement": "anm_coboundary / anm_hessian / anm_rigid_modes",
+      "package": "src/graphs",
+      "formula": "O(n³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL115",
+      "statement": "big_gcd / br_norm / mat_det_bigrat / bigrat_sign",
+      "package": "src/exact",
+      "formula": "O(n³·log‖det‖)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL116",
+      "statement": "weil_pow_mod / weil_legendre / weil_point_count",
+      "package": "src/series",
+      "formula": "O(q log p)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL117",
+      "statement": "weil_power_sum / weil_counts（Frobenius 冪和遞推）",
+      "package": "src/series",
+      "formula": "O(N)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL118",
+      "statement": "weil_log_derivative_identity / weil_poly_mul",
+      "package": "src/series",
+      "formula": "O(N²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL119",
+      "statement": "weil_twist / weil_functional_equation",
+      "package": "src/series",
+      "formula": "O(deg²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL120",
+      "statement": "weil_explicit_formula（fps_exp 之形式冪級數驗證）",
+      "package": "src/series",
+      "formula": "O(N²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL121",
+      "statement": "weil_tail_bound / theorem_weil_explicit_tail",
+      "package": "src/series",
+      "formula": "O(N)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL122",
+      "statement": "nr_mul（雙變數截斷卷積）/ nr_eval_u0",
+      "package": "src/compose",
+      "formula": "O((kl)²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL123",
+      "statement": "idempotent_lift（Newton–Hensel 冪等元提升）",
+      "package": "src/compose",
+      "formula": "O(n³·log(kl))",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL124",
+      "statement": "k0_rref / k0_kernel（關係矩陣回代求 U_add）",
+      "package": "src/compose",
+      "formula": "O(n³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL125",
+      "statement": "nm_block_sum（Waldhausen 分裂直和）/ idempotent_rank",
+      "package": "src/compose",
+      "formula": "O(n²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL126",
+      "statement": "dr_mul / dr_der（Euler δ=t d/dt 之截斷環）",
+      "package": "src/algebra",
+      "formula": "O(m²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL127",
+      "statement": "diff_fundamental（基本解矩陣 Picard 遞推）",
+      "package": "src/algebra",
+      "formula": "O(m²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL128",
+      "statement": "diff_solution_nullity（2m×2m F_p 線性映射秩）",
+      "package": "src/algebra",
+      "formula": "O(m³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL129",
+      "statement": "dm_gl2 / diff_gauge_group / diff_invariant_lines",
+      "package": "src/algebra",
+      "formula": "O(p⁴·m+p²·|G|)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL130",
+      "statement": "diff_riccati_roots / theorem_pv_kovacic",
+      "package": "src/algebra",
+      "formula": "O(p·m²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-05"
+    },
+    {
+      "kind": "等式",
+      "id": "E66",
+      "statement": "高維 sheaf 1-st Laplacian",
+      "package": "src/graphs",
+      "formula": "L¹_F = C⁰(C⁰)ᵀ + (C¹)ᵀC¹，d¹d⁰=0 ⇒ ker L¹ ≅ H¹",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "等式",
+      "id": "E67",
+      "statement": "Hodge–de Rham（有限層）",
+      "package": "src/graphs",
+      "formula": "nullity L¹ = dim C¹ − rank d⁰ − rank d¹ = β¹",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "等式",
+      "id": "E68",
+      "statement": "ANM Hessian",
+      "package": "src/graphs",
+      "formula": "L⁰_F = H_ANM = C⁰(C⁰)ᵀ，dim H⁰ = 6 rigid modes",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "等式",
+      "id": "E69",
+      "statement": "Bareiss 消去",
+      "package": "src/exact",
+      "formula": "a_{ij}^{(k)} = (p·a_{ij} − a_{ik}a_{kj}) / prev，中介量恆為子式",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "等式",
+      "id": "E70",
+      "statement": "Weil 點數",
+      "package": "src/series",
+      "formula": "N₁ = q+1+Σ_x χ_q(x³+ac·x+bc)，a = q+1−N₁",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "等式",
+      "id": "E71",
+      "statement": "Frobenius 冪和",
+      "package": "src/series",
+      "formula": "s₀=2, s₁=a, sₙ=a·sₙ₋₁−q·sₙ₋₂；Nₙ=qⁿ+1−sₙ",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "等式",
+      "id": "E72",
+      "statement": "Hasse–Weil zeta",
+      "package": "src/series",
+      "formula": "Z(E,T)=(1−aT+qT²)/((1−T)(1−qT))，P(T)=1−aT+qT²",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "等式",
+      "id": "E73",
+      "statement": "對數導數恆等式",
+      "package": "src/series",
+      "formula": "S·P·Q = P′Q − PQ′，S(T)=Σ_{n≥1}NₙTⁿ⁻¹",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "等式",
+      "id": "E74",
+      "statement": "Weil 函數方程",
+      "package": "src/series",
+      "formula": "qT²P(1/(qT))=P(T)，qT²Q(1/(qT))=Q(T) ⇒ Z(1/(qT))=Z(T)",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "等式",
+      "id": "E75",
+      "statement": "Weil 顯式公式",
+      "package": "src/series",
+      "formula": "log Z(E,T)=Σ_{n≥1}NₙTⁿ/n；exp(L_N)·Q≡P (mod T^{N+1})",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "等式",
+      "id": "E76",
+      "statement": "顯式公式餘項界",
+      "package": "src/series",
+      "formula": "|Σ_{n>N}Nₙtⁿ/n| ≤ 4(qt)^{N+1}/((N+1)(1−qt))，|qt|<1",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "等式",
+      "id": "E77",
+      "statement": "RH 代數式（有限域曲線）",
+      "package": "src/series",
+      "formula": "α+β=a, αβ=q, a²−4q≤0 ⇒ |α|²=|β|²=q",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "等式",
+      "id": "E78",
+      "statement": "Newton–Hensel 冪等元提升",
+      "package": "src/compose",
+      "formula": "E ← E + (1−2E)(E²−E)，(E²−E)∈I^{2^s} ⇒ K₀(R)≅K₀(R/I)",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "等式",
+      "id": "E79",
+      "statement": "Waldhausen 可加性 / U_add",
+      "package": "src/compose",
+      "formula": "[B]=[A]+[C]；K₀=ℤ·[R]，U([R^i])=i；rank(E⊕F)=rank E+rank F",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-05"
+    },
+    {
+      "kind": "等式",
+      "id": "E80",
+      "statement": "δ-Galois / Abel / Kovacic",
+      "package": "src/algebra",
+      "formula": "δ(det Y)=tr(A)det Y；G=⋂Z_{GL₂}(A_k)；δu+u²+a₁u+a₀=0",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-05"
     }
   ],
   "references": [
@@ -3513,6 +4107,76 @@
       "2025",
       "https://publications.mfo.de/bitstream/handle/mfo/4320/OWR_2025_36.pdf",
       "A¹-同倫不變性 K₀(R[t])≅K₀(R)；K₀(R[t,t⁻¹])≅K₀(R)⊕K₋₁(R)；么模列補全；非交換動機"
+    ],
+    [
+      "R46",
+      "Hansen–Ghrist / Wei–Wei 高維 sheaf Laplacian (arXiv:2505.23993v1)",
+      "2025/26",
+      "https://arxiv.org/pdf/2505.23993v1",
+      "Theorem 1 H^q(K;F)≃ker Δ^q；Example 4/5：L¹_F=C⁰(C⁰)ᵀ+(C¹)ᵀC¹、L⁰_{F⊗G}=L⁰_F⊗I₃；ringed-space module sheaf 與 2-simplex"
+    ],
+    [
+      "R47",
+      "Pith review of arXiv:2505.23993 / arXiv:2501.06197 (ANM sheaf)",
+      "2026",
+      "https://pith.science/paper/2505.23993",
+      "審查提醒 Hessian recovery 只在 graph Example 3 成立，高維應稱 1-st Laplacian 保留 Hessian-like blocks；ANM 層 L⁰_F=H_ANM、6 rigid modes=H⁰"
+    ],
+    [
+      "R48",
+      "Bochner/Forman 離散曲率與 H₁^F=δ₀δ₀*+δ₁*δ₁ (arXiv:2610.28455v1)",
+      "2026",
+      "https://arxiv.org/html/2610.28455v1",
+      "高維 cellular sheaf 之 1-st Laplacian 分解；Weitzenböck/Bochner 型曲率恆等式"
+    ],
+    [
+      "R49",
+      "Weil conjectures / Hasse–Weil zeta of elliptic curves over F_q",
+      "1949/1974",
+      "https://grokipedia.com/page/Weil_conjectures",
+      "Z(E,T)=(1−aT+qT²)/((1−T)(1−qT))、N_n=qⁿ+1−αⁿ−βⁿ、Hasse |a|≤2√q、函數方程與 RH（有限域曲線）"
+    ],
+    [
+      "R50",
+      "Matsukawa, Higher Noncommutative Motives and Higher K-theory, arXiv:2611.07262",
+      "2026",
+      "https://arxiv.org/abs/2611.07262",
+      "2026-11-05 提交；stable (∞,n)-categories 之 higher additive motives；exact sequences 之泛性質；enriched presheaves 局部化與 weighted Waldhausen S-construction on complete exact flags"
+    ],
+    [
+      "R51",
+      "Hilman, Parametrised noncommutative motives and equivariant cubical descent (arXiv:2202.02591v3)",
+      "2026",
+      "https://www.sas.rochester.edu/mth/sites/doug-ravenel/otherpapers/hilman-parametrised-motives.pdf",
+      "parametrised perfect–stable categories；NMot^pw corepresents K-theory；additive spectral invariant on Karoubi sequences；Q-construction motivically local"
+    ],
+    [
+      "R52",
+      "Bachmann–Elmanto–Morrow, A¹-invariant motivic cohomology of schemes, arXiv:2508.09915",
+      "2025",
+      "https://arxiv.org/pdf/2508.09915",
+      "Voevodsky slice filtration、cdh-motivic cohomology、zeroth slice 與 homotopy K-theory KH 之關係；A¹-不變性與 KH(X×A¹)≅KH(X)"
+    ],
+    [
+      "R53",
+      "Tabuada / Blumberg–Gepner–Tabuada, universal additive invariant U_add (arXiv:1511.03589v3)",
+      "2015/2020",
+      "https://arxiv.org/html/1511.03589v3",
+      "U_add 為 universal additive invariant；Morita equivalences、Waldhausen additivity、K-theory corepresentable、split-exact sequences"
+    ],
+    [
+      "R54",
+      "Spectral Picard–Vessiot / differential Galois theory, arXiv:2503.03429 & arXiv:2510.07323",
+      "2025",
+      "https://arxiv.org/pdf/2503.03429",
+      "PV extensions、LCLM 與 Wronskian、classical groups 之 direct problem、Levi decomposition 與 G_a-tower"
+    ],
+    [
+      "R55",
+      "Kovacic algorithm / Picard–Vessiot lecture notes (HAL hal-04117227v1)",
+      "1986/2023",
+      "https://hal.science/hal-04117227v1/document",
+      "Theorem 2.5：Liouvillian solutions ⟺ Riccati 有次數 1/2/{4,6,12} 代數解；Kovacic cases I/II/III 與 SL₂(C) 子群分類"
     ]
   ]
 }

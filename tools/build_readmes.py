@@ -86,8 +86,8 @@ INTERFACES = {
     "src/graphs": "接入：n,k 或位元遮罩鄰接列。輸出：chromatic_number、max_clique、betti_numbers、tutte_coeffs、theorem_*。",
     "src/compose": "接入：布爾格、布林矩陣、矩陣、Context。輸出：lan_poset/ran_poset、kronecker、relation_tensor、theorem_C*。",
     "src/catalog": "接入：docs/catalog.json。輸出：catalog()、catalog_size()、count_kind()、theorem_catalog_consistent()。",
-    "cmd/main": "接入：root @c1.report()。輸出：stdout inspect 報表（51 行憑證）。",
-    "docs": "接入：tools/build_catalog.py。輸出：catalog.json（355 筆）。",
+    "cmd/main": "接入：root @c1.report()。輸出：stdout inspect 報表（56 行憑證）。",
+    "docs": "接入：tools/build_catalog.py。輸出：catalog.json（421 筆）。",
     "tools": "接入：Python 標準庫 + openpyxl。輸出：catalog.json、catalog.mbt、algorithm.xlsx、各 README.md。",
 }
 
@@ -99,7 +99,7 @@ def folder_readme(folder):
     eq = [e for e in E if e["package"] == folder and e["kind"] == "等式"]
     ax = [e for e in E if e["package"] == folder and e["kind"] == "公理"]
     L = ["# " + folder + " — " + ROLES[folder], ""]
-    L += ["> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。", ""]
+    L += ["> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。", ""]
     if ax:
         L += ["## 已獲得公理", ""] + ["- **{}** {}".format(e["id"], e["statement"]) for e in ax] + [""]
     L += ["## 已獲得定理列表", ""]
@@ -130,11 +130,11 @@ def folder_readme(folder):
     return "\n".join(L)
 
 
-ROOT_README = """# C1 — 全局公理伽羅瓦對應（C1-01 首次開發切片）
+ROOT_README = """# C1 — 全局公理伽羅瓦對應（C1-01..C1-05 累積切片）
 
 > 依 `工程內容03.md`／`工程約束.md`／`作業規範.md`／`組合範例.md` 建立之首次切片。
 > 全局公理 **G = 伽羅瓦對應（極性伴隨）**；局部公理 L1..L5 由本回合代理決定。
-> 本回合為**首次開發**，尚未達成 5,000,000 行／10,000 條演算法之最終目標；未完成部分不列為已完成。
+> C1-01 為**首次開發**；C1-02..C1-05 逐回合補回前沿待辦。尚未達成 5,000,000 行／10,000 條演算法之最終目標；未完成部分不列為已完成。
 
 ## 全局公理
 
@@ -172,7 +172,7 @@ src/exact    ──► src/axioms ──► src/galois ──► src/series ─�
 - `src/algebra`：歪多項式環（Ore）、Hilbert–Poincaré 級數、局部化、Ext¹、Morita
 - `src/graphs`：克內澤圖、Lovász/EKR、Ramsey、擬陣 Tutte、單純複形 Betti
 - `src/compose`：14 種組合手法（Kan、束、纖維積、單子、張量、纖維範疇、推出、交織、博弈管線等）
-- `src/catalog`：355 筆定理／演算法／等式登錄
+- `src/catalog`：421 筆定理／演算法／等式登錄
 - `algorithm.xlsx`：由 `docs/catalog.json` 單一來源產生之活頁簿
 - `Dev.txt`：流水式帳本；`AGENT.md` 與 `工程約束.md` 為同一份文件
 
@@ -197,8 +197,8 @@ moon run cmd/main
 | `moon check --deny-warn`（全域） | Finished，21 tasks |
 | `moon prove --deny-warn` | `1 of 1 packages proved, 17 goals proved` |
 | `moon build` | wasm artifact 生成 |
-| `moon run cmd/main` | 51 行真實 inspect 憑證，全數 OK |
-| 登錄表 | 6 公理／32 定義／8 命題／14 引理／120 定理／110 演算法／65 等式 = 355 筆；前沿文獻 45 筆 |
+| `moon run cmd/main` | 56 行真實 inspect 憑證，全數 OK |
+| 登錄表 | 6 公理／42 定義／8 命題／14 引理／141 定理／130 演算法／80 等式 = 421 筆；前沿文獻 55 筆 |
 | CI | `.github/workflows/c1-ci.yml` 推送全域編譯與形式化驗證 |
 
 ## C1-02：前沿查證與 §6 待辦補回
@@ -292,15 +292,35 @@ Oberwolfach 2025、Caruso–Le Borgne / Gómez-Torrecillas），完整書目見
 | δ-Galois／Kalai–Meshulam | F_5[t]/(t⁵) 之 δ-等變平移群與固定環；誘導子複形 Leray 數與擬陣 ρ(V∖τ)≤λ(X) 憑證 | T-Ore16, T-Gph16 |
 | 集庫成群 | 對 355 筆真實登錄項抽取 33 位元簽章，Jaccard + union-find 聚類，驗證分割／門檻單調／決定性 | T-C25 |
 
+## C1-05：最大責任補齊 §6''' 剩餘數學結構
+
+依《作業規範》「不時聯網搜查及查證最前沿論文」，本回合再查證 R46..R55 共 10 組
+（arXiv:2505.23993v1 高維 sheaf 1-st Laplacian 與 Example 4/5 之 `C⁰(C⁰)ᵀ`、
+Pith 對 Hessian recovery 範圍之審查、arXiv:2610.28455v1 之 Bochner/Forman 曲率、
+Weil/Hasse–Weil zeta 與顯式公式、arXiv:2611.07262（2026-11-05）higher additive
+noncommutative motives、Hilman arXiv:2202.02591v3、Bachmann–Elmanto–Morrow
+arXiv:2508.09915、BGT/Tabuada `U_add`、arXiv:2503.03429/2510.07323 之 PV、
+Kovacic HAL hal-04117227v1）。完整書目見 `algorithm.xlsx`「前沿文獻」與
+`docs/catalog.json`。本回合僅修改既有檔案，未新增任何文檔。
+
+| §6''' 待辦 | 本回合補回 | 憑證 |
+| --- | --- | --- |
+| 高維 sheaf 1-st persistent Laplacian／環模值層／ANM Hessian | R=ℚ[ε]/ε² 秩 1 環值層之 `d¹d⁰=0`、q=1 persistent 1-st Laplacian、ANM `L⁰_F=H_ANM` 與 6 rigid modes；並以 BigInt Bareiss 修復 12×12 `L¹` 主子式之 Int64 溢位 | T-Gph17..Gph20, T-X6 |
+| Connes／Spec Z 解析極限之可計算憑證 | 六條 F_q 橢圓曲線逐條精確算 N₁、a、Nₙ、Z(E,T)、函數方程、Hasse–Weil 界（有限域曲線 RH）、Weil 顯式公式之 `exp(L_N)·Q≡P` 與精確有理餘項界 | T-W1..W7 |
+| 非交換動機／導出方案連續 K 理論 | F_p[t,u]/(t^k,u^l) 之 Newton–Hensel 冪等元提升（K₀ 冪零不變）、塔 R_k→R_{k−1} 之連續性、u↦0 之 KH A¹-同倫不變、關係矩陣回代求 `U_add` 之泛性質 | T-NCM1..NCM5 |
+| 一般 Picard–Vessiot／δ-Galois | 任意二階 δ-模 ∇=δ−A(t) 之解空間維度、基本解矩陣與 Abel 恆等式、gauge 群精確階數 480/20/16/480、Kovacic 第一型「Riccati 根數＝不變直線數＝dim V」有限 Galois 對應、C1-04 `G_a(F₅)` 嵌入 | T-PV1..PV4 |
+
 ## 未完成（誠實標記）
 
-- 5,000,000 行程式碼、10,000 條中階以上演算法：目前 **110 / 10,000** 條演算法、
-  約 8 千餘行，仍為早期切片；「集庫成群」已建立聚類演算法與憑證，但庫規模本身未達最終目標。
-- 高維 sheaf 之 **1-st persistent Laplacian**（R30 之 2-維單純複形／環值層）、
-  ANM Hessian 對應、非交換動機與導出方案連續 K 理論（R36）尚未落地為可計算憑證；
-  本回合 q=0 persistent sheaf Laplacian 與 filtration 已完整實作。
-- Connes 譜 triple 之無限維極限／RH 等價證明、Spec Z 之 adelic Abel–Jacobi 解析
-  （archimedean 對數）與 Weil 顯式公式，以有限模型給出代數憑證，非解析極限證明。
+- 5,000,000 行程式碼、10,000 條中階以上演算法：目前 **130 / 10,000** 條演算法、
+  約 1.2 萬行，仍為早期切片；「集庫成群」已建立聚類演算法與憑證，但庫規模本身未達最終目標。
+- Connes 譜 triple 之**無限維解析極限／RH 一般等價證明**、Spec Z 之 archimedean
+  adelic Abel–Jacobi 解析：本回合補上的是逐條有限域曲線與有理餘項界的**有限精確憑證**，
+  並非無限維解析極限或 RH 一般證明。
+- 高階 K 理論、導出方案之 ∞-範疇極限、higher motives（Matsukawa 2026 之
+  (∞,n)-category 層級）：本回合只落地 K₀ 層級、有限維冪零增厚之憑證。
+- 無限維複數域 PV 擴張、代數閉包上之完整 δ-Galois 群與解析單值群：
+  本回合為 F_p[t]/(t^p) 上任意二階 δ-模之有限精確模型。
 - `docs/` 其餘設計文件：依《工程約束》「非首次開發、創建新文檔前需先獲准」，
   本回合不另建新文檔，改以既有 `Dev.txt`、`README.md` 與各資料夾 README 記錄。
 - git 仍無 remote：CI workflow 與 commit 僅本機落地，**未 push**。

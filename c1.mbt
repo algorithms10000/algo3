@@ -207,6 +207,33 @@ pub fn report() -> String {
     lc[0].to_string() + "/" + lc[1].to_string() + "/" + lc[2].to_string() +
       "/" + lc[3].to_string() + "/" + lc[4].to_string() + "/" +
       flag(@compose.theorem_library_clustering()))
+  // ── C1-05：補回 §6''' 最前沿數學結構 ──────────────────────────────
+  push_line(buf, "T-Gph17..20 高維環值層 1-st Laplacian / persistent q=1 / ANM Hessian",
+    flag(@graphs.theorem_sheaf2_hodge(@graphs.sheaf2_demo())) + "/" +
+      flag(@graphs.theorem_sheaf1_persistent(@graphs.sheaf1_demo())) + "/" +
+      flag(@graphs.theorem_anm_hessian(@graphs.anm_demo())) + "/" +
+      flag(@graphs.theorem_sheaf_certificates()))
+  push_line(buf, "T-X6 BigInt Bareiss 任意精度行列式 / PSD 主子式憑證",
+    flag(@exact.theorem_bareiss_determinant()) + "/" +
+      flag(@graphs.psd_principal_minors(@graphs.sheaf2_laplacian1(@graphs.sheaf2_demo()))))
+  push_line(buf, "T-W1..W7 Hasse–Weil / 函數方程 / Weil 顯式公式 / 有理餘項界",
+    flag(@series.theorem_weil_curve()) + "/" +
+      flag(@series.theorem_weil_explicit_tail()) + "/" +
+      @series.weil_curve(19L, 0L, 1L).a.to_string() + "/" +
+      @series.weil_point_count(19L, 0L, 1L).to_string() + "/" +
+      @series.weil_tail_bound(19L, 8, @exact.rat(1L, 76L)).n.to_string())
+  push_line(buf, "T-NCM1..NCM5 冪零不變 / K₀ 連續性 / KH A¹ / U_add 泛性質",
+    flag(@compose.theorem_nilinvariance()) + "/" +
+      flag(@compose.theorem_k0_continuity()) + "/" +
+      flag(@compose.theorem_kh_homotopy()) + "/" +
+      flag(@compose.theorem_universal_additive_invariant()) + "/" +
+      flag(@compose.theorem_noncomm_motives()))
+  push_line(buf, "T-PV1..PV4 基本解/Wronskian / gauge 群 / Kovacic / G_a 嵌入",
+    flag(@algebra.theorem_pv_wronskian()) + "/" +
+      flag(@algebra.theorem_pv_gauge_group()) + "/" +
+      flag(@algebra.theorem_pv_kovacic()) + "/" +
+      flag(@algebra.theorem_pv_additive_subgroup()) + "/" +
+      @algebra.diff_solution_nullity(@algebra.diff_module(5L, 5, [[0L, 1L, 3L, 2L]])).to_string())
   push_line(buf, "catalog 登錄筆數 / 一致性",
     @catalog.catalog_size().to_string() + "/" +
       flag(@catalog.theorem_catalog_consistent()))

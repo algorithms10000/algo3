@@ -1,6 +1,6 @@
 # src/series — 局部公理 L1/L2/L3：多項式、形式冪級數、洛朗、狄利克雷、商環、全純
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得公理
 
@@ -34,6 +34,13 @@
 - **T-A6** det_ζ=∏_{k≥1}k^{c_k}=|[t^{c₀}]χ_D| 且 ζ_D(2)=tr(D⁺²)
 - **T-A7** Grothendieck–Lefschetz：exp(Σω t^k/k)=(1−t)^{−ω}
 - **T-A8** adelic AJ 單射、div(AJ(D))=D、Pic(Spec Z)=0
+- **T-W1** log Z 導數恆等式 S·P·Q=P′Q−PQ′（mod T^N）
+- **T-W2** genus 1 函數方程 Z(E,1/(qT))=Z(E,T)，扭轉算子為對合
+- **T-W3** Hasse–Weil 界 |a|≤2√q（a²≤4q）與 a=q+1−N₁
+- **T-W4** 有限域曲線 RH 之代數憑證 |α|=|β|=√q 與 Newton 恆等式
+- **T-W5** Weil 顯式公式 exp(Σ_{n≤N}NₙTⁿ/n)·Q≡P (mod T^{N+1})
+- **T-W6** 解析極限可計算憑證：4(qt)^{N+1}/((N+1)(1−qt)) 有理餘項界
+- **T-W7** 六條 F_q 橢圓曲線全套有限精確憑證
 
 ## 已實作演算法列表
 
@@ -62,6 +69,12 @@
 - **AL089** kl_pow_proj / kl_comp / kl_compose（O(M(n)log m+M(m))）
 - **AL109** connes_rank_one / regularized_determinant / spectral_zeta（O(τ(n)³)）
 - **AL110** spec_z_zeta_series / adelic_abel_jacobi（O(cut²+2^p)）
+- **AL116** weil_pow_mod / weil_legendre / weil_point_count（O(q log p)）
+- **AL117** weil_power_sum / weil_counts（Frobenius 冪和遞推）（O(N)）
+- **AL118** weil_log_derivative_identity / weil_poly_mul（O(N²)）
+- **AL119** weil_twist / weil_functional_equation（O(deg²)）
+- **AL120** weil_explicit_formula（fps_exp 之形式冪級數驗證）（O(N²)）
+- **AL121** weil_tail_bound / theorem_weil_explicit_tail（O(N)）
 
 ## 等式
 
@@ -81,6 +94,14 @@
 - **E62** Connes rank-one：`det(D+I+aP)=det(D+I)(1+a)`
 - **E63** Lefschetz zeta：`Z(X,t)=exp(Σ_k #X(F_{q^k})t^k/k)=1/(1−t)^{ω(n)}`
 - **E64** Adelic Abel–Jacobi：`AJ(D)=∏_p p^{e_p}；div(AJ(D))=D`
+- **E70** Weil 點數：`N₁ = q+1+Σ_x χ_q(x³+ac·x+bc)，a = q+1−N₁`
+- **E71** Frobenius 冪和：`s₀=2, s₁=a, sₙ=a·sₙ₋₁−q·sₙ₋₂；Nₙ=qⁿ+1−sₙ`
+- **E72** Hasse–Weil zeta：`Z(E,T)=(1−aT+qT²)/((1−T)(1−qT))，P(T)=1−aT+qT²`
+- **E73** 對數導數恆等式：`S·P·Q = P′Q − PQ′，S(T)=Σ_{n≥1}NₙTⁿ⁻¹`
+- **E74** Weil 函數方程：`qT²P(1/(qT))=P(T)，qT²Q(1/(qT))=Q(T) ⇒ Z(1/(qT))=Z(T)`
+- **E75** Weil 顯式公式：`log Z(E,T)=Σ_{n≥1}NₙTⁿ/n；exp(L_N)·Q≡P (mod T^{N+1})`
+- **E76** 顯式公式餘項界：`|Σ_{n>N}Nₙtⁿ/n| ≤ 4(qt)^{N+1}/((N+1)(1−qt))，|qt|<1`
+- **E77** RH 代數式（有限域曲線）：`α+β=a, αβ=q, a²−4q≤0 ⇒ |α|²=|β|²=q`
 
 ## 資料夾視角依賴關係圖
 
@@ -132,9 +153,12 @@
   kl_pow_proj  kl_compose  theorem_kl_pow_proj  theorem_kl_compose
   connes_rank_one  regularized_determinant  spectral_zeta  theorem_connes_rank_one
   theorem_connes_zeta_det  lefschetz_trace  spec_z_zeta_series  theorem_spec_z_lefschetz
-  adelic_abel_jacobi  theorem_spec_z_adelic  Poly  Fps
-  Laurent  Dirichlet  Quot  DivMod
-  ConvAlg
+  adelic_abel_jacobi  theorem_spec_z_adelic  weil_point_count  weil_curve
+  weil_power_sum  weil_counts  weil_poly_p  weil_poly_q
+  weil_log_derivative_identity  weil_functional_equation  weil_hasse  weil_rh_modulus
+  weil_explicit_formula  weil_tail_bound  theorem_weil_explicit_tail  theorem_weil_curve
+  Poly  Fps  Laurent  Dirichlet
+  Quot  DivMod  ConvAlg  WeilCurve
 ```
 
 ## 驗證

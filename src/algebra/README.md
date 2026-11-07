@@ -1,6 +1,6 @@
 # src/algebra — Ore 歪多項式環、Hilbert–Poincaré、局部化、Ext¹、Morita
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得定理列表
 
@@ -38,6 +38,10 @@
 - **T-Ore16** δ-Galois：G_a(F_5) 與 δ 交換，固定環 = δ-常數 F_5
 - **T-Ore17** A¹-不變性：F_5[u] 么模列皆可補全，K₀(F_5[u])≅ℤ
 - **T-Ore18** Laurent 局部化 gcd 乘法性 u^k·gcd(a,b)
+- **T-PV1** 一般 δ-模基本解矩陣與 Abel 恆等式 δ(det Y)=tr(A)det Y
+- **T-PV2** δ-Galois gauge 群精確階數：480 / 20 / 16 / 480 與乘法封閉
+- **T-PV3** Kovacic 第一型有限 Galois 對應：Riccati 根數 = 不變直線數 = dim V
+- **T-PV4** C1-04 G_a(F₅) 模型嵌入一般 gauge 群之階 p 加法子群
 
 ## 已實作演算法列表
 
@@ -62,6 +66,11 @@
 - **AL098** sfq_specialize / parametric_gcrd_strata（O(5·(df+dg)³)）
 - **AL099** fp5_translate / fp5_delta δ-Galois 群（O(5³)）
 - **AL100** fu_gcd_ext / a1_homotopy / theorem_a1_*（O(125²·d²)）
+- **AL126** dr_mul / dr_der（Euler δ=t d/dt 之截斷環）（O(m²)）
+- **AL127** diff_fundamental（基本解矩陣 Picard 遞推）（O(m²)）
+- **AL128** diff_solution_nullity（2m×2m F_p 線性映射秩）（O(m³)）
+- **AL129** dm_gl2 / diff_gauge_group / diff_invariant_lines（O(p⁴·m+p²·|G|)）
+- **AL130** diff_riccati_roots / theorem_pv_kovacic（O(p·m²)）
 
 ## 等式
 
@@ -80,6 +89,7 @@
 - **E54** Reduced norm：`N(f)=Aσ(A)−t Bσ(B) ∈ F_5[t]，t=x²`
 - **E55** Ore bound：`deg φ ≤ 2 deg f；φ = N(f)/lc(N(f))`
 - **E65** A¹-同倫不變性：`K₀(F_5[u])≅K₀(F_5)≅ℤ；det[[a,b],[−q,p]]=1`
+- **E80** δ-Galois / Abel / Kovacic：`δ(det Y)=tr(A)det Y；G=⋂Z_{GL₂}(A_k)；δu+u²+a₁u+a₀=0`
 
 ## 資料夾視角依賴關係圖
 
@@ -133,9 +143,12 @@
   sfq_specialize  parametric_gcrd_strata  theorem_parametric_gcrd  sfq_module_groebner
   theorem_ore_module_groebner  theorem_ore_parametric_groebner  ore_two_level_factor  theorem_ore_two_level
   theorem_delta_galois  fu_gcd_ext  a1_homotopy  theorem_a1_invariance
-  theorem_a1_laurent  SkewPoly  OreDiv  Fq2
-  SkewFq  SFqDiv  OreGCL  F5pDiv
-  SkewGB  FuDiv  FuBezout
+  theorem_a1_laurent  diff_module  diff_fundamental  theorem_pv_wronskian
+  diff_solution_nullity  diff_gauge_group  diff_invariant_lines  diff_riccati_roots
+  theorem_pv_gauge_group  theorem_pv_kovacic  theorem_pv_additive_subgroup  SkewPoly
+  OreDiv  Fq2  SkewFq  SFqDiv
+  OreGCL  F5pDiv  SkewGB  FuDiv
+  FuBezout  DiffModule
 ```
 
 ## 驗證

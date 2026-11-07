@@ -1,6 +1,6 @@
 # cmd/main — inspect 輸出介面（moon run cmd/main）
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得定理列表
 
@@ -23,7 +23,7 @@
 
 ## 接入／輸出接口
 
-接入：root @c1.report()。輸出：stdout inspect 報表（51 行憑證）。
+接入：root @c1.report()。輸出：stdout inspect 報表（56 行憑證）。
 
 ## 驗證
 

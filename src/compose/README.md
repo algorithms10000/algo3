@@ -1,6 +1,6 @@
 # src/compose — 14 種組合手法：Kan、束、纖維積、單子、張量、纖維範疇、推出、交織、博弈
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得定理列表
 
@@ -31,6 +31,11 @@
 - **T-C23** codensity monad Ran_K K 為 closure operator
 - **T-C24** Π_f 橋接全局公理 G：Π_f P_A = F(A)
 - **T-C25** 集庫成群：聚類分割、Jaccard 門檻、單調性與決定性
+- **T-NCM1** K₀ 冪零不變性：Newton 提升 E←E+(1−2E)(E²−E) 且 rank 不變
+- **T-NCM2** 導出 K 連續性：塔 R_k→R_{k−1} 之 K₀≅holim K₀≅ℤ
+- **T-NCM3** KH 之 A¹-同倫不變性（有限層）：u↦0 不改變冪等元秩
+- **T-NCM4** U_add 泛性質：關係矩陣秩 5、核一維、Waldhausen 可加與 Morita 穩定
+- **T-NCM5** 非交換動機有限層四項憑證合取
 
 ## 已實作演算法列表
 
@@ -48,6 +53,10 @@
 - **AL106** sigma_f / pullback_f / pi_f / pushforward_monad（O(2^{nx+ny})）
 - **AL107** lan_presheaf / ran_presheaf / codensity_value（O(2^{m+n}mn)）
 - **AL108** library_signature / library_clustering（O(N²)）
+- **AL122** nr_mul（雙變數截斷卷積）/ nr_eval_u0（O((kl)²)）
+- **AL123** idempotent_lift（Newton–Hensel 冪等元提升）（O(n³·log(kl))）
+- **AL124** k0_rref / k0_kernel（關係矩陣回代求 U_add）（O(n³)）
+- **AL125** nm_block_sum（Waldhausen 分裂直和）/ idempotent_rank（O(n²)）
 
 ## 等式
 
@@ -59,6 +68,8 @@
 - **E50** 衍生相容矩陣：`M[v][p] = [inv_p(V_v(D₀)) = inv_p(D₀)] ∈ F₂^{21×14}`
 - **E60** Pushforward monad：`T=Π_f f*=Ran_f f*；T(B)=B∪(Y∖im f)`
 - **E61** Ran / codensity：`(Ran_K F)(q)=⋀_{q≤Kp}F(p)；(Ran_K K)(q)=min{Kp|q≤Kp}`
+- **E78** Newton–Hensel 冪等元提升：`E ← E + (1−2E)(E²−E)，(E²−E)∈I^{2^s} ⇒ K₀(R)≅K₀(R/I)`
+- **E79** Waldhausen 可加性 / U_add：`[B]=[A]+[C]；K₀=ℤ·[R]，U([R^i])=i；rank(E⊕F)=rank E+rank F`
 
 ## 資料夾視角依賴關係圖
 
@@ -101,9 +112,12 @@
   pushforward_monad  theorem_pushforward_adjunction  theorem_pushforward_monad  poset_kan
   ran_presheaf  lan_presheaf  kan_pullback  theorem_kan_adjunction
   codensity_value  theorem_codensity_monad  theorem_pi_polar_bridge  library_signature
-  library_clustering  theorem_library_clustering  library_cluster_stats  PosetLattice
-  UnionFind  Fibered  WeaveElem  DerivData
-  FiniteMap  PosetKan  LibraryClustering
+  library_clustering  theorem_library_clustering  library_cluster_stats  idempotent_lift
+  idempotent_is_exact  idempotent_rank  theorem_nilinvariance  theorem_k0_continuity
+  theorem_kh_homotopy  k0_relation_matrix  theorem_universal_additive_invariant  theorem_noncomm_motives
+  PosetLattice  UnionFind  Fibered  WeaveElem
+  DerivData  FiniteMap  PosetKan  LibraryClustering
+  NilRing
 ```
 
 ## 驗證

@@ -1,6 +1,6 @@
 # src/exact — 精確算術層：Rat、gcd/egcd、模算術、GF(2) 秩、Smith 標準型
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得公理
 
@@ -15,6 +15,7 @@
 - **T-X3** Toeplitz 循環嵌入 NTT 之矩陣向量乘積 = 直接乘積（TMVP）
 - **T-X4** Toom–Cook 3-way（5 求值點 + Lagrange 插值）= 整數卷積
 - **T-X5** n=3⁹ 時 NTT < Toom-3 < Karatsuba < school-book 之運算量序
+- **T-X6** BigInt Bareiss 行列式無溢位：6×6 中介量 1.5·10¹⁹ 仍給 det=16231235440
 
 ## 已實作演算法列表
 
@@ -36,6 +37,7 @@
 - **AL091** toeplitz_mvp_ntt 循環嵌入（O(n log n)）
 - **AL092** toom3_mul 五點求值 Lagrange 插值（O(n^log₃5)）
 - **AL093** multiplication_costs 複雜度模型（O(log n)）
+- **AL115** big_gcd / br_norm / mat_det_bigrat / bigrat_sign（O(n³·log‖det‖)）
 
 ## 等式
 
@@ -43,6 +45,7 @@
 - **E40** Cayley–Hamilton：`p_M(M) = 0；det(M) = (−1)^n p_M(0)`
 - **E52** NTT 卷積：`c = NTT⁻¹(NTT(a)·NTT(b)) mod p, p=998244353`
 - **E53** Toom–3：`C(z)=Σ_j ℓ_j(z)·A(z_j)B(z_j)，5 次半尺寸乘法`
+- **E69** Bareiss 消去：`a_{ij}^{(k)} = (p·a_{ij} − a_{ik}a_{kj}) / prev，中介量恆為子式`
 
 ## 資料夾視角依賴關係圖
 
@@ -78,13 +81,14 @@ Int64/UInt64 位元 → gcd/Rat/矩陣秩 → 供所有上層套件做精確係�
   rank_mod_p  smith_invariants  det2  mat_from
   mat_new  mat_clone  mat_identity  mat_scale
   mat_add  mat_sub  mat_mul  mat_transpose
-  mat_equal  mat_trace  mat_det  mat_rank
-  poly_add  poly_scale  poly_mul  poly_eval
-  mat_charpoly  poly_from_points  mat_generalized_charpoly  poly_bisect
-  poly_smallest_positive_root  poly_deflate_zero  poly_from_roots  theorem_charpoly_cayley_hamilton
-  ntt  ntt_mul  theorem_ntt_equivalence  toeplitz_mvp_ntt
-  theorem_toeplitz_mvp  toom3_mul  theorem_toom3_equivalence  multiplication_costs
-  theorem_complexity_ordering  Rat  Bezout  Mat
+  mat_equal  mat_trace  bigrat_sign  mat_det_bigrat
+  mat_det  mat_rank  poly_add  poly_scale
+  poly_mul  poly_eval  mat_charpoly  poly_from_points
+  mat_generalized_charpoly  poly_bisect  poly_smallest_positive_root  poly_deflate_zero
+  poly_from_roots  theorem_charpoly_cayley_hamilton  ntt  ntt_mul
+  theorem_ntt_equivalence  toeplitz_mvp_ntt  theorem_toeplitz_mvp  toom3_mul
+  theorem_toom3_equivalence  multiplication_costs  theorem_complexity_ordering  theorem_bareiss_determinant
+  Rat  Bezout  Mat
 ```
 
 ## 驗證
