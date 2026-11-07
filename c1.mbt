@@ -150,6 +150,63 @@ pub fn report() -> String {
       @exact.rank_mod_p(vmat, 2L).to_string() + "/" +
       vclasses[0].to_string() + "/" + vcc[0].to_string() + "/" +
       vcc[1].to_string())
+  // ── C1-04：補回 §6'' 最前沿待辦 ──────────────────────────────────
+  push_line(buf, "T-S12/S13 Kinoshita–Li PowProj / Comp 近線性合成",
+    flag(@series.theorem_kl_pow_proj(4, 5)) + "/" +
+      flag(@series.theorem_kl_compose(9, 3)))
+  push_line(buf, "T-X2/X3/X4/X5 NTT / Toeplitz MVP / Toom–3 / 複雜度序",
+    flag(@exact.theorem_ntt_equivalence(16)) + "/" +
+      flag(@exact.theorem_toeplitz_mvp(8)) + "/" +
+      flag(@exact.theorem_toom3_equivalence(12)) + "/" +
+      flag(@exact.theorem_complexity_ordering()))
+  push_line(buf, "T-Ore10..13 reduced norm / bound / 中心分解 / 參數 gcrd",
+    flag(@algebra.theorem_ore_reduced_norm(3)) + "/" +
+      flag(@algebra.theorem_ore_bound(3)) + "/" +
+      flag(@algebra.theorem_ore_central_decomposition(4)) + "/" +
+      flag(@algebra.theorem_parametric_gcrd()))
+  push_line(buf, "T-Ore14..18 模組 Gröbner / 兩層分解 / δ-Galois / A¹-不變",
+    flag(@algebra.theorem_ore_module_groebner(3)) + "/" +
+      flag(@algebra.theorem_ore_parametric_groebner()) + "/" +
+      flag(@algebra.theorem_ore_two_level(3)) + "/" +
+      flag(@algebra.theorem_delta_galois()) + "/" +
+      flag(@algebra.theorem_a1_invariance()) + "/" +
+      flag(@algebra.theorem_a1_laurent()))
+  let fc = @galois.fcbo_run(@galois.fcbo_demo_context())
+  push_line(buf, "T-G11..G13 FCbO/PFCbO 閉包數/剪枝/分割",
+    fc.closures.to_string() + "/" + fc.skipped.to_string() + "/" +
+      flag(@galois.theorem_fcbo_new_test_active()) + "/" +
+      flag(@galois.theorem_pfcbo_partition(@galois.fcbo_demo_context(), 2, 3)))
+  let psg = @graphs.graph(7, [
+    0b0000110UL, 0b0000101UL, 0b0000011UL, 0b0010000UL,
+    0b0101000UL, 0b1010000UL, 0b0100000UL,
+  ])
+  let psflat = @graphs.LineBundle::{
+    g: psg, neg: Array::make(7, 0UL),
+  }
+  let psb = @graphs.persistent_sheaf(psflat, 4)
+  push_line(buf, "T-Gph11..15 persistent sheaf Laplacian / filtration / Kalai–Meshulam",
+    @graphs.persistent_sheaf_betti0(psb).to_string() + "/" +
+      flag(@graphs.theorem_persistent_sheaf_hodge(psb)) + "/" +
+      flag(@graphs.theorem_persistent_sheaf_psd(psb)) + "/" +
+      flag(@graphs.theorem_persistent_sheaf_filtration()) + "/" +
+      flag(@graphs.theorem_kalai_meshulam()))
+  let fm = @compose.finite_map(5, 4, [0, 0, 1, 3, 3])
+  let kn = @compose.poset_kan(4, [1, 3])
+  push_line(buf, "T-C20..C24 pushforward monad / Ran / codensity / 極性橋接",
+    flag(@compose.theorem_pushforward_monad(fm)) + "/" +
+      flag(@compose.theorem_kan_adjunction(kn)) + "/" +
+      flag(@compose.theorem_codensity_monad(kn)) + "/" +
+      flag(@compose.theorem_pi_polar_bridge()))
+  push_line(buf, "T-A5..A8 Connes rank-one / det_ζ / Lefschetz / Abel–Jacobi",
+    flag(@series.theorem_connes_rank_one(60L, 2L)) + "/" +
+      flag(@series.theorem_connes_zeta_det(60L)) + "/" +
+      flag(@series.theorem_spec_z_lefschetz(60L, 8)) + "/" +
+      flag(@series.theorem_spec_z_adelic(60L)))
+  let lc = @compose.library_cluster_stats()
+  push_line(buf, "T-C25 集庫成群(J=3/4)：總筆數/群數/多項群/最大群/演算法",
+    lc[0].to_string() + "/" + lc[1].to_string() + "/" + lc[2].to_string() +
+      "/" + lc[3].to_string() + "/" + lc[4].to_string() + "/" +
+      flag(@compose.theorem_library_clustering()))
   push_line(buf, "catalog 登錄筆數 / 一致性",
     @catalog.catalog_size().to_string() + "/" +
       flag(@catalog.theorem_catalog_consistent()))

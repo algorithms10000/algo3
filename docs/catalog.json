@@ -1,5 +1,5 @@
 {
-  "round": "C1-03",
+  "round": "C1-04",
   "global_axiom": "伽羅瓦對應",
   "entries": [
     {
@@ -8,7 +8,8 @@
       "statement": "全局公理：伽羅瓦對應（極性伴隨）",
       "package": "src/galois",
       "formula": "A ⊆ H(B) ⟺ B ⊆ F(A)",
-      "verification": "galois_certificate 穷舉 128/128 對 + Z3 l_adjoint"
+      "verification": "galois_certificate 穷舉 128/128 對 + Z3 l_adjoint",
+      "round": "C1-01"
     },
     {
       "kind": "公理",
@@ -16,7 +17,8 @@
       "statement": "有限支撐公理：精確有理係數 + 明確截斷次數",
       "package": "src/exact",
       "formula": "supp(a) 有限，係數 ∈ ℚ",
-      "verification": "Rat 正規化與 gcd 唯一性驗題"
+      "verification": "Rat 正規化與 gcd 唯一性驗題",
+      "round": "C1-01"
     },
     {
       "kind": "公理",
@@ -24,7 +26,8 @@
       "statement": "卷積么半群公理：四類環為同一代數之實例",
       "package": "src/series",
       "formula": "(a*b)(m) = Σ_{u*v=m} a(u)b(v)",
-      "verification": "theorem_conv_associative 三種么半群"
+      "verification": "theorem_conv_associative 三種么半群",
+      "round": "C1-01"
     },
     {
       "kind": "公理",
@@ -32,7 +35,8 @@
       "statement": "截斷商公理：π_N 為滿環同態",
       "package": "src/series",
       "formula": "π_N : ℚ[[t]] → ℚ[[t]]/(t^N)",
-      "verification": "Z3 l_conv2_associative + fps_mul 驗題"
+      "verification": "Z3 l_conv2_associative + fps_mul 驗題",
+      "round": "C1-01"
     },
     {
       "kind": "公理",
@@ -40,7 +44,8 @@
       "statement": "極性矩陣／楚空間公理：轉置為鏡像對偶",
       "package": "src/galois",
       "formula": "C^⊥ = (C_a, r^op, C_o)",
-      "verification": "theorem_chu_dual + theorem_graph_chu_dual"
+      "verification": "theorem_chu_dual + theorem_graph_chu_dual",
+      "round": "C1-01"
     },
     {
       "kind": "公理",
@@ -48,7 +53,8 @@
       "statement": "有限域算術公理：Int64 模運算 + GF(2) 位元打包",
       "package": "src/exact",
       "formula": "a^{-1} = egcd(a,p).x mod p",
-      "verification": "mod_inv/gf2_rank/smith_invariants 驗題"
+      "verification": "mod_inv/gf2_rank/smith_invariants 驗題",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -56,7 +62,8 @@
       "statement": "Rat：正規化精確有理數 (n,d), d>0, gcd(n,d)=1",
       "package": "src/exact",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -64,7 +71,8 @@
       "statement": "Bezout：擴展歐幾里得係數 (x,y,g)",
       "package": "src/exact",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -72,7 +80,8 @@
       "statement": "Context：關係 R ⊆ X×Y 的列位元遮罩",
       "package": "src/galois",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -80,7 +89,8 @@
       "statement": "GaloisCert：伴隨/閉包/概念格計算憑證",
       "package": "src/galois",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -88,7 +98,8 @@
       "statement": "Poly：多項式環 ℚ[t] 的稠密係數",
       "package": "src/series",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -96,7 +107,8 @@
       "statement": "Fps：形式冪級數環 ℚ[[t]] 截斷至 t^N",
       "package": "src/series",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -104,7 +116,8 @@
       "statement": "Laurent：洛朗級數環 ℚ((t))，帶最低次偏移",
       "package": "src/series",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -112,7 +125,8 @@
       "statement": "Dirichlet：狄利克雷級數環 DS(ℚ)",
       "package": "src/series",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -120,7 +134,8 @@
       "statement": "Quot：多項式商環 ℚ[t]/(m)",
       "package": "src/series",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -128,7 +143,8 @@
       "statement": "ConvAlg：卷積么半群代數 (kind/offset/coeffs)",
       "package": "src/series",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -136,7 +152,8 @@
       "statement": "MPoly/Monomial：多元單項式與指數向量",
       "package": "src/series",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -144,7 +161,8 @@
       "statement": "MonoIdeal：單項式理想的生成元指數向量",
       "package": "src/algebra",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -152,7 +170,8 @@
       "statement": "SkewPoly：Ore 擴展 ℚ[u][x;σ] 的左係數",
       "package": "src/algebra",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -160,7 +179,8 @@
       "statement": "Localized：S^{-1}ℤ 的元素",
       "package": "src/algebra",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -168,7 +188,8 @@
       "statement": "Matroid：GF(2) 可表擬陣",
       "package": "src/graphs",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -176,7 +197,8 @@
       "statement": "Complex：由 facets 生成的單純複形分層",
       "package": "src/graphs",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -184,7 +206,8 @@
       "statement": "PosetLattice：布爾格視為薄範疇",
       "package": "src/compose",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -192,7 +215,8 @@
       "statement": "Fibered：Grothendieck 構造的纖維資料",
       "package": "src/compose",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -200,7 +224,8 @@
       "statement": "UnionFind：共融推出的同餘閉包",
       "package": "src/compose",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "定義",
@@ -208,7 +233,8 @@
       "statement": "WeaveElem：2-上循環交織群的元素",
       "package": "src/compose",
       "formula": "",
-      "verification": "型別定義與構造函數，moon check --deny-warn"
+      "verification": "型別定義與構造函數，moon check --deny-warn",
+      "round": "C1-01"
     },
     {
       "kind": "命題",
@@ -216,7 +242,8 @@
       "statement": "極性 F,H 為反色調且 c=F∘H 為閉包算子",
       "package": "src/galois",
       "formula": "A ⊆ H(B) ⟺ B ⊆ F(A)",
-      "verification": "由所屬套件定理憑證導出"
+      "verification": "由所屬套件定理憑證導出",
+      "round": "C1-01"
     },
     {
       "kind": "命題",
@@ -224,7 +251,8 @@
       "statement": "截斷 π_N 保持乘法：π_N(ab)=π_N(a)π_N(b)",
       "package": "src/series",
       "formula": "fps_mul(a,b,N)",
-      "verification": "由所屬套件定理憑證導出"
+      "verification": "由所屬套件定理憑證導出",
+      "round": "C1-01"
     },
     {
       "kind": "命題",
@@ -232,7 +260,8 @@
       "statement": "狄利克雷卷積對應么半群 (ℕ≥1,×)",
       "package": "src/series",
       "formula": "ds_mul O(N log N)",
-      "verification": "由所屬套件定理憑證導出"
+      "verification": "由所屬套件定理憑證導出",
+      "round": "C1-01"
     },
     {
       "kind": "命題",
@@ -240,7 +269,8 @@
       "statement": "Ore 關係 x·r = σ(r)x + δ(r)",
       "package": "src/algebra",
       "formula": "x·u = q·u·x",
-      "verification": "由所屬套件定理憑證導出"
+      "verification": "由所屬套件定理憑證導出",
+      "round": "C1-01"
     },
     {
       "kind": "命題",
@@ -248,7 +278,8 @@
       "statement": "Hilbert 分子為 lcm 格的交錯和",
       "package": "src/algebra",
       "formula": "Q(t)=Σ_S(−1)^{|S|}t^{deg lcm(S)}",
-      "verification": "由所屬套件定理憑證導出"
+      "verification": "由所屬套件定理憑證導出",
+      "round": "C1-01"
     },
     {
       "kind": "命題",
@@ -256,7 +287,8 @@
       "statement": "束的匹配族由限制映射兩兩相容定義",
       "package": "src/compose",
       "formula": "s_i|_{U_i∩U_j} = s_j|_{U_i∩U_j}",
-      "verification": "由所屬套件定理憑證導出"
+      "verification": "由所屬套件定理憑證導出",
+      "round": "C1-01"
     },
     {
       "kind": "命題",
@@ -264,7 +296,8 @@
       "statement": "Morita 雙模映射為外積與內積",
       "package": "src/algebra",
       "formula": "Q⊗P → M_n(ℤ), P⊗Q → ℤ",
-      "verification": "由所屬套件定理憑證導出"
+      "verification": "由所屬套件定理憑證導出",
+      "round": "C1-01"
     },
     {
       "kind": "命題",
@@ -272,7 +305,8 @@
       "statement": "進位函數為正規化 2-上循環",
       "package": "src/compose",
       "formula": "φ(a,b)=⌊(a+b)/m⌋",
-      "verification": "由所屬套件定理憑證導出"
+      "verification": "由所屬套件定理憑證導出",
+      "round": "C1-01"
     },
     {
       "kind": "引理",
@@ -280,7 +314,8 @@
       "statement": "l_adjoint：極性伴隨性 (x ≤ −y) ⟺ (y ≤ −x)",
       "package": "src/axioms",
       "formula": "",
-      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證"
+      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證",
+      "round": "C1-01"
     },
     {
       "kind": "引理",
@@ -288,7 +323,8 @@
       "statement": "l_adjoint_sum：伴隨性的線性等價形式",
       "package": "src/axioms",
       "formula": "",
-      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證"
+      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證",
+      "round": "C1-01"
     },
     {
       "kind": "引理",
@@ -296,7 +332,8 @@
       "statement": "l_triple_identity：F∘H∘F = F",
       "package": "src/axioms",
       "formula": "",
-      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證"
+      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證",
+      "round": "C1-01"
     },
     {
       "kind": "引理",
@@ -304,7 +341,8 @@
       "statement": "l_chu_involution：H∘F = id",
       "package": "src/axioms",
       "formula": "",
-      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證"
+      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證",
+      "round": "C1-01"
     },
     {
       "kind": "引理",
@@ -312,7 +350,8 @@
       "statement": "l_conv2_associative：ℤ[[t]]/(t²) 卷積結合律",
       "package": "src/axioms",
       "formula": "",
-      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證"
+      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證",
+      "round": "C1-01"
     },
     {
       "kind": "引理",
@@ -320,7 +359,8 @@
       "statement": "l_ore_leibniz：q-整數恆等式 [5]_q=[2]_q+q²[3]_q",
       "package": "src/axioms",
       "formula": "",
-      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證"
+      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證",
+      "round": "C1-01"
     },
     {
       "kind": "引理",
@@ -328,7 +368,8 @@
       "statement": "l_ore_leibniz2：q-整數恆等式 [5]_q=[3]_q+q³[2]_q",
       "package": "src/axioms",
       "formula": "",
-      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證"
+      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證",
+      "round": "C1-01"
     },
     {
       "kind": "引理",
@@ -336,7 +377,8 @@
       "statement": "l_newton_step：(1+a)(2−(1+a)) = 1−a²",
       "package": "src/axioms",
       "formula": "",
-      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證"
+      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證",
+      "round": "C1-01"
     },
     {
       "kind": "引理",
@@ -344,7 +386,8 @@
       "statement": "l_newton_double：(1−a²)(1+a²) = 1−a⁴",
       "package": "src/axioms",
       "formula": "",
-      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證"
+      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證",
+      "round": "C1-01"
     },
     {
       "kind": "引理",
@@ -352,7 +395,8 @@
       "statement": "l_hilbert_geom：(1−t)H(t) = 1−t⁵",
       "package": "src/axioms",
       "formula": "",
-      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證"
+      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證",
+      "round": "C1-01"
     },
     {
       "kind": "引理",
@@ -360,7 +404,8 @@
       "statement": "l_compose_assoc：一階複合結合律係數恆等式",
       "package": "src/axioms",
       "formula": "",
-      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證"
+      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證",
+      "round": "C1-01"
     },
     {
       "kind": "引理",
@@ -368,7 +413,8 @@
       "statement": "閉包三律：擴張、單調、冪等（有限冪集穷舉）",
       "package": "src/galois",
       "formula": "",
-      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證"
+      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證",
+      "round": "C1-01"
     },
     {
       "kind": "引理",
@@ -376,7 +422,8 @@
       "statement": "NextClosure lectic 順序正確性：↑↓ 為閉包算子",
       "package": "src/galois",
       "formula": "",
-      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證"
+      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證",
+      "round": "C1-01"
     },
     {
       "kind": "引理",
@@ -384,7 +431,8 @@
       "statement": "GF(2) 秩-零化度：dim ker = ncols − rank",
       "package": "src/exact",
       "formula": "",
-      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證"
+      "verification": "moon prove + Z3（前 11 條）／有限穷舉憑證",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -392,7 +440,8 @@
       "statement": "伽羅瓦對應：伴隨性對所有子集對成立",
       "package": "src/galois",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -400,7 +449,8 @@
       "statement": "閉包算子三律：擴張／單調／冪等",
       "package": "src/galois",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -408,7 +458,8 @@
       "statement": "閉物件格與閉屬性格反同構（概念格完備格）",
       "package": "src/galois",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -416,7 +467,8 @@
       "statement": "Ganter NextClosure 完整列舉所有 intent",
       "package": "src/galois",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -424,7 +476,8 @@
       "statement": "楚空間對偶保持概念格大小（鏡像對稱）",
       "package": "src/galois",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -432,7 +485,8 @@
       "statement": "有限域上理想–簇 Galois 對應 F(H(V))=V",
       "package": "src/galois",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -440,7 +494,8 @@
       "statement": "完備格表示定理：閉包系統由 Chu space 產生",
       "package": "src/galois",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -448,7 +503,8 @@
       "statement": "共性定理：(ℕ,+)/(ℕ≥1,×)/(ℤ,+) 卷積皆結合",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -456,7 +512,8 @@
       "statement": "exp∘log = id 且 log∘exp = id (mod t^N)",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -464,7 +521,8 @@
       "statement": "Newton 迭代反演正確性",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -472,7 +530,8 @@
       "statement": "Lagrange 反演與合成恆等式 f(f^{-1})=t",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -480,7 +539,8 @@
       "statement": "洛朗級數賦值可加 val(ab)=val(a)+val(b)",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -488,7 +548,8 @@
       "statement": "Möbius 反演 ζ*μ=δ₁ 且 σ=ζ*id",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -496,7 +557,8 @@
       "statement": "Euler 乘積：乘法函數由質數冪決定",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -504,7 +566,8 @@
       "statement": "Kan 擴展 Lan_φ 保持環結構",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -512,7 +575,8 @@
       "statement": "操作子代入結合律 (P∘Q)∘R=P∘(Q∘R)",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -520,7 +584,8 @@
       "statement": "多元代入求值同態",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -528,7 +593,8 @@
       "statement": "Hilbert–Poincaré 容斥級數 = 標準單項式基底計數",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -536,7 +602,8 @@
       "statement": "ℚ[t]/(t^d) 的 Hilbert 函數差分遞推",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -544,7 +611,8 @@
       "statement": "skew PBW 擴展與交換環有相同 Hilbert 級數",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -552,7 +620,8 @@
       "statement": "量子平面交換律 x·u = q·u·x",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -560,7 +629,8 @@
       "statement": "Ore 乘法結合律",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -568,7 +638,8 @@
       "statement": "Ore 環無零因子：deg(fg)=deg f+deg g",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -576,7 +647,8 @@
       "statement": "gcrd 右整除 f 與 g",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -584,7 +656,8 @@
       "statement": "σ-Leibniz 律對所有單項式成立",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -592,7 +665,8 @@
       "statement": "Ore 擴展 Hilbert 級數 = (1−t)^{-n}",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -600,7 +674,8 @@
       "statement": "局部化 S^{-1}ℤ 的泛性質與唯一延拓",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -608,7 +683,8 @@
       "statement": "Ext¹ 分類：擴張類 g 個、中間群同構型 τ(g) 個",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -616,7 +692,8 @@
       "statement": "Baer 和構成 ℤ/g 上的交換群",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -624,7 +701,8 @@
       "statement": "Morita context 雙模相容性 (q·p)q'=q(p·q')",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -632,7 +710,8 @@
       "statement": "M_n(ℤ) 為結合環且具單位元",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -640,7 +719,8 @@
       "statement": "Lovász：χ(KG(n,k)) = n−2k+2",
       "package": "src/graphs",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -648,7 +728,8 @@
       "statement": "EKR：α(KG(n,k)) = C(n−1,k−1)",
       "package": "src/graphs",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -656,7 +737,8 @@
       "statement": "分數色數 χ_f=n/k 為 χ 的下界",
       "package": "src/graphs",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -664,7 +746,8 @@
       "statement": "Ramsey R(3,3)=6",
       "package": "src/graphs",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -672,7 +755,8 @@
       "statement": "Tutte 多項式 T(1,1)=基底數、T(2,2)=2^{|E|}",
       "package": "src/graphs",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -680,7 +764,8 @@
       "statement": "Euler–Poincaré：Σ(−1)^d f_d = Σ(−1)^d β_d",
       "package": "src/graphs",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -688,7 +773,8 @@
       "statement": "圖鄰接極性的 Chu 對偶",
       "package": "src/graphs",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -696,7 +782,8 @@
       "statement": "左 Kan 擴展伴隨 Lan_φ ⊣ φ*",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -704,7 +791,8 @@
       "statement": "右 Kan 擴展伴隨 φ* ⊣ Ran_φ",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -712,7 +800,8 @@
       "statement": "纖維積 ℤ/m×_{ℤ/g}ℤ/n 泛性質",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -720,7 +809,8 @@
       "statement": "共融推出 union-find 泛性質",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -728,7 +818,8 @@
       "statement": "共融自由交換么半群單項式計數",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -736,7 +827,8 @@
       "statement": "分配律單子複合仍為單子",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -744,7 +836,8 @@
       "statement": "全局公理 G 的閉包算子本身為單子",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -752,7 +845,8 @@
       "statement": "Kronecker 混合積 (A⊗B)(C⊗D)=AC⊗BD",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -760,7 +854,8 @@
       "statement": "Kronecker 秩可乘性",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -768,7 +863,8 @@
       "statement": "管線策略合成結合律",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -776,7 +872,8 @@
       "statement": "博弈張量積交換律",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -784,7 +881,8 @@
       "statement": "Grothendieck 構造給出纖維範疇",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -792,7 +890,8 @@
       "statement": "有限 Alexandrov 拓樸之束黏合唯一性",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -800,7 +899,8 @@
       "statement": "2-上循環交織群結合律與短正合序列",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -808,7 +908,8 @@
       "statement": "多合一相容性：跨套件定理同時成立",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI"
+      "verification": "局部編譯 + 即寫即驗即刪測試題；回合末全域 CI",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -816,7 +917,8 @@
       "statement": "gcd / egcd 歐幾里得與擴展歐幾里得",
       "package": "src/exact",
       "formula": "O(log min(a,b))",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -824,7 +926,8 @@
       "statement": "rat 有理數正規化與四則運算",
       "package": "src/exact",
       "formula": "O(log d)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -832,7 +935,8 @@
       "statement": "Rat::pow 二進位快速冪",
       "package": "src/exact",
       "formula": "O(log k)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -840,7 +944,8 @@
       "statement": "mod_pow / mod_inv 模冪與模逆",
       "package": "src/exact",
       "formula": "O(log e)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -848,7 +953,8 @@
       "statement": "binom Pascal 動態規劃",
       "package": "src/exact",
       "formula": "O(n·k)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -856,7 +962,8 @@
       "statement": "popcount Kernighan 位元計數",
       "package": "src/exact",
       "formula": "O(#1-bits)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -864,7 +971,8 @@
       "statement": "gf2_rank / gf2_nullity 位元打包消去",
       "package": "src/exact",
       "formula": "O(rows·cols/64)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -872,7 +980,8 @@
       "statement": "rank_mod_p 素數體矩陣秩",
       "package": "src/exact",
       "formula": "O(r²c)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -880,7 +989,8 @@
       "statement": "smith_invariants Smith 標準型與可整除鏈",
       "package": "src/exact",
       "formula": "多項式時間",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -888,7 +998,8 @@
       "statement": "polar_obj / polar_attr 極性映射",
       "package": "src/galois",
       "formula": "O(nx+ny)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -896,7 +1007,8 @@
       "statement": "closure_obj / closure_attr 閉包算子",
       "package": "src/galois",
       "formula": "O(nx+ny)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -904,7 +1016,8 @@
       "statement": "galois_certificate 全子集穷舉憑證",
       "package": "src/galois",
       "formula": "O(2^(nx+ny))",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -912,7 +1025,8 @@
       "statement": "next_closure_intents Ganter lectic 枚舉",
       "package": "src/galois",
       "formula": "O(ny²|B|)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -920,7 +1034,8 @@
       "statement": "concept_covers 概念格覆蓋關係",
       "package": "src/galois",
       "formula": "O(|B|³)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -928,7 +1043,8 @@
       "statement": "chu_dual 楚空間轉置",
       "package": "src/galois",
       "formula": "O(nx·ny)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -936,7 +1052,8 @@
       "statement": "relation_compose 布林矩陣乘法",
       "package": "src/galois",
       "formula": "O(nx·ny·nz)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -944,7 +1061,8 @@
       "statement": "ideal_variety_context 有限域理想–簇脈絡",
       "package": "src/galois",
       "formula": "O(p^d·p·d)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -952,7 +1070,8 @@
       "statement": "closure_system_representation 完備格表示",
       "package": "src/galois",
       "formula": "O(|D|²)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -960,7 +1079,8 @@
       "statement": "Poly::mul 稀疏跳零卷積",
       "package": "src/series",
       "formula": "O(|suppA|·|suppB|)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -968,7 +1088,8 @@
       "statement": "poly_divmod / poly_gcd 帶餘除法與 gcd",
       "package": "src/series",
       "formula": "O(deg²)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -976,7 +1097,8 @@
       "statement": "quot / Quot::mul 商環算術",
       "package": "src/series",
       "formula": "O(deg²)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -984,7 +1106,8 @@
       "statement": "fps_mul 截斷形式冪級數乘法",
       "package": "src/series",
       "formula": "O(N²) 帶零剪枝",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -992,7 +1115,8 @@
       "statement": "fps_inv Newton 倍精度反演",
       "package": "src/series",
       "formula": "O(M(N) log N)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1000,7 +1124,8 @@
       "statement": "fps_compose 冪次展開 + valuation 剪枝",
       "package": "src/series",
       "formula": "O(N²/v)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1008,7 +1133,8 @@
       "statement": "fps_reversion Lagrange 反演",
       "package": "src/series",
       "formula": "O(N·M(N))",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1016,7 +1142,8 @@
       "statement": "fps_exp / fps_log 係數遞推",
       "package": "src/series",
       "formula": "O(N²)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1024,7 +1151,8 @@
       "statement": "holomorphic_eval / tail_bound 全純求值與誤差界",
       "package": "src/series",
       "formula": "O(N)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1032,7 +1160,8 @@
       "statement": "laurent_inv 洛朗級數求逆",
       "package": "src/series",
       "formula": "O(M(N) log N)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1040,7 +1169,8 @@
       "statement": "ds_mul O(N log N) 狄利克雷卷積",
       "package": "src/series",
       "formula": "O(N log N)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1048,7 +1178,8 @@
       "statement": "ds_inv / mobius / ds_phi 算術函數",
       "package": "src/series",
       "formula": "O(N log N)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1056,7 +1187,8 @@
       "statement": "conv_mul 三種卷積么半群統一乘法",
       "package": "src/series",
       "formula": "O(N²) 或 O(N log N)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1064,7 +1196,8 @@
       "statement": "lan_along_phi 左 Kan 擴展（纖維和）",
       "package": "src/series",
       "formula": "O(log N)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1072,7 +1205,8 @@
       "statement": "mpoly_substitute 操作子代入",
       "package": "src/series",
       "formula": "多項式於指數",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1080,7 +1214,8 @@
       "statement": "hilbert_numerator lcm 格容斥 + 原子化",
       "package": "src/algebra",
       "formula": "O(2^r·n)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1088,7 +1223,8 @@
       "statement": "hilbert_coefficients / direct_count",
       "package": "src/algebra",
       "formula": "O(N·n)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1096,7 +1232,8 @@
       "statement": "quotient_basis 標準單項式基底枚舉",
       "package": "src/algebra",
       "formula": "O(C(n+d,d))",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1104,7 +1241,8 @@
       "statement": "ore_mul / ore_divmod / ore_gcrd",
       "package": "src/algebra",
       "formula": "O(deg²·deg_u)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1112,7 +1250,8 @@
       "statement": "q_derivative Jackson q-導子",
       "package": "src/algebra",
       "formula": "O(deg_u)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1120,7 +1259,8 @@
       "statement": "localize / extend_hom 局部化",
       "package": "src/algebra",
       "formula": "O(log d)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1128,7 +1268,8 @@
       "statement": "extension_invariants Ext¹ 的 SNF 分類",
       "package": "src/algebra",
       "formula": "多項式時間",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1136,7 +1277,8 @@
       "statement": "outer_product / mat_vec_mul Morita 雙模",
       "package": "src/algebra",
       "formula": "O(n²)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1144,7 +1286,8 @@
       "statement": "chromatic_number 回溯 + 對稱破壞",
       "package": "src/graphs",
       "formula": "P（分支限界）",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1152,7 +1295,8 @@
       "statement": "max_clique Bron–Kerbosch 位元版",
       "package": "src/graphs",
       "formula": "P（分支限界）",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1160,7 +1304,8 @@
       "statement": "ramsey_triangle_free_count 穷舉證明",
       "package": "src/graphs",
       "formula": "O(2^E·n³)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1168,7 +1313,8 @@
       "statement": "tutte_coeffs 秩生成式二項展開",
       "package": "src/graphs",
       "formula": "O(2^|E|·|E|²)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1176,7 +1322,8 @@
       "statement": "boundary_rank / betti_numbers GF(2) 同調",
       "package": "src/graphs",
       "formula": "O(f_d·f_{d-1})",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1184,7 +1331,8 @@
       "statement": "lan_poset / ran_poset 有限格 Kan 擴展",
       "package": "src/compose",
       "formula": "O(|C|·|D|)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1192,7 +1340,8 @@
       "statement": "UnionFind 共融推出同餘閉包",
       "package": "src/compose",
       "formula": "O(n α(n))",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1200,7 +1349,8 @@
       "statement": "kronecker / relation_tensor 張量積",
       "package": "src/compose",
       "formula": "O(r²c²)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1208,7 +1358,8 @@
       "statement": "gluing_rec 束匹配族枚舉",
       "package": "src/compose",
       "formula": "O(Π|F(U_i)|)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1216,7 +1367,8 @@
       "statement": "weave_mul 2-上循環交織乘法",
       "package": "src/compose",
       "formula": "O(1)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "演算法",
@@ -1224,7 +1376,8 @@
       "statement": "monad_closure 閉包單子",
       "package": "src/compose",
       "formula": "O(1) 位元運算",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1232,7 +1385,8 @@
       "statement": "極性定義",
       "package": "src/galois",
       "formula": "F(A) = { y | ∀x∈A, R(x,y) }, H(B) = { x | ∀y∈B, R(x,y) }",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1240,7 +1394,8 @@
       "statement": "伴隨性",
       "package": "src/galois",
       "formula": "A ⊆ H(B) ⟺ B ⊆ F(A)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1248,7 +1403,8 @@
       "statement": "閉包冪等",
       "package": "src/galois",
       "formula": "c(c(A)) = c(A), c = F∘H",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1256,7 +1412,8 @@
       "statement": "三次極性",
       "package": "src/axioms",
       "formula": "F∘H∘F = F 且 H∘F∘H = H",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1264,7 +1421,8 @@
       "statement": "卷積么半群",
       "package": "src/series",
       "formula": "(a*b)(m) = Σ_{u*v=m} a(u)b(v)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1272,7 +1430,8 @@
       "statement": "截斷商同態",
       "package": "src/series",
       "formula": "π_N(a·b) = π_N(a)·π_N(b)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1280,7 +1439,8 @@
       "statement": "Newton 迭代",
       "package": "src/series",
       "formula": "g ← g(2 − a·g)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1288,7 +1448,8 @@
       "statement": "Lagrange 反演",
       "package": "src/series",
       "formula": "[t^k] f^{-1}(t) = (1/k)[t^{k-1}] h(t)^{-k}",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1296,7 +1457,8 @@
       "statement": "複合反演",
       "package": "src/series",
       "formula": "f(f^{-1}(t)) ≡ t (mod t^N)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1304,7 +1466,8 @@
       "statement": "Möbius 反演",
       "package": "src/series",
       "formula": "ζ * μ = δ₁，即 Σ_{d|n} μ(d) = [n=1]",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1312,7 +1475,8 @@
       "statement": "Euler 乘積",
       "package": "src/series",
       "formula": "f(n) = Π_{p^e || n} f(p^e)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1320,7 +1484,8 @@
       "statement": "Hilbert–Poincaré",
       "package": "src/algebra",
       "formula": "H_{R/I}(t) = (Σ_S (−1)^{|S|} t^{deg lcm(S)})/(1−t)^n",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1328,7 +1493,8 @@
       "statement": "商環 Hilbert 遞推",
       "package": "src/algebra",
       "formula": "h(n) − h(n−1) = δ_{n,0} − δ_{n,d}",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1336,7 +1502,8 @@
       "statement": "Ore 交換律",
       "package": "src/algebra",
       "formula": "x·u = q·u·x",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1344,7 +1511,8 @@
       "statement": "σ-Leibniz",
       "package": "src/algebra",
       "formula": "δ(rs) = δ(r)s + σ(r)δ(s)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1352,7 +1520,8 @@
       "statement": "q-整數恆等式",
       "package": "src/algebra",
       "formula": "[i+j]_q = [i]_q + q^i [j]_q",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1360,7 +1529,8 @@
       "statement": "Ext¹",
       "package": "src/algebra",
       "formula": "Ext¹(ℤ/m, ℤ/n) ≅ ℤ/gcd(m,n)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1368,7 +1538,8 @@
       "statement": "Morita context",
       "package": "src/algebra",
       "formula": "(q·p)q' = q(p·q') 且 (q·p)² = (p·q)(q·p)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1376,7 +1547,8 @@
       "statement": "Lovász 色數",
       "package": "src/graphs",
       "formula": "χ(KG(n,k)) = n − 2k + 2",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1384,7 +1556,8 @@
       "statement": "EKR 獨立數",
       "package": "src/graphs",
       "formula": "α(KG(n,k)) = C(n−1, k−1)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1392,7 +1565,8 @@
       "statement": "Tutte 秩生成式",
       "package": "src/graphs",
       "formula": "T(M;x,y) = Σ_A (x−1)^{r(E)−r(A)} (y−1)^{|A|−r(A)}",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1400,7 +1574,8 @@
       "statement": "Betti 數",
       "package": "src/graphs",
       "formula": "β_d = dim ker ∂_d − rank ∂_{d+1}",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1408,7 +1583,8 @@
       "statement": "Euler–Poincaré",
       "package": "src/graphs",
       "formula": "Σ(−1)^d f_d = Σ(−1)^d β_d",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1416,7 +1592,8 @@
       "statement": "Kan 伴隨",
       "package": "src/compose",
       "formula": "Lan_φ ⊣ φ* ⊣ Ran_φ",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1424,7 +1601,8 @@
       "statement": "Kronecker 混合積",
       "package": "src/compose",
       "formula": "(A⊗B)(C⊗D) = (AC)⊗(BD)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1432,7 +1610,8 @@
       "statement": "共融推出泛性質",
       "package": "src/compose",
       "formula": "|Hom(A ⊔_C B, X)| = |X|^{#classes}",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1440,7 +1619,8 @@
       "statement": "2-上循環條件",
       "package": "src/compose",
       "formula": "φ(a,b)+φ(a+b,c) = φ(b,c)+φ(a,b+c)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1448,7 +1628,8 @@
       "statement": "束黏合",
       "package": "src/compose",
       "formula": "匹配族 ↔ F(∪U_i) 為雙射",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1456,7 +1637,8 @@
       "statement": "Ramsey",
       "package": "src/graphs",
       "formula": "R(3,3) = 6",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "等式",
@@ -1464,7 +1646,8 @@
       "statement": "分數色數",
       "package": "src/graphs",
       "formula": "χ_f(KG(n,k)) = n/k ≤ χ",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-01"
     },
     {
       "kind": "定理",
@@ -1472,7 +1655,8 @@
       "statement": "deg lclm = deg f + deg g − deg gcrd = rank(Sylvester)，lclm 為公共右倍式",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證",
+      "round": "C1-02"
     },
     {
       "kind": "定理",
@@ -1480,7 +1664,8 @@
       "statement": "F_25 上多組非交換實例的 lclm/Sylvester 恆等式穷舉",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證",
+      "round": "C1-02"
     },
     {
       "kind": "定理",
@@ -1488,7 +1673,8 @@
       "statement": "σ ≠ id：x·θ = −θ·x，Ore 環真正非交換",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證",
+      "round": "C1-02"
     },
     {
       "kind": "定理",
@@ -1496,7 +1682,8 @@
       "statement": "約束閉包算子 c_req 滿足擴張／單調／冪等",
       "package": "src/galois",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證",
+      "round": "C1-02"
     },
     {
       "kind": "定理",
@@ -1504,7 +1691,8 @@
       "statement": "NextClosures 基數層級平行枚舉與 closed_attributes 一致",
       "package": "src/galois",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證",
+      "round": "C1-02"
     },
     {
       "kind": "定理",
@@ -1512,7 +1700,8 @@
       "statement": "約束切分之平行 worker 輸出為 intents 的不交劃分",
       "package": "src/galois",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證",
+      "round": "C1-02"
     },
     {
       "kind": "定理",
@@ -1520,7 +1709,8 @@
       "statement": "Karatsuba 卷積與 school-book 卷積逐項相等",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證",
+      "round": "C1-02"
     },
     {
       "kind": "定理",
@@ -1528,7 +1718,8 @@
       "statement": "Bostan–Mori Graeffe 係數抽取與 Newton 反演一致",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證",
+      "round": "C1-02"
     },
     {
       "kind": "定理",
@@ -1536,7 +1727,8 @@
       "statement": "Brent–Kung baby-step/giant-step 合成與直接合成一致",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證",
+      "round": "C1-02"
     },
     {
       "kind": "定理",
@@ -1544,7 +1736,8 @@
       "statement": "前沿方法一致性：Ore lclm／NextClosures 平行／Karatsuba／Graeffe 同時成立",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；Z3／有限穷舉憑證",
+      "round": "C1-02"
     },
     {
       "kind": "演算法",
@@ -1552,7 +1745,8 @@
       "statement": "sfq_gcrd_lclm 擴展右歐幾里得（同時得 gcrd 與 lclm）",
       "package": "src/algebra",
       "formula": "O(deg²) 於 F_25",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-02"
     },
     {
       "kind": "演算法",
@@ -1560,7 +1754,8 @@
       "statement": "sfq_sylvester_rank Ore Sylvester 矩陣秩（ISSAC'24）",
       "package": "src/algebra",
       "formula": "O((df+dg)³)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-02"
     },
     {
       "kind": "演算法",
@@ -1568,7 +1763,8 @@
       "statement": "fq2_rank F_25 高斯消去與 fq2_inv 範數求逆",
       "package": "src/algebra",
       "formula": "O(r·c·min(r,c))",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-02"
     },
     {
       "kind": "演算法",
@@ -1576,7 +1772,8 @@
       "statement": "sfq_divmod F_25 上 σ^k 修正之右除",
       "package": "src/algebra",
       "formula": "O(deg²)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-02"
     },
     {
       "kind": "演算法",
@@ -1584,7 +1781,8 @@
       "statement": "next_closure_constrained 約束閉包算子之 Ganter 枚舉",
       "package": "src/galois",
       "formula": "O(ny²|B|)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-02"
     },
     {
       "kind": "演算法",
@@ -1592,7 +1790,8 @@
       "statement": "intents_by_cardinality 基數層級 BFS（層內可平行）",
       "package": "src/galois",
       "formula": "O(ny·|B|²)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-02"
     },
     {
       "kind": "演算法",
@@ -1600,7 +1799,8 @@
       "statement": "parallel_intent_partition 無通訊 worker 不交劃分",
       "package": "src/galois",
       "formula": " embarrassingly parallel",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-02"
     },
     {
       "kind": "演算法",
@@ -1608,7 +1808,8 @@
       "statement": "kar_mul Karatsuba 次二次卷積",
       "package": "src/series",
       "formula": "O(n^1.585)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-02"
     },
     {
       "kind": "演算法",
@@ -1616,7 +1817,8 @@
       "statement": "fps_compose_bk Brent–Kung baby-step/giant-step 合成",
       "package": "src/series",
       "formula": "O((N/B+B)·M(N))",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-02"
     },
     {
       "kind": "演算法",
@@ -1624,7 +1826,8 @@
       "statement": "graeffe_coeff Bostan–Mori Graeffe 係數抽取",
       "package": "src/series",
       "formula": "O(M(N) log N)",
-      "verification": "局部編譯 + 即時驗題；困難度 P"
+      "verification": "局部編譯 + 即時驗題；困難度 P",
+      "round": "C1-02"
     },
     {
       "kind": "等式",
@@ -1632,7 +1835,8 @@
       "statement": "Ore 度數公式",
       "package": "src/algebra",
       "formula": "deg lclm(f,g) = deg f + deg g − deg gcrd(f,g)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-02"
     },
     {
       "kind": "等式",
@@ -1640,7 +1844,8 @@
       "statement": "Sylvester 秩",
       "package": "src/algebra",
       "formula": "deg lclm(f,g) = rank Syl(f,g)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-02"
     },
     {
       "kind": "等式",
@@ -1648,7 +1853,8 @@
       "statement": "F_25 係數體",
       "package": "src/algebra",
       "formula": "θ² = 2, σ(θ) = θ⁵ = −θ, σ² = id",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-02"
     },
     {
       "kind": "等式",
@@ -1656,7 +1862,8 @@
       "statement": "約束閉包",
       "package": "src/galois",
       "formula": "c_req(A) = c(required ∪ A)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-02"
     },
     {
       "kind": "等式",
@@ -1664,7 +1871,8 @@
       "statement": "平行不交劃分",
       "package": "src/galois",
       "formula": "Intents(K) = ⊔_{w=0}^{|M|} Worker_w(K)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-02"
     },
     {
       "kind": "等式",
@@ -1672,7 +1880,8 @@
       "statement": "Karatsuba 遞迴",
       "package": "src/series",
       "formula": "T(n) = 3T(n/2) + O(n) = O(n^{log₂3})",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-02"
     },
     {
       "kind": "等式",
@@ -1680,7 +1889,8 @@
       "statement": "Graeffe 減半",
       "package": "src/series",
       "formula": "[t^N] P/Q = [t^{⌊N/2⌋}] U_{parity}/V",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-02"
     },
     {
       "kind": "等式",
@@ -1688,7 +1898,8 @@
       "statement": "BK 合成分解",
       "package": "src/series",
       "formula": "f(g) = Σ_i (Σ_{j<B} f_{iB+j} g^j) · g^{iB}",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-02"
     },
     {
       "kind": "定理",
@@ -1696,7 +1907,8 @@
       "statement": "Faddeev–LeVerrier 特徵多項式滿足 Cayley–Hamilton 與 det/tr 恆等式",
       "package": "src/exact",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1704,7 +1916,8 @@
       "statement": "Newton 恆等式：tr(L^j) 由 det(tI−L) 係數決定",
       "package": "src/graphs",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1712,7 +1925,8 @@
       "statement": "Kirchhoff：L·1=0、rank(L)=n−#components、生成樹 >0 ⟺ 連通",
       "package": "src/graphs",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1720,7 +1934,8 @@
       "statement": "Chung/Dodziuk–Alon–Milman Cheeger：λ₂/2 ≤ h ≤ √(2λ₂)",
       "package": "src/graphs",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1728,7 +1943,8 @@
       "statement": "KG(5,2)=Petersen：L 譜 {0,2⁵,5⁴}，ℒ 譜 {0,(2/3)⁵,(5/3)⁴}",
       "package": "src/graphs",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1736,7 +1952,8 @@
       "statement": "BFS 測地距離為度量（對稱、三角不等式）",
       "package": "src/graphs",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1744,7 +1961,8 @@
       "statement": "切束維度 Σ_v dim T_v = 2|E|，餘切由 Chu 對偶給出",
       "package": "src/graphs",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1752,7 +1970,8 @@
       "statement": "離散 Hodge：Δ⁰=δᵀδ=聯絡 Laplacian，ker Δ⁰=ker δ",
       "package": "src/graphs",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1760,7 +1979,8 @@
       "statement": "O(1) 線叢平坦 ⟺ 環 holonomy=+1 ⟺ dim H⁰=1",
       "package": "src/graphs",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1768,7 +1988,8 @@
       "statement": "測地線平行移動 holonomy ∈{±1} 且路徑反向不變",
       "package": "src/graphs",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1776,7 +1997,8 @@
       "statement": "算術 ζ/Poincaré 多項式 Σ_{d|n}t^{Ω(d)} = ∏(1+...+t^{e_i})",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1784,7 +2006,8 @@
       "statement": "算術 spectral triple：χ_D=∏(t−Ω(d))、[D,E_p]=0、[D,T_p]=T_p",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1792,7 +2015,8 @@
       "statement": "Spec(ℤ/nℤ) 之 Zariski 極性為伽羅瓦對應（伴隨性＋閉包三律）",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1800,7 +2024,8 @@
       "statement": "Σ_{d|n}φ(d)=n、Σ_{d|n}μ(d)=[n=1]、φ(n)=n∏(1−1/p)",
       "package": "src/series",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1808,7 +2033,8 @@
       "statement": "G₀(R/(f)) ≅ ℤ^s，s=相異不可約右因子數；合成因子次數和=deg f",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1816,7 +2042,8 @@
       "statement": "Quillen–Grayson 基本定理：H_R(t)=1/(1−t)，秩 1→2→1→0，Euler=0",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1824,7 +2051,8 @@
       "statement": "Morita 不變性：2×2 冪等矩陣 tr(e)=rank(e)·1",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1832,7 +2060,8 @@
       "statement": "K₀ 函子性：局部化泛性質與基本定理複合為零",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1840,7 +2069,8 @@
       "statement": "δ=0 時 x^k r = σ^k(r) x^k（Shin 2024 q-binomial 之 σ²=id 特例）",
       "package": "src/algebra",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1848,7 +2078,8 @@
       "statement": "泛性質：纖維積中介態射唯一、自由么半群 |Hom|=x²、函子性",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1856,7 +2087,8 @@
       "statement": "21×14 衍生方向相容矩陣非平凡；GF(2) 秩=12",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "定理",
@@ -1864,7 +2096,8 @@
       "statement": "泛性質 × 21 動詞 × 14 手法之一致性",
       "package": "src/compose",
       "formula": "",
-      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證"
+      "verification": "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -1872,7 +2105,8 @@
       "statement": "mat_det / mat_rank 有理高斯消去",
       "package": "src/exact",
       "formula": "O(n³)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -1880,7 +2114,8 @@
       "statement": "mat_charpoly Faddeev–LeVerrier",
       "package": "src/exact",
       "formula": "O(n⁴)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -1888,7 +2123,8 @@
       "statement": "poly_from_points Newton 差商插值（無溢位）",
       "package": "src/exact",
       "formula": "O(n²)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -1896,7 +2132,8 @@
       "statement": "mat_generalized_charpoly det(A−tB) 求值插值",
       "package": "src/exact",
       "formula": "O(n⁴)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -1904,7 +2141,8 @@
       "statement": "poly_smallest_positive_root 1/8 網格根隔離",
       "package": "src/exact",
       "formula": "O(deg·16)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -1912,7 +2150,8 @@
       "statement": "spectral_power_sums Newton 恆等式冪和",
       "package": "src/graphs",
       "formula": "O(k²)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -1920,7 +2159,8 @@
       "statement": "graph_spanning_trees Kirchhoff 餘子式",
       "package": "src/graphs",
       "formula": "O(n³)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -1928,7 +2168,8 @@
       "statement": "graph_conductance 體積加權最小割",
       "package": "src/graphs",
       "formula": "O(2^n·n)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -1936,7 +2177,8 @@
       "statement": "graph_normalized_charpoly 廣義特徵多項式",
       "package": "src/graphs",
       "formula": "O(n⁴)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -1944,7 +2186,8 @@
       "statement": "geodesic_distances / geodesic_path BFS",
       "package": "src/graphs",
       "formula": "O(n²)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -1952,7 +2195,8 @@
       "statement": "tangent_space 切空間基底",
       "package": "src/graphs",
       "formula": "O(n)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -1960,7 +2204,8 @@
       "statement": "cycle_basis BFS 樹補邊 + LCA 基本環",
       "package": "src/graphs",
       "formula": "O(n³)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -1968,7 +2213,8 @@
       "statement": "holonomy / curvature 平行移動與曲率",
       "package": "src/graphs",
       "formula": "O(|E|)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -1976,7 +2222,8 @@
       "statement": "sheaf_coboundary / sheaf_laplacian",
       "package": "src/graphs",
       "formula": "O(|E|n²)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -1984,7 +2231,8 @@
       "statement": "connection_laplacian O(1) 線叢",
       "package": "src/graphs",
       "formula": "O(n²)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -1992,7 +2240,8 @@
       "statement": "prime_factorization / divisors_of / big_omega",
       "package": "src/series",
       "formula": "O(n)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -2000,7 +2249,8 @@
       "statement": "arithmetic_zeta_poly 算術 ζ 多項式",
       "package": "src/series",
       "formula": "O(τ(n))",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -2008,7 +2258,8 @@
       "statement": "arithmetic_hecke 升階算子 T_p",
       "package": "src/series",
       "formula": "O(τ(n)²)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -2016,7 +2267,8 @@
       "statement": "theorem_arithmetic_galois Zariski 極性有限穷舉",
       "package": "src/series",
       "formula": "O(2^{p+d})",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -2024,7 +2276,8 @@
       "statement": "sfq_factor 歪多項式右因子分解",
       "package": "src/algebra",
       "formula": "O(25^{d}·deg²)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -2032,7 +2285,8 @@
       "statement": "sfq_distinct_factors G₀ 生成元",
       "package": "src/algebra",
       "formula": "O(k²)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -2040,7 +2294,8 @@
       "statement": "theorem_universal_property_pullback 中介態射枚舉",
       "package": "src/compose",
       "formula": "O(n^{2q})",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -2048,7 +2303,8 @@
       "statement": "verb_apply 21 衍生方向動詞變換",
       "package": "src/compose",
       "formula": "O(n²)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -2056,7 +2312,8 @@
       "statement": "deriv_invariant 14 手法不變量",
       "package": "src/compose",
       "formula": "O(2^n)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -2064,7 +2321,8 @@
       "statement": "verb_pattern_matrix / stable_pairs / row_classes",
       "package": "src/compose",
       "formula": "O(21·14·C)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "演算法",
@@ -2072,7 +2330,8 @@
       "statement": "verb_composition_closure 441 組動詞複合",
       "package": "src/compose",
       "formula": "O(441·14·C)",
-      "verification": "困難度 P；局部編譯 + inspect"
+      "verification": "困難度 P；局部編譯 + inspect",
+      "round": "C1-03"
     },
     {
       "kind": "等式",
@@ -2080,7 +2339,8 @@
       "statement": "特徵多項式",
       "package": "src/exact",
       "formula": "p_M(t) = det(tI − M) = t^n + c_{n−1}t^{n−1} + ⋯ + c₀",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-03"
     },
     {
       "kind": "等式",
@@ -2088,7 +2348,8 @@
       "statement": "Cayley–Hamilton",
       "package": "src/exact",
       "formula": "p_M(M) = 0；det(M) = (−1)^n p_M(0)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-03"
     },
     {
       "kind": "等式",
@@ -2096,7 +2357,8 @@
       "statement": "Newton 冪和",
       "package": "src/graphs",
       "formula": "p_k = e₁p_{k−1} − e₂p_{k−2} + ⋯ + (−1)^{k−1}k e_k",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-03"
     },
     {
       "kind": "等式",
@@ -2104,7 +2366,8 @@
       "statement": "Kirchhoff",
       "package": "src/graphs",
       "formula": "τ(G) = det L^{(i,i)}；rank L = n − c(G)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-03"
     },
     {
       "kind": "等式",
@@ -2112,7 +2375,8 @@
       "statement": "Cheeger",
       "package": "src/graphs",
       "formula": "λ₂/2 ≤ h(G) ≤ √(2λ₂)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-03"
     },
     {
       "kind": "等式",
@@ -2120,7 +2384,8 @@
       "statement": "正規化廣義特徵",
       "package": "src/graphs",
       "formula": "det(L − tD) = det(D)·∏(λ_i(ℒ) − t)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-03"
     },
     {
       "kind": "等式",
@@ -2128,7 +2393,8 @@
       "statement": "離散 Hodge",
       "package": "src/graphs",
       "formula": "Δ⁰_F = δᵀδ；ker Δ⁰ = H⁰(G;F)",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-03"
     },
     {
       "kind": "等式",
@@ -2136,7 +2402,8 @@
       "statement": "算術 ζ",
       "package": "src/series",
       "formula": "Σ_{d|n} t^{Ω(d)} = ∏_i (1+t+⋯+t^{e_i})",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-03"
     },
     {
       "kind": "等式",
@@ -2144,7 +2411,8 @@
       "statement": "Dirac–Hecke 交換子",
       "package": "src/series",
       "formula": "[D,E_p]=0；[D,T_p]=T_p；tr D² = Σ_k c_k k²",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-03"
     },
     {
       "kind": "等式",
@@ -2152,7 +2420,8 @@
       "statement": "K₀ 基本定理",
       "package": "src/algebra",
       "formula": "K₀(R[t,t⁻¹]) ≅ K₀(R) ⊕ K₋₁(R)；Euler: 1−2+1−0=0",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-03"
     },
     {
       "kind": "等式",
@@ -2160,7 +2429,8 @@
       "statement": "G₀ 商環",
       "package": "src/algebra",
       "formula": "G₀(R/(f)) ≅ ℤ^{#distinct irreducible right factors}",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-03"
     },
     {
       "kind": "等式",
@@ -2168,7 +2438,764 @@
       "statement": "衍生相容矩陣",
       "package": "src/compose",
       "formula": "M[v][p] = [inv_p(V_v(D₀)) = inv_p(D₀)] ∈ F₂^{21×14}",
-      "verification": "由對應定理憑證驗證"
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-03"
+    },
+    {
+      "kind": "定義",
+      "id": "D28",
+      "statement": "NTT 環 F_p, p=998244353=119·2²³+1，原根 3",
+      "package": "src/exact",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定義",
+      "id": "D29",
+      "statement": "TMVP：Toeplitz 矩陣經 2n 循環嵌入之 NTT 卷積",
+      "package": "src/exact",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定義",
+      "id": "D30",
+      "statement": "Ore bound：中心 F_5[t]（t=x²）之首一中心左倍式",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定義",
+      "id": "D31",
+      "statement": "Reduced norm：N(f)=det[[A,tσ(B)],[B,σ(A)]]=Aσ(A)−tBσ(B)",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定義",
+      "id": "D32",
+      "statement": "FCbO 之 Θ¹_{X,Y} 與 offset N_j 失敗記錄",
+      "package": "src/galois",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定義",
+      "id": "D33",
+      "statement": "PersistentSheaf：X⊂Y 前 k 頂點誘導子複形 + O(1) 線叢",
+      "package": "src/graphs",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定義",
+      "id": "D34",
+      "statement": "FiniteMap / PosetKan：Σ_f⊣f*⊣Π_f 與 Lan_K⊣K*⊣Ran_K",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定義",
+      "id": "D35",
+      "statement": "LibraryClustering：33 位元簽章之 Jaccard union-find 聚類",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定義",
+      "id": "D36",
+      "statement": "SpectralTriple rank-one 擾動 D_a = D + a|1⟩⟨1|",
+      "package": "src/series",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定義",
+      "id": "D37",
+      "statement": "Adelic Abel–Jacobi：Div₀(Spec Z) → ℚ*，AJ(D)=∏p^{e_p}",
+      "package": "src/series",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定義",
+      "id": "D38",
+      "statement": "F_5[u] 么模列與 Quillen–Suslin 補全（A¹-不變性）",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定義",
+      "id": "D39",
+      "statement": "δ-Galois：F_5[t]/(t⁵) 之平移群 G_a(F_5) 與 δ-常數",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-S12",
+      "statement": "Kinoshita–Li PowProj：Bostan–Mori Graeffe 迭代之 [x^N]P/Q 正確性",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-S13",
+      "statement": "Kinoshita–Li Comp：O(M(n) log m+M(m)) 合成與直接合成逐項相等",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-X2",
+      "statement": "NTT 正逆變換互逆、卷積 = school-book mod 998244353",
+      "package": "src/exact",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-X3",
+      "statement": "Toeplitz 循環嵌入 NTT 之矩陣向量乘積 = 直接乘積（TMVP）",
+      "package": "src/exact",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-X4",
+      "statement": "Toom–Cook 3-way（5 求值點 + Lagrange 插值）= 整數卷積",
+      "package": "src/exact",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-X5",
+      "statement": "n=3⁹ 時 NTT < Toom-3 < Karatsuba < school-book 之運算量序",
+      "package": "src/exact",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Ore10",
+      "statement": "reduced norm 落於中心 F_5[t]、具乘法性且 N(f)=f·f̄",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Ore11",
+      "statement": "Ore bound 為最小首一中心左倍式且 deg ≤ 2deg f",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Ore12",
+      "statement": "中心分解 h_i 兩兩右互質、Σdeg h_i=deg f、lclm(h_i)=f",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Ore13",
+      "statement": "參數 GCRD 特化 σ-等變且每層 Sylvester 秩缺陷 = deg gcrd",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Ore14",
+      "statement": "模組 Gröbner 基底秩 = deg lclm，最低次列 = gcrd",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Ore15",
+      "statement": "兩層模組分解因子不可約、次數和=deg f、與直接分解同譜",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Ore16",
+      "statement": "δ-Galois：G_a(F_5) 與 δ 交換，固定環 = δ-常數 F_5",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Ore17",
+      "statement": "A¹-不變性：F_5[u] 么模列皆可補全，K₀(F_5[u])≅ℤ",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Ore18",
+      "statement": "Laurent 局部化 gcd 乘法性 u^k·gcd(a,b)",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-G11",
+      "statement": "FCbO 列舉全部 intent、無重複、皆為閉集",
+      "package": "src/galois",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-G12",
+      "statement": "FCbO 新 canonicity test 守恆律 closures+skipped=CbO closures",
+      "package": "src/galois",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-G13",
+      "statement": "FCbO 新測試啟動時嚴格少算閉包（skipped>0）",
+      "package": "src/galois",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-G14",
+      "statement": "PFCbO worker 輸出為 intents 之不交分割且聯集完備",
+      "package": "src/galois",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Gph11",
+      "statement": "ker Δ₀^{X,Y} ≅ π•(H⁰(Y;G))：nullity = persistent Betti",
+      "package": "src/graphs",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Gph12",
+      "statement": "Δ₀^{X,Y} 半正定（全主子式 ≥0）且零根重數 = β₀",
+      "package": "src/graphs",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Gph13",
+      "statement": "X=Y 時 persistent Laplacian 退化為 δᵀδ",
+      "package": "src/graphs",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Gph14",
+      "statement": "Wei–Wei Prop.3.2：譜不依賴 Y 之定向",
+      "package": "src/graphs",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Gph15",
+      "statement": "多尺度 filtration 之 β₀ 單調不減、rank+nullity=k",
+      "package": "src/graphs",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Gph16",
+      "statement": "Kalai–Meshulam：M⊆X ⇒ ∃τ∈X, ρ(V∖τ) ≤ λ(X)",
+      "package": "src/graphs",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-C20",
+      "statement": "Σ_f ⊣ f* ⊣ Π_f 三角伴隨（穷舉 2^nx·2^ny）",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-C21",
+      "statement": "pushforward monad T=Π_f f*=Ran_f f* 滿足單子律",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-C22",
+      "statement": "Lan_K ⊣ K* ⊣ Ran_K（協變預層之有限穷舉）",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-C23",
+      "statement": "codensity monad Ran_K K 為 closure operator",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-C24",
+      "statement": "Π_f 橋接全局公理 G：Π_f P_A = F(A)",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-C25",
+      "statement": "集庫成群：聚類分割、Jaccard 門檻、單調性與決定性",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-A5",
+      "statement": "Connes rank-one：χ_{D+aP}=χ_D−a∏_{d≠1}(t−Ω(d))",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-A6",
+      "statement": "det_ζ=∏_{k≥1}k^{c_k}=|[t^{c₀}]χ_D| 且 ζ_D(2)=tr(D⁺²)",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-A7",
+      "statement": "Grothendieck–Lefschetz：exp(Σω t^k/k)=(1−t)^{−ω}",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "定理",
+      "id": "T-A8",
+      "statement": "adelic AJ 單射、div(AJ(D))=D、Pic(Spec Z)=0",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL089",
+      "statement": "kl_pow_proj / kl_comp / kl_compose",
+      "package": "src/series",
+      "formula": "O(M(n)log m+M(m))",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL090",
+      "statement": "ntt / ntt_mul / ntt_cyclic_mul",
+      "package": "src/exact",
+      "formula": "O(n log n)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL091",
+      "statement": "toeplitz_mvp_ntt 循環嵌入",
+      "package": "src/exact",
+      "formula": "O(n log n)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL092",
+      "statement": "toom3_mul 五點求值 Lagrange 插值",
+      "package": "src/exact",
+      "formula": "O(n^log₃5)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL093",
+      "statement": "multiplication_costs 複雜度模型",
+      "package": "src/exact",
+      "formula": "O(log n)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL094",
+      "statement": "f5p_irreducibles / f5p_embed / f5p_divmod",
+      "package": "src/algebra",
+      "formula": "O(5^d·d³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL095",
+      "statement": "ore_even_odd / ore_reduced_norm / ore_bound",
+      "package": "src/algebra",
+      "formula": "O(d²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL096",
+      "statement": "ore_central_decomposition / ore_two_level_factor",
+      "package": "src/algebra",
+      "formula": "O(5^d·d³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL097",
+      "statement": "sfq_module_groebner（leading-degree RREF）",
+      "package": "src/algebra",
+      "formula": "O((df+dg)³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL098",
+      "statement": "sfq_specialize / parametric_gcrd_strata",
+      "package": "src/algebra",
+      "formula": "O(5·(df+dg)³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL099",
+      "statement": "fp5_translate / fp5_delta δ-Galois 群",
+      "package": "src/algebra",
+      "formula": "O(5³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL100",
+      "statement": "fu_gcd_ext / a1_homotopy / theorem_a1_*",
+      "package": "src/algebra",
+      "formula": "O(125²·d²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL101",
+      "statement": "fcbo_run / cbo_closure_count",
+      "package": "src/galois",
+      "formula": "O(|concepts|·n²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL102",
+      "statement": "pfcbo_workers 層級 L 之 round-robin 分發",
+      "package": "src/galois",
+      "formula": "O(w·|queue|)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL103",
+      "statement": "persistent_laplacian_from_delta / kernel_projector",
+      "package": "src/graphs",
+      "formula": "O(m³+k²m)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL104",
+      "statement": "persistent_sheaf_bars 多尺度 filtration",
+      "package": "src/graphs",
+      "formula": "O(n·m³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL105",
+      "statement": "leray_number / induced_complex / kalai_meshulam_witness",
+      "package": "src/graphs",
+      "formula": "O(2^n·n³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL106",
+      "statement": "sigma_f / pullback_f / pi_f / pushforward_monad",
+      "package": "src/compose",
+      "formula": "O(2^{nx+ny})",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL107",
+      "statement": "lan_presheaf / ran_presheaf / codensity_value",
+      "package": "src/compose",
+      "formula": "O(2^{m+n}mn)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL108",
+      "statement": "library_signature / library_clustering",
+      "package": "src/compose",
+      "formula": "O(N²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL109",
+      "statement": "connes_rank_one / regularized_determinant / spectral_zeta",
+      "package": "src/series",
+      "formula": "O(τ(n)³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL110",
+      "statement": "spec_z_zeta_series / adelic_abel_jacobi",
+      "package": "src/series",
+      "formula": "O(cut²+2^p)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-04"
+    },
+    {
+      "kind": "等式",
+      "id": "E51",
+      "statement": "Kinoshita–Li PowProj",
+      "package": "src/series",
+      "formula": "[x^N] P/Q = 偶部 U(x²)+x·奇部 U(x²)/A(x²)",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "等式",
+      "id": "E52",
+      "statement": "NTT 卷積",
+      "package": "src/exact",
+      "formula": "c = NTT⁻¹(NTT(a)·NTT(b)) mod p, p=998244353",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "等式",
+      "id": "E53",
+      "statement": "Toom–3",
+      "package": "src/exact",
+      "formula": "C(z)=Σ_j ℓ_j(z)·A(z_j)B(z_j)，5 次半尺寸乘法",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "等式",
+      "id": "E54",
+      "statement": "Reduced norm",
+      "package": "src/algebra",
+      "formula": "N(f)=Aσ(A)−t Bσ(B) ∈ F_5[t]，t=x²",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "等式",
+      "id": "E55",
+      "statement": "Ore bound",
+      "package": "src/algebra",
+      "formula": "deg φ ≤ 2 deg f；φ = N(f)/lc(N(f))",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "等式",
+      "id": "E56",
+      "statement": "FCbO 守恆律",
+      "package": "src/galois",
+      "formula": "closures(FCbO)+skipped = closures(CbO)",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "等式",
+      "id": "E57",
+      "statement": "Persistent sheaf Laplacian",
+      "package": "src/graphs",
+      "formula": "Δ₀^{X,Y}=M Proj_Θ Mᵀ，Proj_Θ=I−Aᵀ(AAᵀ)⁻¹A",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "等式",
+      "id": "E58",
+      "statement": "Persistent Betti",
+      "package": "src/graphs",
+      "formula": "β₀^{X,Y}=(n−rankδ_Y)−((n−k)−rankδ_Y[:,k:])",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "等式",
+      "id": "E59",
+      "statement": "Kalai–Meshulam",
+      "package": "src/graphs",
+      "formula": "M⊆X ⇒ ∃τ∈X: ρ(V∖τ) ≤ λ(X)",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "等式",
+      "id": "E60",
+      "statement": "Pushforward monad",
+      "package": "src/compose",
+      "formula": "T=Π_f f*=Ran_f f*；T(B)=B∪(Y∖im f)",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "等式",
+      "id": "E61",
+      "statement": "Ran / codensity",
+      "package": "src/compose",
+      "formula": "(Ran_K F)(q)=⋀_{q≤Kp}F(p)；(Ran_K K)(q)=min{Kp|q≤Kp}",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "等式",
+      "id": "E62",
+      "statement": "Connes rank-one",
+      "package": "src/series",
+      "formula": "det(D+I+aP)=det(D+I)(1+a)",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "等式",
+      "id": "E63",
+      "statement": "Lefschetz zeta",
+      "package": "src/series",
+      "formula": "Z(X,t)=exp(Σ_k #X(F_{q^k})t^k/k)=1/(1−t)^{ω(n)}",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "等式",
+      "id": "E64",
+      "statement": "Adelic Abel–Jacobi",
+      "package": "src/series",
+      "formula": "AJ(D)=∏_p p^{e_p}；div(AJ(D))=D",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-04"
+    },
+    {
+      "kind": "等式",
+      "id": "E65",
+      "statement": "A¹-同倫不變性",
+      "package": "src/algebra",
+      "formula": "K₀(F_5[u])≅K₀(F_5)≅ℤ；det[[a,b],[−q,p]]=1",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-04"
     }
   ],
   "references": [
@@ -2423,6 +3450,69 @@
       "2025",
       "https://publications.mfo.de/bitstream/handle/mfo/4320/OWR_2025_36.pdf",
       "A¹-不變性、非交換動機、Grayson Γ 函子 K(ΓC)≃ΣK(C)、對數/導出方案之 K 理論"
+    ],
+    [
+      "R37",
+      "Kinoshita–Li, Power Series Composition in Near-Linear Time, FOCS 2024 (arXiv:2404.05177v2, Algorithm 1 PowProj / Algorithm 2 Comp)",
+      "2024",
+      "https://arxiv.org/html/2404.05177v2",
+      "Algorithm 1 Graeffe U=P Q(−x)、A=Q Q(−x)、偶奇壓縮；Algorithm 2 F_{d,m} 反轉多項式、V(x,y) 壓縮、遞迴 W=Comp(⌈n/2⌉,e,m,P,V)、B=W(x²,y)Q(−x,y)；O(M(n)log m+M(m))"
+    ],
+    [
+      "R38",
+      "Krajča–Outrata–Vychodil, Advances in Algorithms Based on CbO (CLA 2010, CEUR Vol-672 paper29)",
+      "2010",
+      "https://ceur-ws.org/Vol-672/paper29.pdf",
+      "Lemma 1 之新增 canonicity test：N_j∩Y_j⊆B∩Y_j 才計算 D；失敗時 M_j=D 傳遞子樹；PFCbO 在層級 L 分發 queue；Prop.3.2 譜與定向無關"
+    ],
+    [
+      "R39",
+      "Wei–Wei, Persistent Sheaf Laplacians, arXiv:2112.10906 / Foundations of Data Science 7(2) 2025",
+      "2021/25",
+      "https://arxiv.org/pdf/2112.10906",
+      "Θ^{q+1}_{X,Y}={x∈C^{q+1}(Y;G)|(d_Y^q)*x∈C^q(X;F)}；Δ_q^{X,Y}=D*P⁻¹Dᵀ+d_X^{q−1}(d_X^{q−1})ᵀ；ker Δ_q^{X,Y}≅π•(H^q(Y;G))；Prop.3.1 矩陣式、Prop.3.2 定向不變"
+    ],
+    [
+      "R40",
+      "Doña Mateo, Pushforward monads, TAC 44(30) 2025",
+      "2025",
+      "http://tac.mta.ca/tac/volumes/44/30/44-30.pdf",
+      "pushforward monad = Ran_G(GT)；Ran 之 end 公式；codensity monad 為 closure operator；極限完備性不變"
+    ],
+    [
+      "R41",
+      "Connes–Consani–Moscovici, Zeta Spectral Triples (arXiv:2511.22755)",
+      "2025/26",
+      "https://arxiv.org/pdf/2511.22755",
+      "rank-one 擾動 scaling Hamiltonian、有限 Euler 積、正則化行列式 det_ζ、譜 zeta 逼近 Riemann Ξ"
+    ],
+    [
+      "R42",
+      "Connes–Consani, On the Jacobian of Spec Z (arXiv:2602.15941)",
+      "2026",
+      "https://arxiv.org/pdf/2602.15941",
+      "Arakelov 除子、adelic Abel–Jacobi、Weil 顯式公式 = Lefschetz 跡公式；Pic(Spec Z) 么半群"
+    ],
+    [
+      "R43",
+      "Kalai–Meshulam, A topological colourful Helly theorem / Intersections of Leray complexes (2005/2006)",
+      "2005/06",
+      "https://www.math.cmu.edu/users/alanlew/files/theses/phd%20thesis.pdf",
+      "X 為 d-Leray、M 為擬陣且 M⊆X ⇒ ∃τ∈X 使 ρ(V∖τ)≤d；λ(X)=max_{U⊆V} top H̃(X[U])+1"
+    ],
+    [
+      "R44",
+      "Caruso–Le Borgne, Fast factorization of skew polynomials / Gómez-Torrecillas et al., Computing the bound of an Ore polynomial",
+      "2017/2013",
+      "https://xavier.caruso.ovh/papers/publis/fastfactor.pdf",
+      "reduced norm N:k[X;σ]→k^σ[X^r]、Azumaya 代數、最小中心左倍式；Giesbrecht 兩層模組分解；ISSAC'24 模組 Gröbner 求參數 gcrd"
+    ],
+    [
+      "R45",
+      "Oberwolfach Report 36/2025 Algebraic K-theory / Quillen–Suslin / Bass fundamental theorem",
+      "2025",
+      "https://publications.mfo.de/bitstream/handle/mfo/4320/OWR_2025_36.pdf",
+      "A¹-同倫不變性 K₀(R[t])≅K₀(R)；K₀(R[t,t⁻¹])≅K₀(R)⊕K₋₁(R)；么模列補全；非交換動機"
     ]
   ]
 }

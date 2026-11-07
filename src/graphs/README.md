@@ -1,6 +1,6 @@
 # src/graphs — 克內澤圖、Ramsey、擬陣 Tutte、單純複形 Betti、圖極性
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得定理列表
 
@@ -20,6 +20,12 @@
 - **T-Gph8** 離散 Hodge：Δ⁰=δᵀδ=聯絡 Laplacian，ker Δ⁰=ker δ
 - **T-Gph9** O(1) 線叢平坦 ⟺ 環 holonomy=+1 ⟺ dim H⁰=1
 - **T-Gph10** 測地線平行移動 holonomy ∈{±1} 且路徑反向不變
+- **T-Gph11** ker Δ₀^{X,Y} ≅ π•(H⁰(Y;G))：nullity = persistent Betti
+- **T-Gph12** Δ₀^{X,Y} 半正定（全主子式 ≥0）且零根重數 = β₀
+- **T-Gph13** X=Y 時 persistent Laplacian 退化為 δᵀδ
+- **T-Gph14** Wei–Wei Prop.3.2：譜不依賴 Y 之定向
+- **T-Gph15** 多尺度 filtration 之 β₀ 單調不減、rank+nullity=k
+- **T-Gph16** Kalai–Meshulam：M⊆X ⇒ ∃τ∈X, ρ(V∖τ) ≤ λ(X)
 
 ## 已實作演算法列表
 
@@ -38,6 +44,9 @@
 - **AL075** holonomy / curvature 平行移動與曲率（O(|E|)）
 - **AL076** sheaf_coboundary / sheaf_laplacian（O(|E|n²)）
 - **AL077** connection_laplacian O(1) 線叢（O(n²)）
+- **AL103** persistent_laplacian_from_delta / kernel_projector（O(m³+k²m)）
+- **AL104** persistent_sheaf_bars 多尺度 filtration（O(n·m³)）
+- **AL105** leray_number / induced_complex / kalai_meshulam_witness（O(2^n·n³)）
 
 ## 等式
 
@@ -53,6 +62,9 @@
 - **E43** Cheeger：`λ₂/2 ≤ h(G) ≤ √(2λ₂)`
 - **E44** 正規化廣義特徵：`det(L − tD) = det(D)·∏(λ_i(ℒ) − t)`
 - **E45** 離散 Hodge：`Δ⁰_F = δᵀδ；ker Δ⁰ = H⁰(G;F)`
+- **E57** Persistent sheaf Laplacian：`Δ₀^{X,Y}=M Proj_Θ Mᵀ，Proj_Θ=I−Aᵀ(AAᵀ)⁻¹A`
+- **E58** Persistent Betti：`β₀^{X,Y}=(n−rankδ_Y)−((n−k)−rankδ_Y[:,k:])`
+- **E59** Kalai–Meshulam：`M⊆X ⇒ ∃τ∈X: ρ(V∖τ) ≤ λ(X)`
 
 ## 資料夾視角依賴關係圖
 
@@ -91,8 +103,13 @@
   theorem_tangent_bundle  line_bundle  bundle_sign  cycle_basis
   holonomy  curvature  is_flat  connection_laplacian
   sheaf_coboundary  sheaf_laplacian  global_sections_dim  theorem_sheaf_hodge
-  theorem_flat_sections  theorem_parallel_transport_geodesic  Matroid  Complex
-  Graph  LineBundle
+  theorem_flat_sections  theorem_parallel_transport_geodesic  persistent_sheaf  persistent_laplacian_from_delta
+  persistent_sheaf_laplacian  persistent_sheaf_betti0  persistent_sheaf_nullity  psd_principal_minors
+  theorem_persistent_sheaf_hodge  theorem_persistent_sheaf_psd  theorem_persistent_sheaf_limit  negate_coboundary_row
+  theorem_persistent_sheaf_orientation  persistent_sheaf_bars  theorem_persistent_sheaf_filtration  induced_complex
+  is_face  reduced_homology_top  leray_number  kalai_meshulam_witness
+  theorem_kalai_meshulam  Matroid  Complex  Graph
+  LineBundle  PersistentSheaf
 ```
 
 ## 驗證

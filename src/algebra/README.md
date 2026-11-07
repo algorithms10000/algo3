@@ -1,6 +1,6 @@
 # src/algebra — Ore 歪多項式環、Hilbert–Poincaré、局部化、Ext¹、Morita
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得定理列表
 
@@ -29,6 +29,15 @@
 - **T-K0-3** Morita 不變性：2×2 冪等矩陣 tr(e)=rank(e)·1
 - **T-K0-4** K₀ 函子性：局部化泛性質與基本定理複合為零
 - **T-K0-5** δ=0 時 x^k r = σ^k(r) x^k（Shin 2024 q-binomial 之 σ²=id 特例）
+- **T-Ore10** reduced norm 落於中心 F_5[t]、具乘法性且 N(f)=f·f̄
+- **T-Ore11** Ore bound 為最小首一中心左倍式且 deg ≤ 2deg f
+- **T-Ore12** 中心分解 h_i 兩兩右互質、Σdeg h_i=deg f、lclm(h_i)=f
+- **T-Ore13** 參數 GCRD 特化 σ-等變且每層 Sylvester 秩缺陷 = deg gcrd
+- **T-Ore14** 模組 Gröbner 基底秩 = deg lclm，最低次列 = gcrd
+- **T-Ore15** 兩層模組分解因子不可約、次數和=deg f、與直接分解同譜
+- **T-Ore16** δ-Galois：G_a(F_5) 與 δ 交換，固定環 = δ-常數 F_5
+- **T-Ore17** A¹-不變性：F_5[u] 么模列皆可補全，K₀(F_5[u])≅ℤ
+- **T-Ore18** Laurent 局部化 gcd 乘法性 u^k·gcd(a,b)
 
 ## 已實作演算法列表
 
@@ -46,6 +55,13 @@
 - **AL056** sfq_divmod F_25 上 σ^k 修正之右除（O(deg²)）
 - **AL082** sfq_factor 歪多項式右因子分解（O(25^{d}·deg²)）
 - **AL083** sfq_distinct_factors G₀ 生成元（O(k²)）
+- **AL094** f5p_irreducibles / f5p_embed / f5p_divmod（O(5^d·d³)）
+- **AL095** ore_even_odd / ore_reduced_norm / ore_bound（O(d²)）
+- **AL096** ore_central_decomposition / ore_two_level_factor（O(5^d·d³)）
+- **AL097** sfq_module_groebner（leading-degree RREF）（O((df+dg)³)）
+- **AL098** sfq_specialize / parametric_gcrd_strata（O(5·(df+dg)³)）
+- **AL099** fp5_translate / fp5_delta δ-Galois 群（O(5³)）
+- **AL100** fu_gcd_ext / a1_homotopy / theorem_a1_*（O(125²·d²)）
 
 ## 等式
 
@@ -61,6 +77,9 @@
 - **E33** F_25 係數體：`θ² = 2, σ(θ) = θ⁵ = −θ, σ² = id`
 - **E48** K₀ 基本定理：`K₀(R[t,t⁻¹]) ≅ K₀(R) ⊕ K₋₁(R)；Euler: 1−2+1−0=0`
 - **E49** G₀ 商環：`G₀(R/(f)) ≅ ℤ^{#distinct irreducible right factors}`
+- **E54** Reduced norm：`N(f)=Aσ(A)−t Bσ(B) ∈ F_5[t]，t=x²`
+- **E55** Ore bound：`deg φ ≤ 2 deg f；φ = N(f)/lc(N(f))`
+- **E65** A¹-同倫不變性：`K₀(F_5[u])≅K₀(F_5)≅ℤ；det[[a,b],[−q,p]]=1`
 
 ## 資料夾視角依賴關係圖
 
@@ -108,9 +127,15 @@
   sfq_sample  theorem_ore_lclm_batch  theorem_fq2_field  theorem_ore_noncommutative
   sfq_equal  sfq_monic_enum  sfq_min_right_factor  sfq_irreducible
   sfq_factor  sfq_distinct_factors  theorem_k0_skew_quotient  theorem_k0_fundamental
-  theorem_k0_morita_idempotents  theorem_k0_functorial  theorem_ore_sigma_binomial  SkewPoly
-  OreDiv  Fq2  SkewFq  SFqDiv
-  OreGCL
+  theorem_k0_morita_idempotents  theorem_k0_functorial  theorem_ore_sigma_binomial  f5p_irreducibles
+  f5p_embed  ore_even_odd  ore_reduced_norm  ore_bound
+  ore_central_decomposition  theorem_ore_reduced_norm  theorem_ore_bound  theorem_ore_central_decomposition
+  sfq_specialize  parametric_gcrd_strata  theorem_parametric_gcrd  sfq_module_groebner
+  theorem_ore_module_groebner  theorem_ore_parametric_groebner  ore_two_level_factor  theorem_ore_two_level
+  theorem_delta_galois  fu_gcd_ext  a1_homotopy  theorem_a1_invariance
+  theorem_a1_laurent  SkewPoly  OreDiv  Fq2
+  SkewFq  SFqDiv  OreGCL  F5pDiv
+  SkewGB  FuDiv  FuBezout
 ```
 
 ## 驗證

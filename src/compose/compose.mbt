@@ -1223,3 +1223,443 @@ pub fn theorem_derivation_all_in_one() -> Bool {
   theorem_universal_properties_all() && theorem_verb_pattern_structure() &&
     cc[0] <= cc[1] && cc[1] == VERB_COUNT * VERB_COUNT
 }
+
+///|
+// ════════════════════════════════════════════════════════════════════════
+// C1-04 補回 §6''：pushforward monad / 右 Kan 擴展 / codensity monad
+// R33 Doña Mateo「Pushforward monads」：對有限集合映射 f : X → Y，
+// Σ_f ⊣ f* ⊣ Π_f（相依和／拉回／相依積），而 T = Π_f f* = Ran_f f*
+// 為 pushforward（codensity）monad。對有限鏈之 K : P → Q，
+// (Ran_K F)(q) = ⋀_{q ≤ K p} F(p)，(Lan_K F)(q) = ⋁_{K p ≤ q} F(p)，
+// 且 Ran_K K 為 Q 上之 closure operator（poset 上的 monad）。
+// ════════════════════════════════════════════════════════════════════════
+
+///|
+pub(all) struct FiniteMap {
+  nx : Int
+  ny : Int
+  f : Array[Int]
+}
+
+///|
+pub fn finite_map(nx : Int, ny : Int, f : Array[Int]) -> FiniteMap {
+  FiniteMap::{ nx, ny, f }
+}
+
+///|
+fn bit(m : UInt64, i : Int) -> Bool { ((m >> i) & 1UL) == 1UL }
+
+///|
+/// Σ_f(A)(y) = ∃ x ∈ f⁻¹(y), x ∈ A（相依和，左伴隨）。
+pub fn sigma_f(fm : FiniteMap, a : UInt64) -> UInt64 {
+  let mut out = 0UL
+  for x in 0..<fm.nx {
+    if bit(a, x) {
+      let y = fm.f[x]
+      if y >= 0 && y < fm.ny { out = out | (1UL << y) }
+    }
+  }
+  out
+}
+
+///|
+/// f*(B)(x) = B(f(x))（拉回）。
+pub fn pullback_f(fm : FiniteMap, b : UInt64) -> UInt64 {
+  let mut out = 0UL
+  for x in 0..<fm.nx {
+    let y = fm.f[x]
+    if y >= 0 && y < fm.ny && bit(b, y) { out = out | (1UL << x) }
+  }
+  out
+}
+
+///|
+/// Π_f(A)(y) = ∀ x ∈ f⁻¹(y), x ∈ A（相依積，右伴隨／右 Kan 擴展）。
+pub fn pi_f(fm : FiniteMap, a : UInt64) -> UInt64 {
+  let mut out = 0UL
+  for y in 0..<fm.ny {
+    let mut all = true
+    for x in 0..<fm.nx {
+      if fm.f[x] == y && !bit(a, x) { all = false; break }
+    }
+    if all { out = out | (1UL << y) }
+  }
+  out
+}
+
+///|
+/// pushforward monad T = Π_f ∘ f* = Ran_f f*。
+pub fn pushforward_monad(fm : FiniteMap, b : UInt64) -> UInt64 {
+  pi_f(fm, pullback_f(fm, b))
+}
+
+///|
+/// 定理 T-C20：Σ_f ⊣ f* ⊣ Π_f（穷舉 2^nx·2^ny 對），且 Π_f f* 為 closure。
+pub fn theorem_pushforward_adjunction(fm : FiniteMap) -> Bool {
+  let nx_total = 1UL << fm.nx
+  let ny_total = 1UL << fm.ny
+  let mut a = 0UL
+  while a < nx_total {
+    let mut b = 0UL
+    while b < ny_total {
+      let l = (sigma_f(fm, a) & b) == sigma_f(fm, a)
+      let r = (a & pullback_f(fm, b)) == a
+      if l != r { return false }
+      let l2 = (pullback_f(fm, b) & a) == pullback_f(fm, b)
+      let r2 = (b & pi_f(fm, a)) == b
+      if l2 != r2 { return false }
+      b += 1UL
+    }
+    a += 1UL
+  }
+  true
+}
+
+///|
+/// 定理 T-C21：T = Π_f f* 為 monad（unit B ⊆ T B、乘法 T² = T、
+/// 單調），且 T(B) = B ∪ (Y \ im f)，即 Ran_f f* 之明確公式。
+pub fn theorem_pushforward_monad(fm : FiniteMap) -> Bool {
+  let total = 1UL << fm.ny
+  let mut image = 0UL
+  for x in 0..<fm.nx {
+    let y = fm.f[x]
+    if y >= 0 && y < fm.ny { image = image | (1UL << y) }
+  }
+  let all = @galois.full_mask(fm.ny)
+  let outside = all & (all ^ image)
+  let mut b = 0UL
+  while b < total {
+    let tb = pushforward_monad(fm, b)
+    if (b & tb) != b { return false }
+    if tb != (b | outside) { return false }
+    if pushforward_monad(fm, tb) != tb { return false }
+    let mut c = 0UL
+    while c < total {
+      if (b & c) == b {
+        if (pushforward_monad(fm, b) & pushforward_monad(fm, c)) !=
+          pushforward_monad(fm, b) { return false }
+      }
+      c += 1UL
+    }
+    b += 1UL
+  }
+  theorem_pushforward_adjunction(fm)
+}
+
+///|
+pub(all) struct PosetKan {
+  n : Int
+  k : Array[Int]
+}
+
+///|
+/// K : P → Q（P、Q 為有限鏈，K 單調），Q = {0,…,n−1}。
+pub fn poset_kan(n : Int, k : Array[Int]) -> PosetKan {
+  PosetKan::{ n, k }
+}
+
+///|
+/// (Ran_K F)(q) = ⋀ { F(p) | q ≤ K(p) }；F、G 為鏈上之 up-set（協變預層）。
+pub fn ran_presheaf(kn : PosetKan, f : UInt64) -> UInt64 {
+  let mut out = 0UL
+  for q in 0..<kn.n {
+    let mut all = true
+    for p in 0..<kn.k.length() {
+      if q <= kn.k[p] && !bit(f, p) { all = false; break }
+    }
+    if all { out = out | (1UL << q) }
+  }
+  out
+}
+
+///|
+/// (Lan_K F)(q) = ⋁ { F(p) | K(p) ≤ q }。
+pub fn lan_presheaf(kn : PosetKan, f : UInt64) -> UInt64 {
+  let mut out = 0UL
+  for q in 0..<kn.n {
+    let mut any = false
+    for p in 0..<kn.k.length() {
+      if kn.k[p] <= q && bit(f, p) { any = true; break }
+    }
+    if any { out = out | (1UL << q) }
+  }
+  out
+}
+
+///|
+/// K*：Q 之下集拉回為 P 之下集（在鏈上以 mask 表示）。
+pub fn kan_pullback(kn : PosetKan, g : UInt64) -> UInt64 {
+  let mut out = 0UL
+  for p in 0..<kn.k.length() {
+    let q = kn.k[p]
+    if q >= 0 && q < kn.n && bit(g, q) { out = out | (1UL << p) }
+  }
+  out
+}
+
+///|
+fn chain_upset(mask : UInt64, n : Int) -> Bool {
+  for i in 0..<(n - 1) {
+    if bit(mask, i) && !bit(mask, i + 1) { return false }
+  }
+  true
+}
+
+///|
+/// 定理 T-C22：Lan_K ⊣ K* ⊣ Ran_K（穷舉所有協變預層 F : P → Set、G : Q → Set，
+/// 即鏈上之 up-set 遮罩；此限制為函子性所需）。
+pub fn theorem_kan_adjunction(kn : PosetKan) -> Bool {
+  let pt = 1UL << kn.k.length()
+  let qt = 1UL << kn.n
+  let mut f = 0UL
+  while f < pt {
+    if !chain_upset(f, kn.k.length()) { f += 1UL; continue }
+    let mut g = 0UL
+    while g < qt {
+      if !chain_upset(g, kn.n) { g += 1UL; continue }
+      let l1 = (lan_presheaf(kn, f) & g) == lan_presheaf(kn, f)
+      let r1 = (f & kan_pullback(kn, g)) == f
+      if l1 != r1 { return false }
+      let l2 = (kan_pullback(kn, g) & f) == kan_pullback(kn, g)
+      let r2 = (g & ran_presheaf(kn, f)) == g
+      if l2 != r2 { return false }
+      g += 1UL
+    }
+    f += 1UL
+  }
+  true
+}
+
+///|
+/// Codensity monad：T = Ran_K K，(Ran_K K)(q) = min{K(p) | q ≤ K(p)}。
+pub fn codensity_value(kn : PosetKan, q : Int) -> Int {
+  let mut best = kn.n
+  for p in 0..<kn.k.length() {
+    if q <= kn.k[p] && kn.k[p] < best { best = kn.k[p] }
+  }
+  best
+}
+
+///|
+/// 定理 T-C23：codensity monad 為 Q 上之 closure operator
+/// （extensive / monotone / idempotent），且 Ran_K K 之 end 公式
+/// 與 closure 之上集作用一致：q' ≥ T(q) ⟺ Ran_K({p | K p ≥ q}) ⊆ {p | K p ≥ q'}。
+pub fn theorem_codensity_monad(kn : PosetKan) -> Bool {
+  let t : Array[Int] = []
+  for q in 0..<kn.n { t.push(codensity_value(kn, q)) }
+  for q in 0..<kn.n {
+    if t[q] < q || t[q] >= kn.n { return false }
+    if t[t[q]] != t[q] { return false }
+    for q2 in q..<kn.n {
+      if t[q2] < t[q] { return false }
+    }
+    // end / limit 公式：z ≤ (Ran_K K)(q) ⟺ ∀ p, q ≤ K p ⇒ z ≤ K p
+    for z in 0..<kn.n {
+      let mut univ = true
+      for p in 0..<kn.k.length() {
+        if q <= kn.k[p] && z > kn.k[p] { univ = false; break }
+      }
+      if (z <= t[q]) != univ { return false }
+    }
+  }
+  theorem_kan_adjunction(kn)
+}
+
+///|
+/// 定理 T-C24：橋接全局公理 G。取 Y 為單一屬性、f : X → 1 為常數映射，
+/// 則 Π_f(A) = F(A) = {y | ∀ x ∈ A, R(x,y)}；相依積即伽羅瓦極性。
+pub fn theorem_pi_polar_bridge() -> Bool {
+  let rows : Array[UInt64] = [1UL, 0UL, 1UL, 0UL]
+  let ctx = @galois.context(4, 1, rows)
+  let f : Array[Int] = [0, 0, 0, 0]
+  let fm = finite_map(4, 1, f)
+  let all = @galois.full_mask(4)
+  let mut rel = 0UL
+  for x in 0..<4 {
+    if rows[x] == 1UL { rel = rel | (1UL << x) }
+  }
+  let total = 1UL << 4
+  let mut a = 0UL
+  while a < total {
+    // P_A(x) = (x ∉ A) ∨ R(x,0)；Π_f P_A = ∀ x ∈ A, R(x,0) = F(A)
+    let pred = (all ^ a) | rel
+    if pi_f(fm, pred) != @galois.polar_obj(ctx, a) { return false }
+    if sigma_f(fm, a) != (if a == 0UL { 0UL } else { 1UL }) { return false }
+    // 三角伴隨：Σ_f ⊣ f* ⊣ Π_f 在此單點脈絡同樣成立
+    if !theorem_pushforward_adjunction(fm) { return false }
+    a += 1UL
+  }
+  true
+}
+
+///|
+// ════════════════════════════════════════════════════════════════════════
+// C1-04 補回 §6''：集庫成群（algorithm library clustering）
+// 以 docs/catalog.json 生成之真實登錄表為輸入，對每筆定理／演算法／等式
+// 抽取 14 種組合手法 + 7 類 + 12 套件之 33 位元簽章，
+// 以 Jaccard 相似度與 union-find 做階層式聚類，並驗證分割性質。
+// ════════════════════════════════════════════════════════════════════════
+
+///|
+fn technique_keys() -> Array[String] {
+  [
+    "泛性質", "Kan", "Grothendieck", "層", "單子", "張量", "對偶", "推出",
+    "非交換", "操作子", "楚空間", "Morita", "導函子", "博弈",
+  ]
+}
+
+///|
+fn kind_keys() -> Array[String] {
+  ["公理", "定義", "命題", "引理", "定理", "演算法", "等式"]
+}
+
+///|
+fn package_keys() -> Array[String] {
+  [
+    "src/exact", "src/galois", "src/series", "src/algebra", "src/graphs",
+    "src/compose", "src/catalog", "src/axioms", "cmd/main", "docs", "tools",
+    "src/root",
+  ]
+}
+
+///|
+pub fn library_signature(e : @catalog.Entry) -> UInt64 {
+  let mut sig = 0UL
+  let tk = technique_keys()
+  for i in 0..<tk.length() {
+    if e.statement.contains(tk[i]) || e.formula.contains(tk[i]) ||
+      e.verification.contains(tk[i]) {
+      sig = sig | (1UL << i)
+    }
+  }
+  let kk = kind_keys()
+  for i in 0..<kk.length() {
+    if e.kind == kk[i] { sig = sig | (1UL << (14 + i)) }
+  }
+  let pk = package_keys()
+  let mut hit = false
+  for i in 0..<pk.length() {
+    if e.pkg == pk[i] { sig = sig | (1UL << (21 + i)); hit = true }
+  }
+  if !hit { sig = sig | (1UL << (21 + pk.length())) }
+  sig
+}
+
+///|
+pub(all) struct LibraryClustering {
+  total : Int
+  groups : Int
+  multi : Int
+  largest : Int
+  singletons : Int
+  assignments : Array[Int]
+  merged_pairs : Array[Array[Int]]
+}
+
+///|
+fn uf_find(parent : Array[Int], x : Int) -> Int {
+  let mut r = x
+  while parent[r] != r { r = parent[r] }
+  let mut c = x
+  while parent[c] != c {
+    let nxt = parent[c]
+    parent[c] = r
+    c = nxt
+  }
+  r
+}
+
+///|
+/// Jaccard 相似度 s(i,j) = |σ_i ∩ σ_j| / |σ_i ∪ σ_j| ≥ num/den 即合併。
+pub fn library_clustering(num : Int, den : Int) -> LibraryClustering {
+  let entries = @catalog.catalog()
+  let n = entries.length()
+  let sigs : Array[UInt64] = []
+  for i in 0..<n { sigs.push(library_signature(entries[i])) }
+  let parent : Array[Int] = []
+  for i in 0..<n { parent.push(i) }
+  let merged : Array[Array[Int]] = []
+  for i in 0..<n {
+    for j in (i + 1)..<n {
+      let inter = @exact.popcount(sigs[i] & sigs[j])
+      let uni = @exact.popcount(sigs[i] | sigs[j])
+      if uni == 0 || inter * den < uni * num { continue }
+      let a = uf_find(parent, i)
+      let b = uf_find(parent, j)
+      if a != b { parent[b] = a }
+      merged.push([i, j, inter, uni])
+    }
+  }
+  let root : Array[Int] = []
+  let sizes : Array[Int] = []
+  for i in 0..<n { root.push(uf_find(parent, i)); sizes.push(0) }
+  for i in 0..<n { sizes[root[i]] += 1 }
+  let mut groups = 0
+  let mut multi = 0
+  let mut largest = 0
+  let mut single = 0
+  for i in 0..<n {
+    if root[i] == i {
+      groups += 1
+      if sizes[i] >= 2 { multi += 1 } else { single += 1 }
+      if sizes[i] > largest { largest = sizes[i] }
+    }
+  }
+  LibraryClustering::{
+    total: n, groups, multi, largest, singletons: single,
+    assignments: root, merged_pairs: merged,
+  }
+}
+
+///|
+/// 定理 T-C25（集庫成群）：聚類為不交且覆蓋全部登錄項之分割；
+/// 每條合併邊滿足 Jaccard 門檻；門檻提高時群數不減；
+/// 最低門檻至少形成一個含 ≥2 項之群（真實多元算法庫）。
+pub fn theorem_library_clustering() -> Bool {
+  let c1 = library_clustering(1, 4)
+  let c2 = library_clustering(1, 2)
+  let c3 = library_clustering(3, 4)
+  let c4 = library_clustering(1, 1)
+  let entries = @catalog.catalog()
+  if c1.total != entries.length() { return false }
+  if c1.assignments.length() != c1.total { return false }
+  if c1.groups > c1.total || c1.multi < 1 { return false }
+  if c1.groups != c1.multi + c1.singletons { return false }
+  if c1.groups > c2.groups || c2.groups > c3.groups ||
+    c3.groups > c4.groups { return false }
+  // 較高門檻須形成真正多元之庫群（非單一巨團）
+  if c3.groups < 10 || c3.multi < 10 { return false }
+  // 分割驗證：每個代表根恰為自身，且大小總和 = 全部筆數
+  let mut sum = 0
+  for i in 0..<c1.total {
+    let r = c1.assignments[i]
+    if r < 0 || r >= c1.total { return false }
+    if c1.assignments[r] != r { return false }
+    sum += 1
+  }
+  if sum != c1.total { return false }
+  // 每條合併邊之 Jaccard ≥ 1/4，且交集非空
+  for k in 0..<c1.merged_pairs.length() {
+    let e = c1.merged_pairs[k]
+    if e[2] < 1 || 4 * e[2] < e[3] { return false }
+    if c1.assignments[e[0]] != c1.assignments[e[1]] { return false }
+  }
+  // 決定性：重跑一次得到完全相同之指派
+  let again = library_clustering(1, 4)
+  for i in 0..<c1.total {
+    if again.assignments[i] != c1.assignments[i] { return false }
+  }
+  true
+}
+
+///|
+/// 演算法庫聚類統計：[總筆數, 群數, 含 ≥2 項之群數, 最大群, 演算法筆數]。
+pub fn library_cluster_stats() -> Array[Int] {
+  let c = library_clustering(3, 4)
+  let entries = @catalog.catalog()
+  let mut algos = 0
+  for i in 0..<entries.length() {
+    if entries[i].kind == "演算法" { algos += 1 }
+  }
+  [c.total, c.groups, c.multi, c.largest, algos]
+}

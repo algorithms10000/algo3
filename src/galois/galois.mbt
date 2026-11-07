@@ -552,3 +552,236 @@ pub fn theorem_parallel_next_closure(ctx : Context) -> Bool {
   flat.length() == brute.length() && theorem_next_closures_levelwise(ctx) &&
     theorem_constraint_closure(ctx, 1UL << (ctx.ny - 1))
 }
+
+///|
+// ════════════════════════════════════════════════════════════════════════
+// C1-04 補回 §6''：FCbO / PFCbO（Krajča–Outrata–Vychodil, CLA 2010）
+// 原始 canonicity test：B∩Y_j = D∩Y_j，D=(B∪{j})^↓↑；
+// 新增 canonicity test（Lemma 1）：若 N_j∩Y_j ⊄ B∩Y_j，則無需計算 D 即可
+// 斷言失敗；失敗時記錄 M_j = D 並向子樹傳遞。PFCbO 在指定層級 L 把
+// queue 中的子任務分發給 w 個 worker，各 worker 獨立遞迴。
+// ════════════════════════════════════════════════════════════════════════
+
+///|
+pub(all) struct FCbOTask {
+  a : UInt64
+  b : UInt64
+  y : Int
+  ns : Array[UInt64]
+}
+
+///|
+fn column_mask(ctx : Context, j : Int) -> UInt64 {
+  polar_attr(ctx, 1UL << j)
+}
+
+///|
+fn copy_ns(ns : Array[UInt64]) -> Array[UInt64] {
+  let out : Array[UInt64] = []
+  for i in 0..<ns.length() { out.push(ns[i]) }
+  out
+}
+
+///|
+/// FCbO 之 FastGenerateFrom（depth 小於 stop 時遞迴，否則交給 frontier）。
+/// stats = [closures, inherited_failures, skipped_by_new_test, raw_listings]。
+fn fcbo_generate(
+  ctx : Context,
+  task : FCbOTask,
+  depth : Int,
+  stop : Int,
+  out : Array[UInt64],
+  stats : Array[Int],
+  frontier : Array[FCbOTask],
+) -> Unit {
+  insert_unique(out, task.b)
+  stats[3] = stats[3] + 1
+  let all = full_mask(ctx.ny)
+  if task.b == all || task.y >= ctx.ny { return }
+  let mm = copy_ns(task.ns)
+  let qa : Array[UInt64] = []
+  let qd : Array[UInt64] = []
+  let qj : Array[Int] = []
+  for j in task.y..<ctx.ny {
+    let low = lower_mask(j)
+    let in_b = ((task.b >> j) & 1UL) == 1UL
+    let newtest = subset(task.ns[j] & low, task.b & low)
+    if !in_b && newtest {
+      let cc = task.a & column_mask(ctx, j)
+      let dd = polar_obj(ctx, cc)
+      stats[0] = stats[0] + 1
+      if (task.b & low) == (dd & low) {
+        qa.push(cc)
+        qd.push(dd)
+        qj.push(j)
+      } else {
+        mm[j] = dd
+        stats[1] = stats[1] + 1
+      }
+    } else if !in_b {
+      stats[2] = stats[2] + 1
+    }
+  }
+  for k in 0..<qd.length() {
+    let child = FCbOTask::{ a: qa[k], b: qd[k], y: qj[k] + 1, ns: mm }
+    if depth >= stop {
+      frontier.push(child)
+    } else {
+      fcbo_generate(ctx, child, depth + 1, stop, out, stats, frontier)
+    }
+  }
+}
+
+///|
+/// FCbO 由 ⟨X, X^↑⟩ 出發；回傳 [intents, stats] 之封裝由 fcbo_run 提供。
+pub struct FCbOResult {
+  intents : Array[UInt64]
+  closures : Int
+  inherited : Int
+  skipped : Int
+  listings : Int
+}
+
+///|
+pub fn fcbo_run(ctx : Context) -> FCbOResult {
+  let ns : Array[UInt64] = []
+  for _j in 0..<ctx.ny { ns.push(0UL) }
+  let start = FCbOTask::{
+    a: full_mask(ctx.nx), b: closure_attr(ctx, 0UL), y: 0, ns,
+  }
+  let out : Array[UInt64] = []
+  let stats : Array[Int] = [0, 0, 0, 0]
+  let frontier : Array[FCbOTask] = []
+  fcbo_generate(ctx, start, 0, 1000000, out, stats, frontier)
+  FCbOResult::{
+    intents: out, closures: stats[0], inherited: stats[1],
+    skipped: stats[2], listings: stats[3],
+  }
+}
+
+///|
+/// 傳統 CbO（僅原始 canonicity test）之閉包計算次數，作為剪枝比較基準。
+pub fn cbo_closure_count(ctx : Context) -> Int {
+  let start = FCbOTask::{
+    a: full_mask(ctx.nx), b: closure_attr(ctx, 0UL), y: 0, ns: [],
+  }
+  let stack : Array[FCbOTask] = [start]
+  let mut count = 0
+  let mut steps = 0
+  while stack.length() > 0 && steps < 100000 {
+    steps += 1
+    let t = stack.pop().unwrap()
+    if t.b == full_mask(ctx.ny) || t.y >= ctx.ny { continue }
+    let q : Array[FCbOTask] = []
+    for j in t.y..<ctx.ny {
+      if ((t.b >> j) & 1UL) == 1UL { continue }
+      let cc = t.a & column_mask(ctx, j)
+      let dd = polar_obj(ctx, cc)
+      count += 1
+      let low = lower_mask(j)
+      if (t.b & low) == (dd & low) {
+        q.push(FCbOTask::{ a: cc, b: dd, y: j + 1, ns: [] })
+      }
+    }
+    // 深度優先：反向推入維持順序
+    for k in 0..<q.length() { stack.push(q[q.length() - 1 - k]) }
+  }
+  count
+}
+
+///|
+/// 定理 T-G11：FCbO 列舉恰為全部 intent，無重複，且每個輸出為閉集。
+pub fn theorem_fcbo_completeness(ctx : Context) -> Bool {
+  let r = fcbo_run(ctx)
+  let brute = closed_attributes(ctx)
+  if r.intents.length() != brute.length() { return false }
+  if r.listings != r.intents.length() { return false }
+  for i in 0..<r.intents.length() {
+    if closure_attr(ctx, r.intents[i]) != r.intents[i] { return false }
+    if !list_contains(brute, r.intents[i]) { return false }
+  }
+  true
+}
+
+///|
+/// 定理 T-G12：FCbO 新增 canonicity test 為安全的剪枝。對每個 (概念, 屬性)
+/// 配對，FCbO 或計算閉包、或由 Lemma 1 直接跳過，故
+/// closures + skipped = CbO closures（守恆律），且 closures ≤ CbO closures。
+pub fn theorem_fcbo_pruning(ctx : Context) -> Bool {
+  let r = fcbo_run(ctx)
+  let cbo = cbo_closure_count(ctx)
+  r.closures + r.skipped == cbo && r.closures <= cbo &&
+    r.inherited <= r.closures && theorem_fcbo_completeness(ctx)
+}
+
+///|
+/// 非平凡 FCbO 測試脈絡（6 物件、7 屬性、決定性假資料）。
+pub fn fcbo_demo_context() -> Context {
+  let rows : Array[UInt64] = []
+  for x in 0..<6 {
+    let mut v = 0UL
+    for y in 0..<7 {
+      let h = (x * 37 + y * 61 + 52 + x * y * 7) % 11
+      if h < 5 { v = @exact.set_bit(v, y) }
+    }
+    rows.push(v)
+  }
+  context(6, 7, rows)
+}
+
+///|
+/// 定理 T-G13a：在非平凡脈絡上新增 canonicity test 確實啟動，
+/// 且 FCbO 嚴格少算閉包（skipped > 0、closures < CbO closures）。
+pub fn theorem_fcbo_new_test_active() -> Bool {
+  let ctx = fcbo_demo_context()
+  let r = fcbo_run(ctx)
+  let cbo = cbo_closure_count(ctx)
+  r.skipped > 0 && r.closures < cbo &&
+    r.closures + r.skipped == cbo && theorem_fcbo_completeness(ctx)
+}
+
+///|
+/// PFCbO：在層級 L 將 queue 子任務以 round-robin 分發給 w 個 worker。
+/// 回傳每個 worker 各自列舉的 intent 清單。
+pub fn pfcbo_workers(ctx : Context, level : Int, workers : Int) -> Array[Array[UInt64]] {
+  let w = if workers < 1 { 1 } else { workers }
+  let ns : Array[UInt64] = []
+  for _j in 0..<ctx.ny { ns.push(0UL) }
+  let start = FCbOTask::{
+    a: full_mask(ctx.nx), b: closure_attr(ctx, 0UL), y: 0, ns,
+  }
+  let rootout : Array[UInt64] = []
+  let stats : Array[Int] = [0, 0, 0, 0]
+  let frontier : Array[FCbOTask] = []
+  let stop = if level < 0 { 0 } else { level }
+  fcbo_generate(ctx, start, 0, stop, rootout, stats, frontier)
+  let parts : Array[Array[UInt64]] = []
+  for _k in 0..<w { parts.push([]) }
+  for i in 0..<rootout.length() { parts[i % w].push(rootout[i]) }
+  for k in 0..<frontier.length() {
+    let idx = k % w
+    let out : Array[UInt64] = []
+    let st : Array[Int] = [0, 0, 0, 0]
+    let fr : Array[FCbOTask] = []
+    fcbo_generate(ctx, frontier[k], stop + 1, 1000000, out, st, fr)
+    for i in 0..<out.length() { parts[idx].push(out[i]) }
+  }
+  parts
+}
+
+///|
+/// 定理 T-G13：PFCbO 之 worker 輸出聯集恰為全部 intent（無遺漏、無重複）。
+pub fn theorem_pfcbo_partition(ctx : Context, level : Int, workers : Int) -> Bool {
+  let parts = pfcbo_workers(ctx, level, workers)
+  let brute = closed_attributes(ctx)
+  let flat : Array[UInt64] = []
+  for k in 0..<parts.length() {
+    for i in 0..<parts[k].length() {
+      if list_contains(flat, parts[k][i]) { return false }
+      flat.push(parts[k][i])
+      if closure_attr(ctx, parts[k][i]) != parts[k][i] { return false }
+      if !list_contains(brute, parts[k][i]) { return false }
+    }
+  }
+  flat.length() == brute.length() && theorem_fcbo_completeness(ctx)
+}

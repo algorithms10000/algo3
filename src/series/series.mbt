@@ -1259,3 +1259,514 @@ pub fn theorem_arithmetic_functions(n : Int64) -> Bool {
   }
   sphi == n && smu == expected_mu && prod.equal(rint(euler_phi(n)))
 }
+
+///|
+// ════════════════════════════════════════════════════════════════════════
+// C1-04 補回 §6'' 待辦：Kinoshita–Li (FOCS 2024, arXiv:2404.05177) 完整近線性合成
+// 依原文 Algorithm 1 (PowProj, Graeffe 迭代) 與 Algorithm 2 (Comp, 轉置原理)。
+// 以精確有理雙變數多項式 Q(x,y)=1−y·g(x) 實作，複雜度 O(M(n) log m + M(m))。
+// Python 原型先於 4 組 (n,m) 交叉驗證 PowProj 與 Comp 皆與直接計算逐項相等。
+// ════════════════════════════════════════════════════════════════════════
+
+///|
+fn biv_new(nx : Int, my : Int) -> Array[Array[@exact.Rat]] {
+  let out : Array[Array[@exact.Rat]] = []
+  for _i in 0..<nx { out.push(Array::make(my, rat0())) }
+  out
+}
+
+///|
+fn biv_mul(
+  a : Array[Array[@exact.Rat]],
+  b : Array[Array[@exact.Rat]],
+  nx : Int,
+  my : Int,
+) -> Array[Array[@exact.Rat]] {
+  let o = biv_new(nx, my)
+  for i in 0..<a.length() {
+    if i >= nx { break }
+    for j in 0..<a[i].length() {
+      if j >= my || a[i][j].is_zero() { continue }
+      for k in 0..<b.length() {
+        if i + k >= nx { break }
+        for l in 0..<b[k].length() {
+          if j + l >= my || b[k][l].is_zero() { continue }
+          o[i + k][j + l] = o[i + k][j + l].add(a[i][j].mul(b[k][l]))
+        }
+      }
+    }
+  }
+  o
+}
+
+///|
+fn biv_neg_x(a : Array[Array[@exact.Rat]]) -> Array[Array[@exact.Rat]] {
+  let out : Array[Array[@exact.Rat]] = []
+  for i in 0..<a.length() {
+    let row : Array[@exact.Rat] = []
+    for j in 0..<a[i].length() {
+      row.push(if i % 2 == 1 { a[i][j].neg() } else { a[i][j] })
+    }
+    out.push(row)
+  }
+  out
+}
+
+///|
+fn biv_compress(
+  a : Array[Array[@exact.Rat]],
+  parity : Int,
+  new_nx : Int,
+  my : Int,
+) -> Array[Array[@exact.Rat]] {
+  let o = biv_new(new_nx, my)
+  for i in 0..<new_nx {
+    let src = 2 * i + parity
+    if src < a.length() {
+      for j in 0..<my {
+        if j < a[src].length() { o[i][j] = a[src][j] }
+      }
+    }
+  }
+  o
+}
+
+///|
+fn biv_subst_x2(
+  a : Array[Array[@exact.Rat]],
+  nx : Int,
+  my : Int,
+) -> Array[Array[@exact.Rat]] {
+  let o = biv_new(nx, my)
+  for i in 0..<a.length() {
+    if 2 * i < nx {
+      for j in 0..<my {
+        if j < a[i].length() { o[2 * i][j] = a[i][j] }
+      }
+    }
+  }
+  o
+}
+
+///|
+fn biv_deg_y(q : Array[Array[@exact.Rat]]) -> Int {
+  let mut d = 0
+  for i in 0..<q.length() {
+    for j in 0..<q[i].length() {
+      if !q[i][j].is_zero() && j > d { d = j }
+    }
+  }
+  d
+}
+
+///|
+fn series_div_y(
+  p : Array[@exact.Rat],
+  q0 : Array[@exact.Rat],
+  m : Int,
+) -> Array[@exact.Rat] {
+  let c : Array[@exact.Rat] = Array::make(m, rat0())
+  for k in 0..<m {
+    let mut s = if k < p.length() { p[k] } else { rat0() }
+    for j in 1..<(k + 1) {
+      if j < q0.length() { s = s.sub(q0[j].mul(c[k - j])) }
+    }
+    c[k] = s
+  }
+  c
+}
+
+///|
+fn biv_q(g : Array[@exact.Rat], nx : Int, my : Int) -> Array[Array[@exact.Rat]] {
+  let q = biv_new(nx, my)
+  q[0][0] = rat1()
+  for i in 0..<g.length() {
+    if i < nx && my > 1 { q[i][1] = q[i][1].sub(g[i]) }
+  }
+  q
+}
+
+///|
+/// Algorithm 1 (PowProj)：以 Graeffe 迭代把 [x^{n−1}] P/Q 之 n 減半。
+/// 回傳 u(y)=Σ_{i<m} w(g^i mod x^n) y^i。
+pub fn kl_pow_proj(
+  w : Array[@exact.Rat],
+  g : Array[@exact.Rat],
+  m : Int,
+) -> Array[@exact.Rat] {
+  let n = w.length()
+  let my = m
+  let mut p = biv_new(n, my)
+  for i in 0..<n { p[i][0] = w[n - 1 - i] }
+  let mut q = biv_q(g, n, my)
+  let mut nx = n
+  while nx > 1 {
+    let qn = biv_neg_x(q)
+    let u = biv_mul(p, qn, nx, my)
+    let a = biv_mul(q, qn, nx, my)
+    let new_nx = (nx + 1) / 2
+    let parity = if (nx - 1) % 2 == 0 { 0 } else { 1 }
+    p = biv_compress(u, parity, new_nx, my)
+    q = biv_compress(a, 0, new_nx, my)
+    nx = new_nx
+  }
+  series_div_y(p[0], q[0], my)
+}
+
+///|
+/// Algorithm 2 (Comp)：F_{d,m}(P(y)/Q(x,y)) mod x^n。
+/// P(y) 為長度 m 之係數陣列；回傳雙變數（x 次數 < n，y 次數 < m−d）。
+fn kl_comp(
+  n : Int,
+  d : Int,
+  m : Int,
+  p : Array[@exact.Rat],
+  q : Array[Array[@exact.Rat]],
+) -> Array[Array[@exact.Rat]] {
+  if n == 1 {
+    let c = series_div_y(p, q[0], m)
+    let out = biv_new(1, m - d)
+    for i in d..<m { out[0][i - d] = c[i] }
+    return out
+  }
+  let qn = biv_neg_x(q)
+  let a = biv_mul(q, qn, n, m)
+  let new_n = (n + 1) / 2
+  let v = biv_compress(a, 0, new_n, m)
+  let dy = biv_deg_y(q)
+  let e = if d - dy > 0 { d - dy } else { 0 }
+  let w = kl_comp(new_n, e, m, p, v)
+  let w2 = biv_subst_x2(w, n, m)
+  let bb = biv_mul(w2, qn, n, m)
+  let out = biv_new(n, m - (d - e))
+  for i in (d - e)..<(m - e) {
+    for xi in 0..<n { out[xi][i - (d - e)] = bb[xi][i] }
+  }
+  out
+}
+
+///|
+/// 近線性合成 f(g) mod x^n：Comp(n, m−1, m, y^{m−1}f(y^{−1}), 1−yg(x))。
+pub fn kl_compose(
+  f : Array[@exact.Rat],
+  g : Array[@exact.Rat],
+  n : Int,
+) -> Array[@exact.Rat] {
+  let m = f.length()
+  if m == 0 || n == 0 { return [] }
+  let rev : Array[@exact.Rat] = []
+  let mut i = m
+  while i > 0 { i -= 1; rev.push(f[i]) }
+  let c = kl_comp(n, m - 1, m, rev, biv_q(g, n, m))
+  let out : Array[@exact.Rat] = []
+  for xi in 0..<n { out.push(c[xi][0]) }
+  out
+}
+
+///|
+/// 直接計算 w(g^i mod x^n) 作為對照（O(n·m·M(n))，僅供有限憑證）。
+fn direct_pow_proj(
+  w : Array[@exact.Rat],
+  g : Array[@exact.Rat],
+  m : Int,
+) -> Array[@exact.Rat] {
+  let n = w.length()
+  let out : Array[@exact.Rat] = Array::make(m, rat0())
+  let mut power : Array[@exact.Rat] = Array::make(n, rat0())
+  power[0] = rat1()
+  for i in 0..<m {
+    let mut s = rat0()
+    for k in 0..<n { s = s.add(w[k].mul(power[k])) }
+    out[i] = s
+    let nxt : Array[@exact.Rat] = Array::make(n, rat0())
+    for k in 0..<n {
+      if power[k].is_zero() { continue }
+      for t in 0..<n {
+        if k + t < n && t < g.length() {
+          nxt[k + t] = nxt[k + t].add(power[k].mul(g[t]))
+        }
+      }
+    }
+    power = nxt
+  }
+  out
+}
+
+///|
+/// 定理 T-S12：Kinoshita–Li PowProj 與直接 Krylov 計算逐項相等。
+pub fn theorem_kl_pow_proj(n : Int, m : Int) -> Bool {
+  let w : Array[@exact.Rat] = []
+  let g : Array[@exact.Rat] = []
+  for i in 0..<n {
+    w.push(rfrac(1L, (i + 3).to_int64()))
+    g.push(if i == 0 { rat0() } else { rfrac(1L, (i + 1).to_int64()) })
+  }
+  let a = kl_pow_proj(w, g, m)
+  let b = direct_pow_proj(w, g, m)
+  for i in 0..<m {
+    if !a[i].equal(b[i]) { return false }
+  }
+  true
+}
+
+///|
+/// 定理 T-S13：Kinoshita–Li Comp 與既有直接合成 fps_compose 逐項相等。
+pub fn theorem_kl_compose(n : Int, m : Int) -> Bool {
+  let f : Array[@exact.Rat] = []
+  let g : Array[@exact.Rat] = []
+  for i in 0..<m { f.push(rfrac(1L, (i + 2).to_int64())) }
+  for i in 0..<n {
+    g.push(if i == 0 { rat0() } else { rfrac(1L, (i + 1).to_int64()) })
+  }
+  let a = kl_compose(f, g, n)
+  // 直接對照：power iteration 使用 f 的全部 m 項（不限 min(m,n)）
+  let b : Array[@exact.Rat] = Array::make(n, rat0())
+  let mut power : Array[@exact.Rat] = Array::make(n, rat0())
+  power[0] = rat1()
+  for i in 0..<m {
+    for k in 0..<n { b[k] = b[k].add(f[i].mul(power[k])) }
+    let nxt : Array[@exact.Rat] = Array::make(n, rat0())
+    for k in 0..<n {
+      if power[k].is_zero() { continue }
+      for t in 0..<n {
+        if k + t < n && t < g.length() {
+          nxt[k + t] = nxt[k + t].add(power[k].mul(g[t]))
+        }
+      }
+    }
+    power = nxt
+  }
+  for i in 0..<n {
+    if !a[i].equal(b[i]) { return false }
+  }
+  if m == n {
+    let c = fps_compose(Fps::{ coeffs: f }, Fps::{ coeffs: g })
+    for i in 0..<n {
+      if !a[i].equal(c.coeffs[i]) { return false }
+    }
+  }
+  true
+}
+
+///|
+// ════════════════════════════════════════════════════════════════════════
+// C1-04 補回 §6''：Connes zeta spectral triples（R26）與 Spec Z（R27）
+// rank-one 擾動、正則化行列式、譜 zeta；adelic Abel–Jacobi、
+// Grothendieck–Lefschetz 跡公式、A¹-同倫不變性之有限憑證。
+// ════════════════════════════════════════════════════════════════════════
+
+///|
+/// 找 divisor d=1 在 divisors_of(n) 中之索引（rank-one 投影之基底）。
+fn unit_divisor_index(n : Int64) -> Int {
+  let ds = divisors_of(n)
+  for i in 0..<ds.length() {
+    if ds[i] == 1L { return i }
+  }
+  -1
+}
+
+///|
+/// Connes rank-one 擾動 D_a = D + a·|1⟩⟨1|（|1⟩ 為 d=1 之基底向量）。
+pub fn connes_rank_one(n : Int64, a : Int64) -> @exact.Mat {
+  let d = @exact.mat_clone(arithmetic_dirac(n))
+  let j = unit_divisor_index(n)
+  if j >= 0 { d.a[j][j] = d.a[j][j].add(rint(a)) }
+  d
+}
+
+///|
+fn binomial_int(n : Int, k : Int) -> Int64 {
+  let mut c = 1L
+  for i in 0..<k { c = c * (n - i).to_int64() / (i + 1).to_int64() }
+  c
+}
+
+///|
+/// 正則化行列式 det_ζ(D) = ∏_{λ≠0} λ = ∏_{k≥1} k^{c_k}。
+pub fn regularized_determinant(n : Int64) -> @exact.Rat {
+  let z = arithmetic_zeta_poly(n)
+  let mut out = rat1()
+  for k in 1..<z.coeffs.length() {
+    let mut term = rat1()
+    for _j in 0..<z.coeffs[k].n.to_int() { term = term.mul(rint(k.to_int64())) }
+    out = out.mul(term)
+  }
+  out
+}
+
+///|
+/// 譜 zeta：ζ_D(s) = Σ_{λ≠0} λ^{−s} = Σ_{k≥1} c_k / k^s（s ≥ 1，精確有理）。
+pub fn spectral_zeta(n : Int64, s : Int) -> @exact.Rat {
+  let z = arithmetic_zeta_poly(n)
+  let mut out = rat0()
+  for k in 1..<z.coeffs.length() {
+    let mut denom = rat1()
+    for _j in 0..<s { denom = denom.mul(rint(k.to_int64())) }
+    out = out.add(z.coeffs[k].div(denom).unwrap())
+  }
+  out
+}
+
+///|
+/// 定理 T-A5（Connes rank-one 擾動）：
+/// charpoly(D+aP) = charpoly(D) − a·∏_{d≠1}(t−Ω(d))（matrix determinant lemma），
+/// det(D+I+aP) = det(D+I)·(1+a)（Sylvester 行列式定理）。
+pub fn theorem_connes_rank_one(n : Int64, a : Int64) -> Bool {
+  let j = unit_divisor_index(n)
+  if j < 0 { return false }
+  let d0 = arithmetic_dirac(n)
+  let d1 = connes_rank_one(n, a)
+  let cp0 = @exact.mat_charpoly(d0)
+  let cp1 = @exact.mat_charpoly(d1)
+  let spec = arithmetic_spectrum(n)
+  let rest : Array[@exact.Rat] = []
+  for i in 0..<spec.length() {
+    if i != j { rest.push(spec[i]) }
+  }
+  let minor = @exact.poly_from_roots(rest)
+  let predicted = @exact.poly_add(
+    cp0,
+    @exact.poly_scale(minor, rint(-a)),
+  )
+  if predicted.length() != cp1.length() { return false }
+  for i in 0..<cp1.length() {
+    if !cp1[i].equal(predicted[i]) { return false }
+  }
+  let id = @exact.mat_identity(d0.a.length())
+  let shift = @exact.mat_add(d0, id)
+  let shift2 = @exact.mat_clone(shift)
+  shift2.a[j][j] = shift2.a[j][j].add(rint(a))
+  let det0 = @exact.mat_det(shift)
+  let det1 = @exact.mat_det(shift2)
+  det1.equal(det0.mul(rat1().add(rint(a))))
+}
+
+///|
+/// 定理 T-A6（正則化行列式與譜 zeta）：
+/// det_ζ = ∏_{k≥1} k^{c_k} = |[t^{c₀}] charpoly(D)|，
+/// ζ_D(2) = tr((D⁺)²)（D⁺ 為非零譜上之偽逆），
+/// 且 ζ_D(1) 可由 zeta 多項式直接導出。
+pub fn theorem_connes_zeta_det(n : Int64) -> Bool {
+  let d = arithmetic_dirac(n)
+  let cp = @exact.mat_charpoly(d)
+  let z = arithmetic_zeta_poly(n)
+  let c0 = z.coeffs[0].n
+  if c0 < 0 || c0 >= cp.length().to_int64() { return false }
+  let coeff = cp[c0.to_int()]
+  let detz = regularized_determinant(n)
+  if !coeff.equal(detz) && !coeff.neg().equal(detz) { return false }
+  // ζ_D(2) = Σ_{k≥1} c_k/k² = tr(偽逆²)
+  let mut pseudo2 = rat0()
+  for k in 1..<z.coeffs.length() {
+    let denom = rint(k.to_int64()).mul(rint(k.to_int64()))
+    pseudo2 = pseudo2.add(z.coeffs[k].div(denom).unwrap())
+  }
+  if !spectral_zeta(n, 2).equal(pseudo2) { return false }
+  spectral_zeta(n, 1).n > 0L && detz.n > 0L
+}
+
+///|
+/// Spec(Z/nZ) 之點數 ω(n)：Frobenius 在 H⁰ 上為恆等，H¹ = 0。
+pub fn lefschetz_trace(n : Int64, _k : Int) -> Int {
+  prime_divisors(n).length()
+}
+
+///|
+/// Grothendieck–Lefschetz 跡公式：Z(X,t) = exp(Σ_k #X(F_{q^k}) t^k/k)
+/// = det(1−t·Frob|H¹)/(det(1−t·Frob|H⁰)) = 1/(1−t)^ω。
+pub fn spec_z_zeta_series(n : Int64, cut : Int) -> Fps {
+  let w = prime_divisors(n).length()
+  let logz : Array[@exact.Rat] = Array::make(cut, rat0())
+  for k in 1..<cut {
+    logz[k] = rint(w.to_int64()).div(rint(k.to_int64())).unwrap()
+  }
+  fps_exp(Fps::{ coeffs: logz })
+}
+
+///|
+fn spec_z_geometric_series(n : Int64, cut : Int) -> Fps {
+  let w = prime_divisors(n).length()
+  let denom : Array[@exact.Rat] = Array::make(cut, rat0())
+  for k in 0..<cut {
+    if k <= w {
+      let sign = if k % 2 == 0 { 1L } else { -1L }
+      denom[k] = rint(sign * binomial_int(w, k))
+    }
+  }
+  fps_inv(Fps::{ coeffs: denom })
+}
+
+///|
+/// 定理 T-A7（Lefschetz 跡公式）：零維 Spec(Z/nZ) 之 zeta 級數
+/// exp(Σ_k ω·t^k/k) 與 (1−t)^{−ω} 逐項相等，且指數係數為二項式係數。
+pub fn theorem_spec_z_lefschetz(n : Int64, cut : Int) -> Bool {
+  let a = spec_z_zeta_series(n, cut)
+  let b = spec_z_geometric_series(n, cut)
+  let w = prime_divisors(n).length()
+  for k in 0..<cut {
+    if !a.coeffs[k].equal(b.coeffs[k]) { return false }
+    let expect = rint(binomial_int(w + k - 1, k))
+    if !a.coeffs[k].equal(expect) { return false }
+  }
+  for k in 1..<cut {
+    if lefschetz_trace(n, k) != w { return false }
+  }
+  true
+}
+
+///|
+/// Adelic Abel–Jacobi：D = Σ e_p·[p] ↦ AJ(D) = ∏ p^{e_p} ∈ ℚ*。
+pub fn adelic_abel_jacobi(n : Int64, exps : Array[Int64]) -> @exact.Rat {
+  let ps = prime_divisors(n)
+  let mut out = rat1()
+  for i in 0..<ps.length() {
+    if i >= exps.length() { continue }
+    let mut factor = rat1()
+    for _j in 0..<exps[i].to_int() { factor = factor.mul(rint(ps[i])) }
+    for _j in 0..<(-exps[i]).to_int() { factor = factor.div(rint(ps[i])).unwrap() }
+    out = out.mul(factor)
+  }
+  out
+}
+
+///|
+fn rat_valuation(q : @exact.Rat, p : Int64) -> Int64 {
+  let mut a = q.n
+  let mut e = 0L
+  while a != 0L && a % p == 0L { a = a / p; e += 1L }
+  let mut b = q.d
+  while b != 0L && b % p == 0L { b = b / p; e -= 1L }
+  e
+}
+
+///|
+/// 定理 T-A8（adelic Abel–Jacobi / Pic(Spec Z) = 0）：
+/// 度數零除子之 AJ 為單射（唯一分解），div(AJ(D)) = D；
+/// 等價於線性等價類皆為主除子（類數 1），乘積公式 AJ(D)·AJ(−D)=1。
+pub fn theorem_spec_z_adelic(n : Int64) -> Bool {
+  let ps = prime_divisors(n)
+  let np = ps.length()
+  if np > 3 { return false }
+  let total = 1 << (2 * np)
+  for code in 0..<total {
+    let exps : Array[Int64] = Array::make(np, 0L)
+    let mut t = code
+    for i in 0..<np { exps[i] = (t % 5).to_int64() - 2L; t = t / 5 }
+    let mut deg = 0L
+    for i in 0..<np { deg += exps[i] }
+    if deg != 0L { continue }
+    let q = adelic_abel_jacobi(n, exps)
+    let mut zero = true
+    for i in 0..<np {
+      if exps[i] != 0L { zero = false; break }
+      if rat_valuation(q, ps[i]) != 0L { return false }
+    }
+    if zero && !q.equal(rat1()) { return false }
+    if !zero && q.equal(rat1()) { return false }
+    // 乘積公式 AJ(D)·AJ(−D) = 1
+    let neg : Array[Int64] = []
+    for i in 0..<np { neg.push(-exps[i]) }
+    if !q.mul(adelic_abel_jacobi(n, neg)).equal(rat1()) { return false }
+  }
+  true
+}

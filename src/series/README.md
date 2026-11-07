@@ -1,6 +1,6 @@
 # src/series — 局部公理 L1/L2/L3：多項式、形式冪級數、洛朗、狄利克雷、商環、全純
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得公理
 
@@ -28,6 +28,12 @@
 - **T-A2** 算術 spectral triple：χ_D=∏(t−Ω(d))、[D,E_p]=0、[D,T_p]=T_p
 - **T-A3** Spec(ℤ/nℤ) 之 Zariski 極性為伽羅瓦對應（伴隨性＋閉包三律）
 - **T-A4** Σ_{d|n}φ(d)=n、Σ_{d|n}μ(d)=[n=1]、φ(n)=n∏(1−1/p)
+- **T-S12** Kinoshita–Li PowProj：Bostan–Mori Graeffe 迭代之 [x^N]P/Q 正確性
+- **T-S13** Kinoshita–Li Comp：O(M(n) log m+M(m)) 合成與直接合成逐項相等
+- **T-A5** Connes rank-one：χ_{D+aP}=χ_D−a∏_{d≠1}(t−Ω(d))
+- **T-A6** det_ζ=∏_{k≥1}k^{c_k}=|[t^{c₀}]χ_D| 且 ζ_D(2)=tr(D⁺²)
+- **T-A7** Grothendieck–Lefschetz：exp(Σω t^k/k)=(1−t)^{−ω}
+- **T-A8** adelic AJ 單射、div(AJ(D))=D、Pic(Spec Z)=0
 
 ## 已實作演算法列表
 
@@ -53,6 +59,9 @@
 - **AL079** arithmetic_zeta_poly 算術 ζ 多項式（O(τ(n))）
 - **AL080** arithmetic_hecke 升階算子 T_p（O(τ(n)²)）
 - **AL081** theorem_arithmetic_galois Zariski 極性有限穷舉（O(2^{p+d})）
+- **AL089** kl_pow_proj / kl_comp / kl_compose（O(M(n)log m+M(m))）
+- **AL109** connes_rank_one / regularized_determinant / spectral_zeta（O(τ(n)³)）
+- **AL110** spec_z_zeta_series / adelic_abel_jacobi（O(cut²+2^p)）
 
 ## 等式
 
@@ -68,6 +77,10 @@
 - **E38** BK 合成分解：`f(g) = Σ_i (Σ_{j<B} f_{iB+j} g^j) · g^{iB}`
 - **E46** 算術 ζ：`Σ_{d|n} t^{Ω(d)} = ∏_i (1+t+⋯+t^{e_i})`
 - **E47** Dirac–Hecke 交換子：`[D,E_p]=0；[D,T_p]=T_p；tr D² = Σ_k c_k k²`
+- **E51** Kinoshita–Li PowProj：`[x^N] P/Q = 偶部 U(x²)+x·奇部 U(x²)/A(x²)`
+- **E62** Connes rank-one：`det(D+I+aP)=det(D+I)(1+a)`
+- **E63** Lefschetz zeta：`Z(X,t)=exp(Σ_k #X(F_{q^k})t^k/k)=1/(1−t)^{ω(n)}`
+- **E64** Adelic Abel–Jacobi：`AJ(D)=∏_p p^{e_p}；div(AJ(D))=D`
 
 ## 資料夾視角依賴關係圖
 
@@ -116,8 +129,12 @@
   divisors_of  big_omega  euler_phi  arithmetic_spectrum
   arithmetic_zeta_poly  arithmetic_dirac  arithmetic_hecke  arithmetic_idempotent
   theorem_arithmetic_zeta  theorem_arithmetic_spectral_triple  theorem_arithmetic_galois  theorem_arithmetic_functions
-  Poly  Fps  Laurent  Dirichlet
-  Quot  DivMod  ConvAlg
+  kl_pow_proj  kl_compose  theorem_kl_pow_proj  theorem_kl_compose
+  connes_rank_one  regularized_determinant  spectral_zeta  theorem_connes_rank_one
+  theorem_connes_zeta_det  lefschetz_trace  spec_z_zeta_series  theorem_spec_z_lefschetz
+  adelic_abel_jacobi  theorem_spec_z_adelic  Poly  Fps
+  Laurent  Dirichlet  Quot  DivMod
+  ConvAlg
 ```
 
 ## 驗證

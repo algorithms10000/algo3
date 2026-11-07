@@ -1,6 +1,6 @@
 # src/compose — 14 種組合手法：Kan、束、纖維積、單子、張量、纖維範疇、推出、交織、博弈
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得定理列表
 
@@ -25,6 +25,12 @@
 - **T-C17** 泛性質：纖維積中介態射唯一、自由么半群 |Hom|=x²、函子性
 - **T-C18** 21×14 衍生方向相容矩陣非平凡；GF(2) 秩=12
 - **T-C19** 泛性質 × 21 動詞 × 14 手法之一致性
+- **T-C20** Σ_f ⊣ f* ⊣ Π_f 三角伴隨（穷舉 2^nx·2^ny）
+- **T-C21** pushforward monad T=Π_f f*=Ran_f f* 滿足單子律
+- **T-C22** Lan_K ⊣ K* ⊣ Ran_K（協變預層之有限穷舉）
+- **T-C23** codensity monad Ran_K K 為 closure operator
+- **T-C24** Π_f 橋接全局公理 G：Π_f P_A = F(A)
+- **T-C25** 集庫成群：聚類分割、Jaccard 門檻、單調性與決定性
 
 ## 已實作演算法列表
 
@@ -39,6 +45,9 @@
 - **AL086** deriv_invariant 14 手法不變量（O(2^n)）
 - **AL087** verb_pattern_matrix / stable_pairs / row_classes（O(21·14·C)）
 - **AL088** verb_composition_closure 441 組動詞複合（O(441·14·C)）
+- **AL106** sigma_f / pullback_f / pi_f / pushforward_monad（O(2^{nx+ny})）
+- **AL107** lan_presheaf / ran_presheaf / codensity_value（O(2^{m+n}mn)）
+- **AL108** library_signature / library_clustering（O(N²)）
 
 ## 等式
 
@@ -48,6 +57,8 @@
 - **E27** 2-上循環條件：`φ(a,b)+φ(a+b,c) = φ(b,c)+φ(a,b+c)`
 - **E28** 束黏合：`匹配族 ↔ F(∪U_i) 為雙射`
 - **E50** 衍生相容矩陣：`M[v][p] = [inv_p(V_v(D₀)) = inv_p(D₀)] ∈ F₂^{21×14}`
+- **E60** Pushforward monad：`T=Π_f f*=Ran_f f*；T(B)=B∪(Y∖im f)`
+- **E61** Ran / codensity：`(Ran_K F)(q)=⋀_{q≤Kp}F(p)；(Ran_K K)(q)=min{Kp|q≤Kp}`
 
 ## 資料夾視角依賴關係圖
 
@@ -58,6 +69,7 @@
   ├─ 依賴 → src/series
   ├─ 依賴 → src/algebra
   ├─ 依賴 → src/graphs
+  ├─ 依賴 → src/catalog
   └─ 被依賴 ← .
 ```
 
@@ -85,8 +97,13 @@
   theorem_functoriality  theorem_universal_properties_all  verb_name  deriv_base
   verb_apply  deriv_invariant  verb_pattern_matrix  verb_pattern_stable_pairs
   verb_pattern_row_classes  theorem_verb_pattern_structure  verb_composition_closure  theorem_derivation_all_in_one
-  PosetLattice  UnionFind  Fibered  WeaveElem
-  DerivData
+  finite_map  sigma_f  pullback_f  pi_f
+  pushforward_monad  theorem_pushforward_adjunction  theorem_pushforward_monad  poset_kan
+  ran_presheaf  lan_presheaf  kan_pullback  theorem_kan_adjunction
+  codensity_value  theorem_codensity_monad  theorem_pi_polar_bridge  library_signature
+  library_clustering  theorem_library_clustering  library_cluster_stats  PosetLattice
+  UnionFind  Fibered  WeaveElem  DerivData
+  FiniteMap  PosetKan  LibraryClustering
 ```
 
 ## 驗證

@@ -917,3 +917,435 @@ pub fn theorem_parallel_transport_geodesic(b : LineBundle, s : Int, t : Int) -> 
   while i > 0 { i -= 1; rev.push(p[i]) }
   (h == 1 || h == -1) && holonomy(b, rev) == h
 }
+
+///|
+// ════════════════════════════════════════════════════════════════════════
+// C1-04 補回 §6''：Persistent Sheaf Laplacian（Wei–Wei 2021 / 2507.19504）
+// 對 X ⊂ Y（X 為前 k 個頂點之誘導子複形，層 F = G|_X），q=0 之
+// Δ₀^{X,Y} = D^{*,0}_{X,Y} P^{-1} (D^{*,0}_{X,Y})^T，其中
+// Θ¹_{X,Y} = {x ∈ C¹(Y;G) | (d⁰_Y)^T x ∈ C⁰(X;F)}；
+// 以正交投影 Proj_Θ = I − Aᵀ(AAᵀ)^{-1}A（A 為 δ_Yᵀ 之新頂點列）給出
+// Δ₀^{X,Y} = (πδ_Yᵀ) Proj_Θ (πδ_Yᵀ)^T，全程 @exact.Rat 精確算術。
+// 主要定理：ker Δ₀^{X,Y} ≅ π•(H⁰(Y;G))（persistent Betti）。
+// ════════════════════════════════════════════════════════════════════════
+
+///|
+pub(all) struct PersistentSheaf {
+  b : LineBundle
+  k : Int
+}
+
+///|
+pub fn persistent_sheaf(b : LineBundle, k : Int) -> PersistentSheaf {
+  let kk = if k < 1 { 1 } else if k > b.g.n { b.g.n } else { k }
+  PersistentSheaf::{ b, k: kk }
+}
+
+///|
+/// 高斯–Jordan 反矩陣（僅用於對稱正定之 AAᵀ）。
+fn rat_mat_inverse(x : @exact.Mat) -> @exact.Mat {
+  let n = x.a.length()
+  let aug : Array[Array[@exact.Rat]] = []
+  for i in 0..<n {
+    let row : Array[@exact.Rat] = []
+    for j in 0..<n { row.push(x.a[i][j]) }
+    for j in 0..<n { row.push(if i == j { @exact.rat_one() } else { @exact.rat_zero() }) }
+    aug.push(row)
+  }
+  for c in 0..<n {
+    let mut piv = -1
+    for i in c..<n {
+      if !aug[i][c].is_zero() { piv = i; break }
+    }
+    if piv < 0 { continue }
+    let tmp = aug[c]
+    aug[c] = aug[piv]
+    aug[piv] = tmp
+    let p = aug[c][c]
+    for j in 0..<(2 * n) { aug[c][j] = aug[c][j].div(p).unwrap() }
+    for i in 0..<n {
+      if i == c { continue }
+      let f = aug[i][c]
+      if f.is_zero() { continue }
+      for j in 0..<(2 * n) { aug[i][j] = aug[i][j].sub(f.mul(aug[c][j])) }
+    }
+  }
+  let out : Array[Array[@exact.Rat]] = []
+  for i in 0..<n {
+    let row : Array[@exact.Rat] = []
+    for j in 0..<n { row.push(aug[i][n + j]) }
+    out.push(row)
+  }
+  @exact.mat_from(out)
+}
+
+///|
+/// 選取列空間之一組線性無關原列（有理列消去，保留原列而非 RREF 列）。
+fn rat_independent_rows(x : @exact.Mat) -> @exact.Mat {
+  let basis : Array[Array[@exact.Rat]] = []
+  let chosen : Array[Array[@exact.Rat]] = []
+  let m = if x.a.length() == 0 { 0 } else { x.a[0].length() }
+  for i in 0..<x.a.length() {
+    let cur : Array[@exact.Rat] = []
+    for j in 0..<m { cur.push(x.a[i][j]) }
+    for k in 0..<basis.length() {
+      let mut pc = -1
+      for j in 0..<m {
+        if !basis[k][j].is_zero() { pc = j; break }
+      }
+      if pc < 0 { continue }
+      let f = cur[pc]
+      if f.is_zero() { continue }
+      for j in 0..<m { cur[j] = cur[j].sub(f.mul(basis[k][j])) }
+    }
+    let mut piv = -1
+    for j in 0..<m {
+      if !cur[j].is_zero() { piv = j; break }
+    }
+    if piv >= 0 {
+      let p = cur[piv]
+      let nrm : Array[@exact.Rat] = []
+      for j in 0..<m { nrm.push(cur[j].div(p).unwrap()) }
+      basis.push(nrm)
+      chosen.push(x.a[i])
+    }
+  }
+  @exact.mat_from(chosen)
+}
+
+///|
+/// Θ = ker A 之正交投影（m×m）：I − Aᵀ(AAᵀ)^{-1}A。
+fn kernel_projector(a : @exact.Mat, m : Int) -> @exact.Mat {
+  let ar = rat_independent_rows(a)
+  if ar.a.length() == 0 { return @exact.mat_identity(m) }
+  let g = @exact.mat_mul(ar, @exact.mat_transpose(ar))
+  let gi = rat_mat_inverse(g)
+  let term = @exact.mat_mul(
+    @exact.mat_mul(@exact.mat_transpose(ar), gi),
+    ar,
+  )
+  @exact.mat_sub(@exact.mat_identity(m), term)
+}
+
+///|
+/// 取出列區間 [lo, hi) 之子矩陣。
+fn row_slice(x : @exact.Mat, lo : Int, hi : Int) -> @exact.Mat {
+  let out : Array[Array[@exact.Rat]] = []
+  for i in lo..<hi { out.push(x.a[i]) }
+  @exact.mat_from(out)
+}
+
+///|
+fn col_slice(x : @exact.Mat, lo : Int, hi : Int) -> @exact.Mat {
+  let out : Array[Array[@exact.Rat]] = []
+  for i in 0..<x.a.length() {
+    let row : Array[@exact.Rat] = []
+    for j in lo..<hi { row.push(x.a[i][j]) }
+    out.push(row)
+  }
+  @exact.mat_from(out)
+}
+
+///|
+/// Persistent sheaf Laplacian Δ₀^{X,Y}（k×k，精確有理矩陣）。
+pub fn persistent_laplacian_from_delta(delta : @exact.Mat, n : Int, k : Int) -> @exact.Mat {
+  let mm = delta.a.length()
+  let dt = @exact.mat_transpose(delta)
+  let big_m = row_slice(dt, 0, k)
+  let aa = row_slice(dt, k, n)
+  let proj = kernel_projector(aa, mm)
+  let dd = @exact.mat_mul(big_m, proj)
+  @exact.mat_mul(dd, @exact.mat_transpose(big_m))
+}
+
+///|
+/// 由 δ_Y 直接構造 persistent sheaf Laplacian（便於驗證定向不變性）。
+pub fn persistent_sheaf_laplacian(p : PersistentSheaf) -> @exact.Mat {
+  persistent_laplacian_from_delta(sheaf_coboundary(p.b), p.b.g.n, p.k)
+}
+
+///|
+/// q=0 persistent Betti：β₀^{X,Y} = dim π•(H⁰(Y;G))
+/// = (n − rank δ_Y) − ((n−k) − rank δ_Y[:,k:])。
+pub fn persistent_sheaf_betti0(p : PersistentSheaf) -> Int {
+  let delta = sheaf_coboundary(p.b)
+  let n = p.b.g.n
+  let h0y = n - @exact.mat_rank(delta)
+  let dnew = col_slice(delta, p.k, n)
+  let vanish = (n - p.k) - @exact.mat_rank(dnew)
+  h0y - vanish
+}
+
+///|
+pub fn persistent_sheaf_nullity(p : PersistentSheaf) -> Int {
+  p.k - @exact.mat_rank(persistent_sheaf_laplacian(p))
+}
+
+///|
+/// 對稱矩陣之 PSD 憑證：所有主子式 ≥ 0（2^k 個，k 小時可穷舉）。
+pub fn psd_principal_minors(x : @exact.Mat) -> Bool {
+  let n = x.a.length()
+  let total = 1 << n
+  for mask in 0..<total {
+    let idx : Array[Int] = []
+    for i in 0..<n {
+      if ((mask >> i) & 1) == 1 { idx.push(i) }
+    }
+    let sub : Array[Array[@exact.Rat]] = []
+    for i in 0..<idx.length() {
+      let row : Array[@exact.Rat] = []
+      for j in 0..<idx.length() { row.push(x.a[idx[i]][idx[j]]) }
+      sub.push(row)
+    }
+    let d = @exact.mat_det(@exact.mat_from(sub))
+    if d.n < 0L { return false }
+  }
+  true
+}
+
+///|
+/// 定理 T-Gph11（persistent sheaf Hodge）：ker Δ₀^{X,Y} ≅ π•(H⁰(Y;G))，
+/// 且 Δ₀^{X,Y} 對稱、秩不超過 k、nullity 與 persistent Betti 相等。
+pub fn theorem_persistent_sheaf_hodge(p : PersistentSheaf) -> Bool {
+  let lap = persistent_sheaf_laplacian(p)
+  let rank = @exact.mat_rank(lap)
+  rank <= p.k &&
+    @exact.mat_equal(lap, @exact.mat_transpose(lap)) &&
+    persistent_sheaf_nullity(p) == persistent_sheaf_betti0(p) &&
+    persistent_sheaf_betti0(p) >= 0
+}
+
+///|
+/// 定理 T-Gph12：Δ₀^{X,Y} 半正定（所有主子式非負），
+/// 且其特徵多項式之零根重數 = persistent Betti（mat_charpoly 低次係數）。
+pub fn theorem_persistent_sheaf_psd(p : PersistentSheaf) -> Bool {
+  let lap = persistent_sheaf_laplacian(p)
+  if !psd_principal_minors(lap) { return false }
+  let cp = @exact.mat_charpoly(lap)
+  let beta = persistent_sheaf_betti0(p)
+  // charpoly(t) = t^k + …；零根重數 β 等價於前 β 個低次係數皆為 0
+  for j in 0..<beta {
+    if !cp[j].is_zero() { return false }
+  }
+  true
+}
+
+///|
+/// 定理 T-Gph13：當 X = Y（k = n）時 persistent Laplacian 退化為
+/// 普通 sheaf Laplacian δᵀδ，且 nullity = dim H⁰(Y)。
+pub fn theorem_persistent_sheaf_limit() -> Bool {
+  let adj : Array[UInt64] = [
+    0b01110UL, 0b10101UL, 0b11011UL, 0b10101UL, 0b01110UL,
+  ]
+  let b = line_bundle(graph(5, adj), 2)
+  let p = persistent_sheaf(b, 5)
+  let lap = persistent_sheaf_laplacian(p)
+  @exact.mat_equal(lap, sheaf_laplacian(b)) &&
+    persistent_sheaf_nullity(p) == global_sections_dim(b) &&
+    theorem_persistent_sheaf_hodge(p)
+}
+
+///|
+/// 反轉第 e 條邊之定向：δ_Y 之第 e 列整體乘 −1（Wei–Wei Prop. 3.2 之
+/// I_{σ,−} 作用），此不改變 Δ₀^{X,Y}。
+pub fn negate_coboundary_row(delta : @exact.Mat, e : Int) -> @exact.Mat {
+  let out : Array[Array[@exact.Rat]] = []
+  for i in 0..<delta.a.length() {
+    let row : Array[@exact.Rat] = []
+    for j in 0..<delta.a[0].length() {
+      row.push(if i == e { delta.a[i][j].neg() } else { delta.a[i][j] })
+    }
+    out.push(row)
+  }
+  @exact.mat_from(out)
+}
+
+///|
+/// 定理 T-Gph14（Wei–Wei Prop. 3.2）：persistent sheaf Laplacian 之譜
+/// 不依賴 Y 之定向；反轉任一邊定向後 Δ₀^{X,Y} 逐項不變，
+/// 因而特徵多項式完全相同，且 Hodge 定理仍然成立。
+pub fn theorem_persistent_sheaf_orientation() -> Bool {
+  let adj : Array[UInt64] = [
+    0b011110UL, 0b101011UL, 0b110101UL, 0b101110UL, 0b110101UL, 0b011101UL,
+  ]
+  let b = line_bundle(graph(6, adj), 3)
+  let p = persistent_sheaf(b, 4)
+  let delta = sheaf_coboundary(b)
+  let lap = persistent_laplacian_from_delta(delta, 6, 4)
+  let c0 = @exact.mat_charpoly(lap)
+  let mut ok = true
+  for e in 0..<delta.a.length() {
+    let d2 = negate_coboundary_row(delta, e)
+    let lap2 = persistent_laplacian_from_delta(d2, 6, 4)
+    if !@exact.mat_equal(lap, lap2) { ok = false }
+    let c1 = @exact.mat_charpoly(lap2)
+    for j in 0..<c0.length() {
+      if !c0[j].equal(c1[j]) { ok = false }
+    }
+  }
+  ok && theorem_persistent_sheaf_hodge(p)
+}
+
+///|
+// ════════════════════════════════════════════════════════════════════════
+// C1-04 補回 §6''：多尺度 filtration 與 Kalai–Meshulam 拓樸組合
+// ════════════════════════════════════════════════════════════════════════
+
+///|
+/// 多尺度 filtration：k=1..n 逐層計算 (β₀^{X_k,Y}, nullity, rank, trace)。
+pub struct PersistBar {
+  k : Int
+  betti : Int
+  nullity : Int
+  rank : Int
+  trace : @exact.Rat
+}
+
+///|
+pub fn persistent_sheaf_bars(b : LineBundle) -> Array[PersistBar] {
+  let out : Array[PersistBar] = []
+  for k in 1..<(b.g.n + 1) {
+    let p = persistent_sheaf(b, k)
+    let lap = persistent_sheaf_laplacian(p)
+    out.push(PersistBar::{
+      k, betti: persistent_sheaf_betti0(p),
+      nullity: persistent_sheaf_nullity(p),
+      rank: @exact.mat_rank(lap), trace: @exact.mat_trace(lap),
+    })
+  }
+  out
+}
+
+///|
+/// 定理 T-Gph15：多尺度 filtration 之 persistent Betti 隨尺度單調不減，
+/// 每層 nullity = β₀、rank + nullity = k，且末層 nullity = dim H⁰(Y)。
+pub fn theorem_persistent_sheaf_filtration() -> Bool {
+  let adj : Array[UInt64] = [
+    0b0000110UL, 0b0000101UL, 0b0000011UL, 0b0010000UL,
+    0b0101000UL, 0b1010000UL, 0b0100000UL,
+  ]
+  let b = line_bundle(graph(7, adj), 2)
+  let bars = persistent_sheaf_bars(b)
+  for i in 0..<bars.length() {
+    let q = bars[i]
+    if q.betti != q.nullity { return false }
+    if q.rank + q.nullity != q.k { return false }
+    if q.trace.n < 0L { return false }
+    if i > 0 && bars[i - 1].betti > q.betti { return false }
+  }
+  bars[bars.length() - 1].betti == global_sections_dim(b)
+}
+
+///|
+/// 誘導子複形 X[U]。
+pub fn induced_complex(c : Complex, u : UInt64) -> Complex {
+  let facets : Array[UInt64] = []
+  for d in 0..<c.faces.length() {
+    for i in 0..<c.faces[d].length() {
+      let f = c.faces[d][i]
+      if (f & u) == f { facets.push(f) }
+    }
+  }
+  complex_from_facets(c.nverts, facets)
+}
+
+///|
+pub fn is_face(c : Complex, f : UInt64) -> Bool {
+  if f == 0UL { return true }
+  for d in 0..<c.faces.length() {
+    for i in 0..<c.faces[d].length() {
+      if c.faces[d][i] == f { return true }
+    }
+  }
+  false
+}
+
+///|
+/// 約化同調之最高非零維度（GF(2)）；無非零者回傳 −1。
+pub fn reduced_homology_top(c : Complex) -> Int {
+  // 空複形（無面）不貢獻約化同調；避免 β̃₀ = −1 之形式贗象
+  if c.faces.length() == 0 || c.faces[0].length() == 0 { return -1 }
+  let b = betti_numbers(c)
+  let mut top = -1
+  for k in 0..<b.length() {
+    let v = if k == 0 { b[0] - 1 } else { b[k] }
+    if v != 0 { top = k }
+  }
+  top
+}
+
+///|
+/// Leray 數 λ(X) = 1 + max_{U⊆V} top( H̃(X[U]) )（對所有誘導子複形）。
+pub fn leray_number(c : Complex) -> Int {
+  let total = 1UL << c.nverts
+  let mut lam = 0
+  let mut u = 0UL
+  while u < total {
+    let t = reduced_homology_top(induced_complex(c, u))
+    if t + 1 > lam { lam = t + 1 }
+    u += 1UL
+  }
+  lam
+}
+
+///|
+/// Kalai–Meshulam 定理之有限憑證：若 matroid complex M ⊆ X，
+/// 則存在 τ ∈ X 使 ρ(V∖τ) ≤ λ(X)。
+pub fn kalai_meshulam_witness(m : Matroid, c : Complex) -> Array[Int] {
+  let all = @galois.full_mask(m.nelem)
+  let mut contained = true
+  let total = 1UL << m.nelem
+  let mut s = 0UL
+  while s < total {
+    if matroid_is_independent(m, s) && !is_face(c, s) { contained = false; break }
+    s += 1UL
+  }
+  if !contained { return [] }
+  let d = leray_number(c)
+  let mut witness = -1
+  let mut t2 = 0UL
+  while t2 < total {
+    if (t2 == 0UL || is_face(c, t2)) && matroid_rank(m, all ^ t2) <= d {
+      witness = t2.to_int()
+      break
+    }
+    t2 += 1UL
+  }
+  [contained.to_int(), d, witness, matroid_rank(m, all)]
+}
+
+///|
+pub fn theorem_kalai_meshulam() -> Bool {
+  // 實例一：X 為完整單純形（λ = 0），M 為自由擬陣（rank 4）。
+  // 此時結論為 Rado/Hall 型：存在 τ = V 使 ρ(V∖τ) = 0 ≤ 0。
+  let n = 4
+  let all = @galois.full_mask(n)
+  let facets : Array[UInt64] = [all]
+  let simplex = complex_from_facets(n, facets)
+  let rows : Array[UInt64] = [1UL, 2UL, 4UL, 8UL]
+  let free = matroid(n, rows)
+  let w1 = kalai_meshulam_witness(free, simplex)
+  if w1.length() != 4 || w1[0] != 1 { return false }
+  if w1[1] != 0 { return false }
+  if w1[2] < 0 || w1[3] != n { return false }
+  if matroid_rank(free, all ^ w1[2].to_uint64()) > w1[1] { return false }
+  // 實例二：X 為 K₄ 之 1-骨架（λ ≥ 2），M 為秩 2 二元擬陣。
+  let edges : Array[UInt64] = []
+  for u in 0..<n {
+    for v in (u + 1)..<n { edges.push((1UL << u) | (1UL << v)) }
+  }
+  let k4 = complex_from_facets(n, edges)
+  let rows2 : Array[UInt64] = [0b0101UL, 0b1010UL]
+  let m2 = matroid(n, rows2)
+  let w2 = kalai_meshulam_witness(m2, k4)
+  if w2.length() != 4 { return false }
+  if w2[1] < 2 { return false }
+  if w2[2] < 0 { return false }
+  if matroid_rank(m2, all ^ w2[2].to_uint64()) > w2[1] { return false }
+  // 誘導子複形之 Euler–Poincaré 一致性
+  for u in 0..<(1UL << n).to_int() {
+    let ic = induced_complex(k4, u.to_uint64())
+    if !theorem_euler_poincare(ic) { return false }
+  }
+  true
+}

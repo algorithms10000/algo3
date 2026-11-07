@@ -610,12 +610,14 @@ C1 開發流水帳本 (Dev.txt) — 流水式，每回合追加，直到工程�
       verb_pattern_matrix、verb_pattern_stable_pairs（D-01）、
       verb_pattern_row_classes（D-02）、verb_composition_closure（D-03）、
       theorem_verb_pattern_structure (T-C18)、theorem_derivation_all_in_one (T-C19)。
-  [x] 根 report() 新增 10 行 inspect；algorithm.xlsx 183→211→271 筆、
+  [x] 根 report() 新增 9 行 inspect；algorithm.xlsx 183→211→271 筆、
       9 工作表、36 筆前沿文獻；12 份 README、docs/catalog.json 一致性重建。
   [x] 局部「即寫、即驗、即刪」五份 zz_probe（exact / graphs / series /
       algebra / compose）全數 passed，回合末無殘留。
 
 §6'' 最前沿「待做」結構／演算法／理論（誠實保留，未完成）
+  ※ 歷史快照：此為 C1-03 回合末之待辦清單原文；C1-04 已逐項補回
+    （見 §5''' 完成項目與 §6''' 剩餘待辦），本節不改寫以保留流水帳本。
   [ ] Kinoshita–Li (R21) 完整近線性合成（Graeffe + 轉置原理）；
       目前僅 BK baby-step/giant-step + Karatsuba 與 Graeffe 係數抽取。
   [ ] FFT/NTT 完整乘法、Toom–Cook、TMVP（R18/Lyu）；目前 Karatsuba O(n^1.585)。
@@ -690,5 +692,227 @@ C1 開發流水帳本 (Dev.txt) — 流水式，每回合追加，直到工程�
     UInt64.to_int64() 已被標記 deprecated → 改 @exact.bit + bit_i。
   - 「20 動詞」與規範原文 21 項之差異：依最大盡責原則全數 21 項納入，
     並於本節與 README 明確標註，未擅自刪減。
+
+================================================================================
+================================================================================
+§2''' C1-04 聯網查證結果（R37..R45；本回合新查，2026-11-08）
+  R37 Kinoshita–Li, FOCS 2024, arXiv:2404.05177v2（fetch_page chunkIndex=3/4）
+      Algorithm 1 PowProj：P=w^R、Q=1−y·g(x)、Graeffe U=P Q(−x)、
+      A=Q Q(−x) 為偶多項式、V(x²)=A、以 U 偶奇部分解 [x^N]U/V，
+      n←⌈n/2⌉；O(M(n) log m + M(m))。
+      Algorithm 2 Comp：P(y)=y^{m−1} f(y^{−1})、F_{d,m}=Σ_{i≤d} …、
+      V(x,y) 之偶部壓縮、e=max(0,d−deg_y Q)、遞迴
+      W=Comp(⌈n/2⌉,e,m,P,V)、B=W(x²,y) Q(−x,y)。
+      以 Python 原型對 (n,m)=(4,5),(5,6),(8,8),(9,7) 交叉驗證
+      powproj True / comp True 後才落地 MoonBit。
+  R38 Krajča–Outrata–Vychodil, CLA 2010, CEUR Vol-672 paper29（fetch_page chunk 0）
+      原始 canonicity test：B∩Y_j = D∩Y_j，D=(B∪{j})^↓↑，Y_j={y<j}；
+      B⊙j=(D∖B)∩Y_j，Lemma 1：若 B⊙j≠∅ 則對每個
+      B'⊇B（j∉B'、B⊙j⊄B'）亦有 B'⊙j≠∅，故可免算 D 直接剪枝。
+      Algorithm 1 FastGenerateFrom(⟨A,B⟩,y,{N_y})：line 6 M_j←N_j、
+      line 7 新測試 j∉B ∧ N_j∩Y_j ⊆ B∩Y_j、line 8/9 C=A∩{j}^↓、
+      D=C^↑、line 10 原測試、line 11 queue、line 13 M_j←D、
+      line 18 對 queue 遞迴 j+1。PFCbO：在層級 L 分發 queue 給 worker。
+      Prop.3.2（見 R39）譜不依賴定向。
+  R39 Wei–Wei, Persistent Sheaf Laplacians, arXiv:2112.10906（fetch_page chunk 3/4）
+      Δ_q=(d^q)*d^q + d^{q−1}(d^{q−1})*；ker Δ_q ≅ H^q。
+      Θ^{q+1}_{X,Y}={x∈C^{q+1}(Y;G) | (d_Y^q)* x ∈ C^q(X;F)}；
+      Δ_q^{X,Y}=D_{X,Y}^{*,q} P^{-1}(D_{X,Y}^{*,q})^T +
+        D_X^{q−1}(D_X^{q−1})^T（Prop.3.1）；
+      ker Δ_q^{X,Y} ≅ π•(H^q(Y;G))；Prop.3.2 譜與 Y 之定向無關。
+      另查 2507.19504 之 persistent Betti／nullity 對應。
+  R40 Doña Mateo, Pushforward monads, TAC 44(30) 2025 / arXiv:2406.15256
+      pushforward monad = Ran_G(GT)；end 公式與兩個泛性質；
+      codensity monad 之極限完備性不變性。本回合落地有限集合版
+      Σ_f ⊣ f* ⊣ Π_f 與有限鏈版 Lan_K ⊣ K* ⊣ Ran_K。
+  R41 Connes–Consani–Moscovici, Zeta Spectral Triples, arXiv:2511.22755
+      rank-one 擾動 scaling Hamiltonian、有限 Euler 積、正則化行列式
+      det_ζ、譜 zeta 逼近 Riemann Ξ。
+  R42 Connes–Consani, On the Jacobian of Spec Z, arXiv:2602.15941
+      Spec Z 為無限虧格算術曲線、Arakelov 除子、adelic Abel–Jacobi、
+      Weil 顯式公式 = Lefschetz 跡公式。
+  R43 Kalai–Meshulam 2005/2006（Alan Lew thesis, CMU；arXiv:2107.12881）
+      d-Leray：對所有 U⊆V、k≥d，H̃_k(X[U])=0；
+      定理：X 為 d-Leray、M 為擬陣且 M⊆X ⇒ ∃τ∈X 使 ρ(V∖τ)≤d；
+      聯集定理 L(∪X_i) ≤ Σ(L(X_i)+1)−1。
+  R44 Caruso–Le Borgne 2017 fastfactor.pdf / Gómez-Torrecillas 2013
+      arXiv:1307.5529 / ISSAC'24 mmrc.iss.ac.cn 24issac.pdf
+      reduced norm N:k[X;σ]→k^σ[X^r]、Azumaya 代數、最小中心左倍式、
+      兩層模組分解、Ore Sylvester 矩陣與模組 Gröbner 基底。
+  R45 Oberwolfach Report 36/2025 Algebraic K-theory / Quillen–Suslin /
+      Bass fundamental theorem：A¹-不變性 K₀(R[t])≅K₀(R)、
+      K₀(R[t,t⁻¹])≅K₀(R)⊕K₋₁(R)。
+  另：web_search 查 FCbO canonicity test 定義、In-Close4、Andrews
+      best-of-breed（確認 Y_j 為「小於 j」之集合、N_j 失敗記錄）、
+      persistent sheaf Laplacian 之 π•(H^q(Y;G)) 陳述。
+
+§3''' C1-04 動手前詳盡規劃（依《作業規範》「最專業代理」）
+  目標：續做 §6'' 十項未完成，逐項「先原型交叉驗證 → MoonBit 落地 →
+  局部 moon check/test --deny-warn 即寫即驗 → inspect → 刪 probe」，
+  回合末全域 CI + 更新產生器/README/Dev.txt + commit。全程只修改既有檔案，
+  不新增文檔（非首次開發需准許）；不使用 --release、不做基準測試、
+  不做白箱/黑箱/冒煙測試、無 stub/mock/fake/玩具模型/恆真判定。
+  執行順序（A→I）：
+    A 修 C1-04 初版 theorem_kl_compose 之 Array::at 長度不一致，
+      並補直接合成對照（f 全部 m 項）與 m=n 時之 fps_compose 交叉檢查。
+    B 近線性乘法群：NTT(p=998244353)、Toeplitz 循環嵌入 TMVP、
+      Toom–3（五求值點 + Lagrange 插值）、複雜度模型（src/exact）。
+    C Ore 群：F_5[t]（t=x²）中心、秩 2 自由模之 reduced norm 行列式、
+      Ore bound 最小性穷舉、中心分解、參數 gcrd 分層、模組 Gröbner
+      （leading-degree RREF）、兩層分解、δ-Galois、A¹-不變性（src/algebra）。
+    D FCA 群：FCbO Algorithm 1 完整偽碼 + CbO 對照 + PFCbO 分發（src/galois）。
+    E 譜群：persistent sheaf Laplacian 精確有理投影、
+      PSD 主子式、定向不變、多尺度 filtration、Kalai–Meshulam（src/graphs）。
+    F 算術群：Connes rank-one、det_ζ、譜 zeta、Lefschetz 跡公式、
+      adelic Abel–Jacobi（src/series）。
+    G 範疇群：Σ_f⊣f*⊣Π_f、Lan_K⊣K*⊣Ran_K、codensity monad、
+      橋接公理 G、集庫成群聚類（src/compose）。
+    H report() 接入新憑證；tools/build_catalog.py 新增
+      定義/定理/演算法/等式/文獻；tools/build_readmes.py 新增 C1-04 章節。
+    I 局部＋全域驗證、決定性重建、刪 probe、commit、present xlsx。
+
+§5''' C1-04 本回合完成項目（逐套件，皆為真實計算憑證）
+  [x] src/series：Kinoshita–Li `kl_pow_proj` / `kl_comp` / `kl_compose`
+      與雙變數 helper（biv_compress / biv_subst_x2）；
+      `theorem_kl_pow_proj`、`theorem_kl_compose`（直接合成 + fps_compose 對照）。
+      另新增 `connes_rank_one`、`regularized_determinant`、`spectral_zeta`、
+      `spec_z_zeta_series`、`adelic_abel_jacobi` 與 T-A5..A8。
+  [x] src/exact：`ntt`（迭代 Cooley–Tukey + bit-reversal）、`ntt_mul`、
+      `ntt_cyclic_mul`、`toeplitz_mvp_ntt`、`toom3_mul`、
+      `multiplication_costs`、T-X2..X5；p²<2⁶³ 全程 Int64 模算術。
+  [x] src/algebra：`f5p_*` F_5[t] 算術與不可約多項式穷舉、
+      `ore_even_odd`、`ore_reduced_norm`、`ore_bound`、
+      `ore_central_decomposition`、`sfq_specialize`、
+      `parametric_gcrd_strata`、`fq2_rref_lead`、`sfq_module_groebner`、
+      `ore_two_level_factor`、`fp5_*` δ-Galois、`fu_*` F_5[u] 算術、
+      `fu_gcd_ext`、`a1_homotopy`；T-Ore10..18 共 9 條定理。
+  [x] src/galois：`FCbOTask`/`FCbOResult`、`fcbo_generate`（Algorithm 1）、
+      `fcbo_run`、`cbo_closure_count`、`fcbo_demo_context`、
+      `pfcbo_workers`；T-G11..G14。實測 6×7 脈絡
+      CbO 25 次閉包、FCbO 20 次、剪枝 5 次，守恆律 20+5=25。
+  [x] src/graphs：`rat_mat_inverse`、`rat_independent_rows`、
+      `kernel_projector`、`persistent_laplacian_from_delta`、
+      `persistent_sheaf_laplacian`、`persistent_sheaf_betti0`、
+      `psd_principal_minors`、`negate_coboundary_row`、
+      `persistent_sheaf_bars`、`induced_complex`、`is_face`、
+      `reduced_homology_top`、`leray_number`、`kalai_meshulam_witness`；
+      T-Gph11..Gph16。
+  [x] src/compose：`FiniteMap`/`PosetKan`、`sigma_f`/`pullback_f`/`pi_f`、
+      `pushforward_monad`、`ran_presheaf`/`lan_presheaf`/`kan_pullback`、
+      `codensity_value`、`library_signature`/`library_clustering`、
+      `library_cluster_stats`；T-C20..C25。compose/moon.pkg 新增
+      src/catalog 依賴（catalog 無反向依賴，無循環）。
+  [x] 根 c1.mbt report() 新增 9 行 inspect（42 → 51 行）；
+      只呼叫真實憑證，無硬編 OK。
+  [x] tools/build_catalog.py：新增 12 定義／35 定理／22 演算法／15 等式／
+      9 組前沿文獻；登錄表 271 → 355 筆、前沿文獻 36 → 45 筆；
+      加入每筆 round 欄位（C1-01..C1-04）讓 xlsx 回合欄忠實；
+      catalog.json round=C1-04、xlsx 固定時間戳 2026-11-08。
+  [x] tools/build_readmes.py：新增 README「C1-04」章節與誠實未完成標記，
+      12 份資料夾 README 重新生成（含新定理／演算法／等式列表）。
+  [x] 局部「即寫、即驗、即刪」六份 zz_probe（series / exact / algebra /
+      galois / graphs / compose）全數 passed，回合末無殘留。
+
+§6''' C1-04 後仍待做（誠實保留）
+  [ ] 5,000,000 行、10,000 條中階以上演算法：目前 110/10,000 條，
+      集庫成群之聚類演算法已落地，但庫規模仍遠未達最終目標。
+  [ ] 高維 sheaf（R30）之 1-st persistent Laplacian、環／模值層、
+      ANM Hessian 對應：本回合僅 q=0（頂點 filtration）之精確有理實作。
+  [ ] Connes 譜 triple 之無限維解析極限／RH 等價證明、
+      Spec Z 之 archimedean 對數 Abel–Jacobi 與 Weil 顯式公式：
+      本回合為有限代數模型憑證，非解析極限證明。
+  [ ] 非交換動機、導出方案連續 K 理論（R36）：本回合為
+      F_5[u] 么模列與 Bass 分解之有限憑證。
+  [ ] δ-Galois 之一般 Picard–Vessiot 群（無限／微分方程）：
+      本回合為 F_5[t]/(t⁵) 之 G_a(F_5) 有限模型。
+  [ ] docs/ 其餘設計文件：非首次開發需先獲准，本回合未建立新文檔。
+  [ ] git 無 remote，CI workflow 與 commit 僅本機落地，未 push。
+
+§7''' C1-04 量化記錄
+  MoonBit / .mbtp 總行數：約 6,910 → 9,924（cat 全部 .mbt/.mbtp 實測）
+  theorem_* 憑證函數：89 → 125（實測 grep -h "^pub fn theorem_"）
+  登錄表：271 → 355 筆（6 公理／32 定義／8 命題／14 引理／
+      120 定理／110 演算法／65 等式），前沿文獻 36 → 45 筆
+  形式化驗證：17 goals proved（.mbtp 未改動，無 trusted assumption）
+  inspect 報表：42 行 → 51 行，全數 OK；catalog 355/OK
+  FCbO 實測：CbO 25 / FCbO 20 / skipped 5（守恆 20+5=25）
+  聚類實測：見 moon run cmd/main 之「T-C25」行（總筆數/群數/
+      多項群/最大群/演算法筆數/憑證）
+
+§8''' C1-04 回合末驗證與 commit
+  環境：/tmp 工具鏈與 z3 於回合開始時再度消失，依 §1 重新安裝
+      curl -fsSL https://cli.moonbitlang.com/install/unix.sh ...
+      MOON_HOME=/tmp/moonhome bash /tmp/moonbit-install.sh
+      python3 -m pip install -q z3-solver (z3 5.3.3)
+      moon 0.1.20261104 / moonc v0.10.20+65efd5b93
+      .githooks/pre-commit 之執行位元亦重新 chmod +x（/tmp 快照權限變動）。
+  局部：series / exact / algebra / galois / graphs / compose 各
+      Total tests: 1, passed: 1, failed: 0，驗畢刪除全部 zz_probe.mbt。
+  全域：moon check --deny-warn / moon build（wasm artifact）/
+      moon prove --deny-warn（17 goals proved）/ moon run cmd/main（51 行全 OK）。
+  產生器決定性：build_catalog.py / build_readmes.py 重跑後
+      docs/catalog.json、src/catalog/catalog.mbt、algorithm.xlsx、12 份 README
+      與 commit 內容 byte-identical（xlsx 固定 zip 時間戳）。
+  commit：本回合結束時 git add -A && git commit（見 git log）；無 remote。
+
+§9''' C1-04 驗證過程與修正記錄
+  - 承接 C1-04 初版 `theorem_kl_compose` 之 Array::at 失敗：原因為
+    `kl_compose` 回傳 n 項，而 `fps_compose` 回傳 min(f.length,g.length)=
+    min(m,n) 項（probe 含 n=9,m=3）。改為直接對照 power iteration
+    （使用 f 的全部 m 項），並僅在 m=n 時交叉檢查 fps_compose。
+    另修 `biv_compress` / `biv_subst_x2` 之列長度檢查。
+  - NTT 初版 `let mut i = 1` 未使用、`while j & bit != 0` 之位元優先順序
+    歧義 → 移除 i、改 `while (j & bit) != 0`。
+  - Toeplitz MVP 初版誤用線性卷積 `ntt_mul`（會 pad 到 2·size）而非循環
+    卷積 → 新增 `ntt_cyclic_mul` 以長度 size 之 NTT 點乘，與直接矩陣乘積相符。
+  - `theorem_complexity_ordering` 初版取 n=1024，實算
+    NTT 36864 > Toom-3 15625 → 改取 n=3⁹=19683，
+    NTT 1671168 < Toom 1953125 < Karatsuba 14348907 < school 387420489。
+  - Ore F_5[t] 變數誤用大寫 `N`/`NN`/`K`（MoonBit 值識別字須小寫）
+    → 更名 norm / nn / kk；`loop {...}` 為 deprecated 且 useless_loop
+    → 改 `while true { ... break }`；`f5p_embed` 參數大寫 N 亦修正。
+  - `sfq_gcrd_lclm` 回傳之 gcrd 未首一化（EEA 最後非零餘式），
+    與模組 Gröbner 之 `sfq_monic(best)` 比較失敗 → 比較時對 z.gcrd
+    取 `sfq_monic`；Python 原型 20 組實例確認 leading-degree RREF
+    之最低次列正規化後恰為 gcrd，且 rank = deg lclm。
+  - 一般 RREF（由左至右取樞紐）無法保證最低次列為 gcrd
+    （第 7 組實例 minrow deg 3 ≠ gcrd deg 1）→ 改為
+    「最高次優先」之 degree-compatible RREF，20 組全數通過。
+  - FCbO 守恆律初版把「j 已在 B」誤計為 skipped → 分離
+    `!in_b` 分支；修正後得精確守恆 `closures + skipped = CbO closures`。
+    初版定理誤要求 `skipped >= inherited`（兩者無此關係）→ 改為守恆律
+    與 `inherited <= closures`，並另立 T-G13 驗證剪枝確實啟動。
+  - FCbO 之 Kan 旁支：Kan 預層協變預層須為 up-set；初版穷舉全部
+    2^m·2^n 遮罩使 Lan_K⊣K*⊣Ran_K 失敗 → 加 `chain_upset` 過濾
+    （函子性要求 G(q)=1 ⇒ G(q')=1 for q≤q'），Python 交叉確認 15 組全過。
+  - codensity 之「end 公式」初版以 f=0 遮罩比較，結論恆真 → 改為
+    極限泛性質 `z ≤ (Ran_K K)(q) ⟺ ∀p, q≤K p ⇒ z≤K p`。
+  - `theorem_pi_polar_bridge` 初版混淆「∀x∈X」與「∀x∈A」：
+    polar_obj(ctx,∅)=全體 Y，而 Π_f(A)=∀x∈X A(x)。
+    改為 P_A(x)=(x∉A)∨R(x,0)，則 Π_f P_A = ∀x∈A R(x,0)=F(A)，
+    並以 rows=[1,0,1,0] 之非平凡脈絡驗證。
+  - Orientation 定理初版誤把「翻轉 sheaf 轉移函數 s_{uv}」當成
+    「變更定向」；Prop.3.2 實為 δ 之整列乘 −1（I_{σ,−}）。
+    改 `negate_coboundary_row` 並驗證 Δ₀^{X,Y} 逐項不變。
+  - `reduced_homology_top` 對空複形給 β̃₀=−1 → 使完整單純形
+    λ=1（應為 0）；加入「無面則回傳 −1」之守衛後
+    λ(simplex)=0、λ(K₄ 1-skeleton)=2，Kalai–Meshulam 兩實例通過。
+  - `regularized_determinant` / `adelic_abel_jacobi` 初版
+    `for _j in 0..<Int64` 型別不符 → 改 `.to_int()`；
+    `Int64.pow` 不存在 → a1_homotopy 改迭代乘法。
+  - A¹ 定理初版以 `r+s != r+s` 之恆真式充作秩可加性（違反
+    「嚴禁恆真永綠假象」）→ 改為實算 `mat_rank(mat_identity(r+s))`
+    `= mat_rank(I_r)+mat_rank(I_s)`；T-Ore18 移除弱恆真檢查，
+    改驗證 `gcd(u^k a, u^k b) = u^k·gcd(a,b)` 之真實乘法性，
+    並誠實標註 K₋₁(F_5)=0 為 R45 引用之文獻結論，非本回合計算憑證。
+  - build_catalog.py 初版所有 xlsx 回合欄硬編 C1-03 → 加入 ROUND
+    全域與每筆 round 欄位（C1-01..C1-04）；檢查 355 筆 ID 無重複。
+  - 產生器決定性檢查發現 openpyxl 於 save 時以當下 UTC 時間覆寫
+    docProps/core.xml 之 dcterms:modified（C1-02 僅固定 zip 時間戳與
+    wb.properties 不足以攔截此欄位）→ 在 zip 重寫階段以 re.sub 把
+    created/modified 同時正規化為 2026-11-08T00:00:00Z；
+    連跑兩次 sha256 皆 dc6323b3…42d，byte-identical 恢復。
+  - README 之 183/271/88 等舊數字全數更新為 355/110，
+    並把 §6'' 十項待辦逐項標註補回結果與憑證編號。
 
 ================================================================================

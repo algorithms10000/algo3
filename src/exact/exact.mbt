@@ -779,3 +779,326 @@ pub fn theorem_charpoly_cayley_hamilton(x : Mat) -> Bool {
   let expected = if n % 2 == 0 { p0 } else { p0.neg() }
   det.equal(expected) && c[n - 1].equal(mat_trace(x).neg())
 }
+
+///|
+// ════════════════════════════════════════════════════════════════════════
+// C1-04 補回 §6'' 待辦：FFT/NTT 完整乘法、Toom–Cook 3-way、TMVP
+// NTT 取 p = 998244353 = 119·2^23 + 1，原根 3；全程 Int64 模算術。
+// Toom–3 以 5 個求值點（0,1,−1,2,−2）+ Lagrange 插值，5 次半尺寸乘法。
+// TMVP 以「Toeplitz 嵌入循環矩陣 + NTT」實作 Toeplitz 矩陣向量乘積。
+// ════════════════════════════════════════════════════════════════════════
+
+///|
+pub const NTT_PRIME : Int64 = 998244353L
+
+///|
+pub const NTT_ROOT : Int64 = 3L
+
+///|
+fn imod(a : Int64, p : Int64) -> Int64 { ((a % p) + p) % p }
+
+///|
+/// 迭代 Cooley–Tukey NTT；invert=true 時為逆變換（含 n^{−1}）。
+pub fn ntt(a0 : Array[Int64], invert : Bool) -> Array[Int64] {
+  let p = NTT_PRIME
+  let n = a0.length()
+  let a : Array[Int64] = []
+  for i in 0..<n { a.push(imod(a0[i], p)) }
+  let mut j = 0
+  // bit-reversal permutation
+  for k in 0..<n {
+    if k < j {
+      let t = a[k]
+      a[k] = a[j]
+      a[j] = t
+    }
+    let mut bit = n / 2
+    while (j & bit) != 0 {
+      j = j ^ bit
+      bit = bit / 2
+    }
+    j = j ^ bit
+  }
+  let mut len = 2
+  while len <= n {
+    let mut wlen = mod_pow(NTT_ROOT, (p - 1L).to_int() / len, p)
+    if invert { wlen = mod_inv(wlen, p) }
+    for ii in 0..<(n / len) {
+      let mut w = 1L
+      for jj in 0..<(len / 2) {
+        let u = a[ii * len + jj]
+        let v = imod(w * a[ii * len + jj + len / 2], p)
+        a[ii * len + jj] = imod(u + v, p)
+        a[ii * len + jj + len / 2] = imod(u - v, p)
+        w = imod(w * wlen, p)
+      }
+    }
+    len = len * 2
+  }
+  if invert {
+    let ninv = mod_inv(n.to_int64(), p)
+    for k in 0..<n { a[k] = imod(a[k] * ninv, p) }
+  }
+  a
+}
+
+///|
+/// 長度為 2 的冪之循環卷積（Toeplitz 嵌入所需）。
+fn ntt_cyclic_mul(a : Array[Int64], b : Array[Int64], size : Int) -> Array[Int64] {
+  let fa = ntt(a, false)
+  let fb = ntt(b, false)
+  let fc : Array[Int64] = []
+  for i in 0..<size { fc.push(imod(fa[i] * fb[i], NTT_PRIME)) }
+  ntt(fc, true)
+}
+
+///|
+fn next_pow2(x : Int) -> Int {
+  let mut n = 1
+  while n < x { n = n * 2 }
+  n
+}
+
+///|
+/// 循環卷積（mod p）之 NTT 乘法，結果截斷至 cut。
+pub fn ntt_mul(a : Array[Int64], b : Array[Int64], cut : Int) -> Array[Int64] {
+  let need = a.length() + b.length() - 1
+  let size = next_pow2(need)
+  let aa : Array[Int64] = Array::make(size, 0L)
+  let bb : Array[Int64] = Array::make(size, 0L)
+  for i in 0..<a.length() { aa[i] = imod(a[i], NTT_PRIME) }
+  for i in 0..<b.length() { bb[i] = imod(b[i], NTT_PRIME) }
+  let fa = ntt(aa, false)
+  let fb = ntt(bb, false)
+  let fc : Array[Int64] = []
+  for i in 0..<size { fc.push(imod(fa[i] * fb[i], NTT_PRIME)) }
+  let c = ntt(fc, true)
+  let out : Array[Int64] = []
+  for i in 0..<cut { out.push(if i < c.length() { c[i] } else { 0L }) }
+  out
+}
+
+///|
+fn naive_conv_int(a : Array[Int64], b : Array[Int64], cut : Int) -> Array[Int64] {
+  let out : Array[Int64] = Array::make(cut, 0L)
+  for i in 0..<a.length() {
+    for j in 0..<b.length() {
+      if i + j < cut {
+        out[i + j] = imod(out[i + j] + imod(a[i] * b[j], NTT_PRIME), NTT_PRIME)
+      }
+    }
+  }
+  out
+}
+
+///|
+/// 定理 T-X2：NTT 正逆變換互逆，且 NTT 卷積與 school-book 卷積 mod p 相等。
+pub fn theorem_ntt_equivalence(n : Int) -> Bool {
+  let a : Array[Int64] = []
+  let b : Array[Int64] = []
+  for i in 0..<n {
+    a.push(((i * 7 + 3) % 1000).to_int64())
+    b.push(((i * 11 + 5) % 1000).to_int64())
+  }
+  let size = next_pow2(n)
+  let aa : Array[Int64] = Array::make(size, 0L)
+  for i in 0..<n { aa[i] = a[i] }
+  let fwd = ntt(aa, false)
+  let back = ntt(fwd, true)
+  for i in 0..<n {
+    if back[i] != imod(a[i], NTT_PRIME) { return false }
+  }
+  let cut = 2 * n - 1
+  let c1 = ntt_mul(a, b, cut)
+  let c2 = naive_conv_int(a, b, cut)
+  for i in 0..<cut {
+    if c1[i] != c2[i] { return false }
+  }
+  true
+}
+
+///|
+/// Toeplitz 矩陣向量乘積：T(i,j)=t_{i−j}，以 2n×2n 循環嵌入 + NTT 計算。
+pub fn toeplitz_mvp_ntt(
+  tpos : Array[Int64],
+  tneg : Array[Int64],
+  v : Array[Int64],
+) -> Array[Int64] {
+  let n = v.length()
+  let size = next_pow2(2 * n)
+  let col : Array[Int64] = Array::make(size, 0L)
+  col[0] = tpos[0]
+  for k in 1..<n { col[k] = tpos[k] }
+  // 標準循環嵌入：下半放 t_{−(n−1)},...,t_{−1}
+  for k in 1..<n { col[size - k] = tneg[k] }
+  let vec : Array[Int64] = Array::make(size, 0L)
+  for i in 0..<n { vec[i] = v[i] }
+  let c = ntt_cyclic_mul(col, vec, size)
+  let out : Array[Int64] = []
+  for i in 0..<n { out.push(c[i]) }
+  out
+}
+
+///|
+fn toeplitz_direct(tpos : Array[Int64], tneg : Array[Int64], v : Array[Int64]) -> Array[Int64] {
+  let n = v.length()
+  let out : Array[Int64] = Array::make(n, 0L)
+  for i in 0..<n {
+    for j in 0..<n {
+      let t = if i >= j { tpos[i - j] } else { tneg[j - i] }
+      out[i] = imod(out[i] + imod(t * v[j], NTT_PRIME), NTT_PRIME)
+    }
+  }
+  out
+}
+
+///|
+/// 定理 T-X3：Toeplitz 循環嵌入 NTT 與直接矩陣向量乘積相等（TMVP）。
+pub fn theorem_toeplitz_mvp(n : Int) -> Bool {
+  let tpos : Array[Int64] = []
+  let tneg : Array[Int64] = []
+  let v : Array[Int64] = []
+  for k in 0..<n {
+    tpos.push(((k * 3 + 1) % 97).to_int64())
+    tneg.push(if k == 0 { 0L } else { ((k * 5 + 2) % 89).to_int64() })
+    v.push(((k * 7 + 4) % 101).to_int64())
+  }
+  let a = toeplitz_mvp_ntt(tpos, tneg, v)
+  let b = toeplitz_direct(tpos, tneg, v)
+  for i in 0..<n {
+    if a[i] != b[i] { return false }
+  }
+  true
+}
+
+///|
+fn rat_arr(a : Array[Int64]) -> Array[Rat] {
+  let out : Array[Rat] = []
+  for i in 0..<a.length() { out.push(rat_int(a[i])) }
+  out
+}
+
+///|
+fn toom3_eval(a : Array[Rat], k : Int, z : Rat) -> Array[Rat] {
+  let out : Array[Rat] = Array::make(k, rat_zero())
+  for t in 0..<3 {
+    let wt = z.pow(t)
+    for i in 0..<k {
+      let idx = t * k + i
+      if idx < a.length() { out[i] = out[i].add(a[idx].mul(wt)) }
+    }
+  }
+  out
+}
+
+///|
+fn lagrange_basis(xs : Array[Rat], j : Int) -> Array[Rat] {
+  let mut num : Array[Rat] = [rat_one()]
+  let mut den = rat_one()
+  for i in 0..<xs.length() {
+    if i == j { continue }
+    num = poly_mul(num, [xs[i].neg(), rat_one()])
+    den = den.mul(xs[j].sub(xs[i]))
+  }
+  poly_scale(num, rat_one().div(den).unwrap())
+}
+
+///|
+/// Toom–Cook 3-way：3 個區塊、5 個求值點、5 次半尺寸乘法，T(n)=5T(n/3)+O(n)。
+pub fn toom3_mul(a0 : Array[Int64], b0 : Array[Int64]) -> Array[Int64] {
+  let a = rat_arr(a0)
+  let b = rat_arr(b0)
+  let nn = if a.length() > b.length() { a.length() } else { b.length() }
+  if nn <= 3 {
+    let c = poly_mul(a, b)
+    let out : Array[Int64] = []
+    for i in 0..<c.length() { out.push(c[i].n) }
+    return out
+  }
+  let k = (nn + 2) / 3
+  let xs = [rat_zero(), rat_one(), rat_int(-1L), rat_int(2L), rat_int(-2L)]
+  let prods : Array[Array[Rat]] = []
+  for j in 0..<xs.length() {
+    let av = toom3_eval(a, k, xs[j])
+    let bv = toom3_eval(b, k, xs[j])
+    prods.push(poly_mul(av, bv))
+  }
+  // C_t(x) = Σ_j l_{j,t} P_j(x)
+  let ct : Array[Array[Rat]] = []
+  for t in 0..<5 {
+    let mut acc : Array[Rat] = []
+    for j in 0..<xs.length() {
+      let l = lagrange_basis(xs, j)
+      let w = if t < l.length() { l[t] } else { rat_zero() }
+      let scaled = poly_scale(prods[j], w)
+      acc = poly_add(acc, scaled)
+    }
+    ct.push(acc)
+  }
+  let outlen = a0.length() + b0.length() - 1
+  let out : Array[Int64] = Array::make(outlen, 0L)
+  for t in 0..<5 {
+    for i in 0..<ct[t].length() {
+      let idx = t * k + i
+      if idx < outlen {
+        let v = ct[t][i]
+        if v.d != 1L { return [] }
+        out[idx] += v.n
+      }
+    }
+  }
+  out
+}
+
+///|
+fn naive_conv_int64(a : Array[Int64], b : Array[Int64]) -> Array[Int64] {
+  let out : Array[Int64] = Array::make(a.length() + b.length() - 1, 0L)
+  for i in 0..<a.length() {
+    for j in 0..<b.length() { out[i + j] += a[i] * b[j] }
+  }
+  out
+}
+
+///|
+/// 定理 T-X4：Toom–3 與 school-book 整數卷積逐項相等。
+pub fn theorem_toom3_equivalence(n : Int) -> Bool {
+  let a : Array[Int64] = []
+  let b : Array[Int64] = []
+  for i in 0..<n {
+    a.push(((i * 3 + 1) % 17).to_int64())
+    b.push(((i * 5 + 2) % 19).to_int64())
+  }
+  let c1 = toom3_mul(a, b)
+  let c2 = naive_conv_int64(a, b)
+  if c1.length() != c2.length() { return false }
+  for i in 0..<c2.length() {
+    if c1[i] != c2[i] { return false }
+  }
+  true
+}
+
+///|
+/// 複雜度模型（實算運算次數）：schoolbook / Karatsuba / Toom-3 / NTT / TMVP。
+pub fn multiplication_costs(n : Int) -> Array[Int64] {
+  let school = (n * n).to_int64()
+  let mut kara = 1L
+  let mut kk = n
+  while kk > 1 { kara *= 3L; kk = kk / 2 }
+  let mut toom = 1L
+  let mut tt = n
+  while tt > 1 { toom *= 5L; tt = tt / 3 }
+  let l = next_pow2(2 * n)
+  let mut log2 = 0
+  let mut tmp = 1
+  while tmp < l { tmp *= 2; log2 += 1 }
+  let nttcost = (3L * (log2 + 1).to_int64() * l.to_int64()) / 2L
+  let tmvp = kara + (3L * n.to_int64()) - 1L
+  [school, kara, toom, nttcost, tmvp]
+}
+
+///|
+/// 定理 T-X5：對 n=3⁹=19683，複雜度模型滿足 NTT < Toom-3 < Karatsuba < school-book。
+pub fn theorem_complexity_ordering() -> Bool {
+  let c = multiplication_costs(19683)
+  c[3] < c[2] && c[2] < c[1] && c[1] < c[0] && c[4] >= c[1]
+}

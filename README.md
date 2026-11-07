@@ -40,7 +40,7 @@ src/exact    ──► src/axioms ──► src/galois ──► src/series ─�
 - `src/algebra`：歪多項式環（Ore）、Hilbert–Poincaré 級數、局部化、Ext¹、Morita
 - `src/graphs`：克內澤圖、Lovász/EKR、Ramsey、擬陣 Tutte、單純複形 Betti
 - `src/compose`：14 種組合手法（Kan、束、纖維積、單子、張量、纖維範疇、推出、交織、博弈管線等）
-- `src/catalog`：183 筆定理／演算法／等式登錄
+- `src/catalog`：355 筆定理／演算法／等式登錄
 - `algorithm.xlsx`：由 `docs/catalog.json` 單一來源產生之活頁簿
 - `Dev.txt`：流水式帳本；`AGENT.md` 與 `工程約束.md` 為同一份文件
 
@@ -65,8 +65,8 @@ moon run cmd/main
 | `moon check --deny-warn`（全域） | Finished，21 tasks |
 | `moon prove --deny-warn` | `1 of 1 packages proved, 17 goals proved` |
 | `moon build` | wasm artifact 生成 |
-| `moon run cmd/main` | 31 行真實 inspect 憑證，全數 OK |
-| 登錄表 | 6 公理／20 定義／8 命題／14 引理／85 定理／88 演算法／50 等式 = 271 筆；前沿文獻 36 筆 |
+| `moon run cmd/main` | 51 行真實 inspect 憑證，全數 OK |
+| 登錄表 | 6 公理／32 定義／8 命題／14 引理／120 定理／110 演算法／65 等式 = 355 筆；前沿文獻 45 筆 |
 | CI | `.github/workflows/c1-ci.yml` 推送全域編譯與形式化驗證 |
 
 ## C1-02：前沿查證與 §6 待辦補回
@@ -136,20 +136,42 @@ moon run cmd/main
 僅 **1 組**保持全部 14 不變量。此為真實計算之非平凡結構，非恆真判定：
 `衍生` 保持 12 項、`計算機抽象` 僅 2 項。
 
+## C1-04：最大責任補齊所需數學結構（§6'' 待辦）
+
+依《作業規範》「不時聯網搜查及查證最前沿論文」，本回合再查證 R37..R45 共 9 組
+（FOCS 2024 arXiv:2404.05177v2 之 Algorithm 1/2 偽碼、CLA 2010 CEUR Vol-672 paper29
+之 FCbO/PFCbO、arXiv:2112.10906 之 persistent sheaf Laplacian 定義與 Prop. 3.1/3.2、
+TAC 44(30) pushforward monads、arXiv:2511.22755 / 2602.15941、Kalai–Meshulam 2005/06、
+Oberwolfach 2025、Caruso–Le Borgne / Gómez-Torrecillas），完整書目見
+`algorithm.xlsx`「前沿文獻」工作表與 `docs/catalog.json`。所有結構皆寫入既有套件，
+未新增任何文檔；每項皆先以 Python 交叉原型驗證、再以 MoonBit 局部
+`moon test --deny-warn` 即寫即驗即刪，最後全域 CI 驗證。
+
+| §6'' 待辦 | 本回合補回 | 憑證 |
+| --- | --- | --- |
+| Kinoshita–Li 完整近線性合成 | `kl_pow_proj`（Graeffe + 偶奇壓縮）、`kl_comp`（F_{d,m} 反轉 + 遞迴）、`kl_compose` | T-S12/S13 |
+| FFT/NTT／Toom–Cook／TMVP | p=998244353 原根 3 之迭代 NTT、循環嵌入 Toeplitz MVP、5 點求值 Toom–3、複雜度模型 | T-X2..X5 |
+| Ore bound／reduced norm／中心分解／參數 gcrd | `ore_reduced_norm`（秩 2 自由模行列式）、`ore_bound` 最小性穷舉、`ore_central_decomposition`、模組 Gröbner、兩層分解 | T-Ore10..15 |
+| FCbO 完整 canonicity test／PFCbO | Algorithm 1 之 `N_j`/`M_j` 傳遞與 Lemma 1 剪枝、CbO 守恆律、層級 L round-robin 分發 | T-G11..G14 |
+| Persistent sheaf Laplacian 多尺度 filtration | `persistent_laplacian_from_delta` 以精確有理正交投影 `I−Aᵀ(AAᵀ)⁻¹A`、β₀ 秩公式、PSD 主子式、定向不變、多尺度 bars | T-Gph11..Gph15 |
+| Connes rank-one／正則化行列式／Spec Z | `connes_rank_one` 行列式引理、`regularized_determinant`、`spectral_zeta`、Lefschetz `exp(Σωt^k/k)`、adelic `AJ(D)=∏p^{e_p}` | T-A5..A8 |
+| pushforward monad／Ran／codensity | `Σ_f⊣f*⊣Π_f` 三角伴隨、`T=Π_f f*` 單子律、`Lan_K⊣K*⊣Ran_K`、`Ran_K K` closure operator、橋接公理 G | T-C20..C24 |
+| A¹-不變性／非交換動機 | F_5[u] 么模列補全（Quillen–Suslin）、A¹-homotopy `u↦s·u`、Laurent gcd 乘法性、δ-Galois `G_a(F_5)` | T-Ore16..18 |
+| δ-Galois／Kalai–Meshulam | F_5[t]/(t⁵) 之 δ-等變平移群與固定環；誘導子複形 Leray 數與擬陣 ρ(V∖τ)≤λ(X) 憑證 | T-Ore16, T-Gph16 |
+| 集庫成群 | 對 355 筆真實登錄項抽取 33 位元簽章，Jaccard + union-find 聚類，驗證分割／門檻單調／決定性 | T-C25 |
+
 ## 未完成（誠實標記）
 
-- 5,000,000 行程式碼、10,000 條中階以上演算法、集庫成群：目前 88 / 10,000 條演算法，仍為早期切片。
-- Kinoshita–Li 之**完整近線性合成**（Graeffe + 轉置原理）尚未落地；本回合僅實作
-  BK baby-step/giant-step 搭配 Karatsuba，以及 Bostan–Mori 係數抽取之 Graeffe 遞迴。
-- FFT/NTT 完整乘法、Ore bound 演算法、Giesbrecht 兩層模組分解、參數 gcrd Gröbner
-  基底、FCbO 完整 canonicity test 仍待後續回合。
-- 多元優質算法庫之跨回合延伸、δ-Galois 推廣、Kalai–Meshulam 拓樸組合。
+- 5,000,000 行程式碼、10,000 條中階以上演算法：目前 **110 / 10,000** 條演算法、
+  約 8 千餘行，仍為早期切片；「集庫成群」已建立聚類演算法與憑證，但庫規模本身未達最終目標。
+- 高維 sheaf 之 **1-st persistent Laplacian**（R30 之 2-維單純複形／環值層）、
+  ANM Hessian 對應、非交換動機與導出方案連續 K 理論（R36）尚未落地為可計算憑證；
+  本回合 q=0 persistent sheaf Laplacian 與 filtration 已完整實作。
+- Connes 譜 triple 之無限維極限／RH 等價證明、Spec Z 之 adelic Abel–Jacobi 解析
+  （archimedean 對數）與 Weil 顯式公式，以有限模型給出代數憑證，非解析極限證明。
 - `docs/` 其餘設計文件：依《工程約束》「非首次開發、創建新文檔前需先獲准」，
   本回合不另建新文檔，改以既有 `Dev.txt`、`README.md` 與各資料夾 README 記錄。
-- 更前沿待做：Kinoshita–Li 完整近線性合成、FFT/NTT 完整乘法、Ore bound (R5)、
-  Giesbrecht (R13) 兩層模組分解、參數 gcrd 模組 Gröbner 基底、FCbO canonicity test、
-  persistent sheaf Laplacian 多尺度實作、Connes zeta spectral triple 之 rank-one 擾動算子、
-  δ-Galois 推廣、Kalai–Meshulam 拓樸組合。
+- git 仍無 remote：CI workflow 與 commit 僅本機落地，**未 push**。
 
 ## 接入／輸出接口
 

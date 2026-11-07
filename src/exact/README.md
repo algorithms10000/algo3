@@ -1,6 +1,6 @@
 # src/exact — 精確算術層：Rat、gcd/egcd、模算術、GF(2) 秩、Smith 標準型
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得公理
 
@@ -11,6 +11,10 @@
 
 - **L14** GF(2) 秩-零化度：dim ker = ncols − rank
 - **T-X1** Faddeev–LeVerrier 特徵多項式滿足 Cayley–Hamilton 與 det/tr 恆等式
+- **T-X2** NTT 正逆變換互逆、卷積 = school-book mod 998244353
+- **T-X3** Toeplitz 循環嵌入 NTT 之矩陣向量乘積 = 直接乘積（TMVP）
+- **T-X4** Toom–Cook 3-way（5 求值點 + Lagrange 插值）= 整數卷積
+- **T-X5** n=3⁹ 時 NTT < Toom-3 < Karatsuba < school-book 之運算量序
 
 ## 已實作演算法列表
 
@@ -28,11 +32,17 @@
 - **AL065** poly_from_points Newton 差商插值（無溢位）（O(n²)）
 - **AL066** mat_generalized_charpoly det(A−tB) 求值插值（O(n⁴)）
 - **AL067** poly_smallest_positive_root 1/8 網格根隔離（O(deg·16)）
+- **AL090** ntt / ntt_mul / ntt_cyclic_mul（O(n log n)）
+- **AL091** toeplitz_mvp_ntt 循環嵌入（O(n log n)）
+- **AL092** toom3_mul 五點求值 Lagrange 插值（O(n^log₃5)）
+- **AL093** multiplication_costs 複雜度模型（O(log n)）
 
 ## 等式
 
 - **E39** 特徵多項式：`p_M(t) = det(tI − M) = t^n + c_{n−1}t^{n−1} + ⋯ + c₀`
 - **E40** Cayley–Hamilton：`p_M(M) = 0；det(M) = (−1)^n p_M(0)`
+- **E52** NTT 卷積：`c = NTT⁻¹(NTT(a)·NTT(b)) mod p, p=998244353`
+- **E53** Toom–3：`C(z)=Σ_j ℓ_j(z)·A(z_j)B(z_j)，5 次半尺寸乘法`
 
 ## 資料夾視角依賴關係圖
 
@@ -72,7 +82,9 @@ Int64/UInt64 位元 → gcd/Rat/矩陣秩 → 供所有上層套件做精確係�
   poly_add  poly_scale  poly_mul  poly_eval
   mat_charpoly  poly_from_points  mat_generalized_charpoly  poly_bisect
   poly_smallest_positive_root  poly_deflate_zero  poly_from_roots  theorem_charpoly_cayley_hamilton
-  Rat  Bezout  Mat
+  ntt  ntt_mul  theorem_ntt_equivalence  toeplitz_mvp_ntt
+  theorem_toeplitz_mvp  toom3_mul  theorem_toom3_equivalence  multiplication_costs
+  theorem_complexity_ordering  Rat  Bezout  Mat
 ```
 
 ## 驗證

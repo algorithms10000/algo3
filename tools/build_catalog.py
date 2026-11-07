@@ -10,6 +10,7 @@ import os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 A = []  # (id, statement, pkg, formula, verification)
+ROUND = "C1-01"
 
 
 def add(kind, id_, stmt, pkg, formula="", verify=""):
@@ -20,6 +21,7 @@ def add(kind, id_, stmt, pkg, formula="", verify=""):
         "package": pkg,
         "formula": formula,
         "verification": verify,
+        "round": ROUND,
     })
 
 
@@ -251,6 +253,8 @@ for id_, name, formula, pkg in eqs:
     add("等式", id_, name, pkg, formula, "由對應定理憑證驗證")
 
 
+ROUND = "C1-02"
+
 # ── C1-02 補回：前沿定理 ────────────────────────────────────────────────
 new_theorems = [
     ("T-Ore7", "deg lclm = deg f + deg g − deg gcrd = rank(Sylvester)，lclm 為公共右倍式", "src/algebra"),
@@ -325,6 +329,8 @@ REFS = [
     ("R24", "Bastioni–Micheli–Zhao, On the Characteristic Polynomial of Linearized Polynomials", "2025", "https://arxiv.org/abs/2506.16937", "O(n(log n)^4) F_q 運算，對低次線性化多項式達平方根級改進"),
     ("R25", "Krajca–Outrata–Vychodil, Parallel CbO / FCbO canonicity test", "2010s", "http://outrata.inf.upol.cz/publications.en.html", "改進 canonicity test 減少重複概念；同層 fixpoints 可平行處理"),
 ]
+
+ROUND = "C1-03"
 
 # ── C1-03：算術譜／三類圖譜／離散微分幾何／泛性質／歪多項式 K 理論 ──────
 new_theorems3 = [
@@ -416,6 +422,125 @@ REFS = REFS + [
     ("R36", "Oberwolfach Report 36/2025: Algebraic K-theory", "2025", "https://publications.mfo.de/bitstream/handle/mfo/4320/OWR_2025_36.pdf", "A¹-不變性、非交換動機、Grayson Γ 函子 K(ΓC)≃ΣK(C)、對數/導出方案之 K 理論"),
 ]
 
+# ── C1-04：補回 §6'' 最前沿待辦（Kinoshita–Li / NTT / Ore / FCbO / PSL / monad）──
+ROUND = "C1-04"
+
+new_defs4 = [
+    ("D28", "NTT 環 F_p, p=998244353=119·2²³+1，原根 3", "src/exact"),
+    ("D29", "TMVP：Toeplitz 矩陣經 2n 循環嵌入之 NTT 卷積", "src/exact"),
+    ("D30", "Ore bound：中心 F_5[t]（t=x²）之首一中心左倍式", "src/algebra"),
+    ("D31", "Reduced norm：N(f)=det[[A,tσ(B)],[B,σ(A)]]=Aσ(A)−tBσ(B)", "src/algebra"),
+    ("D32", "FCbO 之 Θ¹_{X,Y} 與 offset N_j 失敗記錄", "src/galois"),
+    ("D33", "PersistentSheaf：X⊂Y 前 k 頂點誘導子複形 + O(1) 線叢", "src/graphs"),
+    ("D34", "FiniteMap / PosetKan：Σ_f⊣f*⊣Π_f 與 Lan_K⊣K*⊣Ran_K", "src/compose"),
+    ("D35", "LibraryClustering：33 位元簽章之 Jaccard union-find 聚類", "src/compose"),
+    ("D36", "SpectralTriple rank-one 擾動 D_a = D + a|1⟩⟨1|", "src/series"),
+    ("D37", "Adelic Abel–Jacobi：Div₀(Spec Z) → ℚ*，AJ(D)=∏p^{e_p}", "src/series"),
+    ("D38", "F_5[u] 么模列與 Quillen–Suslin 補全（A¹-不變性）", "src/algebra"),
+    ("D39", "δ-Galois：F_5[t]/(t⁵) 之平移群 G_a(F_5) 與 δ-常數", "src/algebra"),
+]
+for id_, stmt, pkg in new_defs4:
+    add("定義", id_, stmt, pkg, "", "moon check --deny-warn + 即寫即驗即刪")
+
+new_theorems4 = [
+    ("T-S12", "Kinoshita–Li PowProj：Bostan–Mori Graeffe 迭代之 [x^N]P/Q 正確性", "src/series"),
+    ("T-S13", "Kinoshita–Li Comp：O(M(n) log m+M(m)) 合成與直接合成逐項相等", "src/series"),
+    ("T-X2", "NTT 正逆變換互逆、卷積 = school-book mod 998244353", "src/exact"),
+    ("T-X3", "Toeplitz 循環嵌入 NTT 之矩陣向量乘積 = 直接乘積（TMVP）", "src/exact"),
+    ("T-X4", "Toom–Cook 3-way（5 求值點 + Lagrange 插值）= 整數卷積", "src/exact"),
+    ("T-X5", "n=3⁹ 時 NTT < Toom-3 < Karatsuba < school-book 之運算量序", "src/exact"),
+    ("T-Ore10", "reduced norm 落於中心 F_5[t]、具乘法性且 N(f)=f·f̄", "src/algebra"),
+    ("T-Ore11", "Ore bound 為最小首一中心左倍式且 deg ≤ 2deg f", "src/algebra"),
+    ("T-Ore12", "中心分解 h_i 兩兩右互質、Σdeg h_i=deg f、lclm(h_i)=f", "src/algebra"),
+    ("T-Ore13", "參數 GCRD 特化 σ-等變且每層 Sylvester 秩缺陷 = deg gcrd", "src/algebra"),
+    ("T-Ore14", "模組 Gröbner 基底秩 = deg lclm，最低次列 = gcrd", "src/algebra"),
+    ("T-Ore15", "兩層模組分解因子不可約、次數和=deg f、與直接分解同譜", "src/algebra"),
+    ("T-Ore16", "δ-Galois：G_a(F_5) 與 δ 交換，固定環 = δ-常數 F_5", "src/algebra"),
+    ("T-Ore17", "A¹-不變性：F_5[u] 么模列皆可補全，K₀(F_5[u])≅ℤ", "src/algebra"),
+    ("T-Ore18", "Laurent 局部化 gcd 乘法性 u^k·gcd(a,b)", "src/algebra"),
+    ("T-G11", "FCbO 列舉全部 intent、無重複、皆為閉集", "src/galois"),
+    ("T-G12", "FCbO 新 canonicity test 守恆律 closures+skipped=CbO closures", "src/galois"),
+    ("T-G13", "FCbO 新測試啟動時嚴格少算閉包（skipped>0）", "src/galois"),
+    ("T-G14", "PFCbO worker 輸出為 intents 之不交分割且聯集完備", "src/galois"),
+    ("T-Gph11", "ker Δ₀^{X,Y} ≅ π•(H⁰(Y;G))：nullity = persistent Betti", "src/graphs"),
+    ("T-Gph12", "Δ₀^{X,Y} 半正定（全主子式 ≥0）且零根重數 = β₀", "src/graphs"),
+    ("T-Gph13", "X=Y 時 persistent Laplacian 退化為 δᵀδ", "src/graphs"),
+    ("T-Gph14", "Wei–Wei Prop.3.2：譜不依賴 Y 之定向", "src/graphs"),
+    ("T-Gph15", "多尺度 filtration 之 β₀ 單調不減、rank+nullity=k", "src/graphs"),
+    ("T-Gph16", "Kalai–Meshulam：M⊆X ⇒ ∃τ∈X, ρ(V∖τ) ≤ λ(X)", "src/graphs"),
+    ("T-C20", "Σ_f ⊣ f* ⊣ Π_f 三角伴隨（穷舉 2^nx·2^ny）", "src/compose"),
+    ("T-C21", "pushforward monad T=Π_f f*=Ran_f f* 滿足單子律", "src/compose"),
+    ("T-C22", "Lan_K ⊣ K* ⊣ Ran_K（協變預層之有限穷舉）", "src/compose"),
+    ("T-C23", "codensity monad Ran_K K 為 closure operator", "src/compose"),
+    ("T-C24", "Π_f 橋接全局公理 G：Π_f P_A = F(A)", "src/compose"),
+    ("T-C25", "集庫成群：聚類分割、Jaccard 門檻、單調性與決定性", "src/compose"),
+    ("T-A5", "Connes rank-one：χ_{D+aP}=χ_D−a∏_{d≠1}(t−Ω(d))", "src/series"),
+    ("T-A6", "det_ζ=∏_{k≥1}k^{c_k}=|[t^{c₀}]χ_D| 且 ζ_D(2)=tr(D⁺²)", "src/series"),
+    ("T-A7", "Grothendieck–Lefschetz：exp(Σω t^k/k)=(1−t)^{−ω}", "src/series"),
+    ("T-A8", "adelic AJ 單射、div(AJ(D))=D、Pic(Spec Z)=0", "src/series"),
+]
+for id_, stmt, pkg in new_theorems4:
+    add("定理", id_, stmt, pkg, "", "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證")
+
+new_algos4 = [
+    ("AL089", "kl_pow_proj / kl_comp / kl_compose", "src/series", "O(M(n)log m+M(m))"),
+    ("AL090", "ntt / ntt_mul / ntt_cyclic_mul", "src/exact", "O(n log n)"),
+    ("AL091", "toeplitz_mvp_ntt 循環嵌入", "src/exact", "O(n log n)"),
+    ("AL092", "toom3_mul 五點求值 Lagrange 插值", "src/exact", "O(n^log₃5)"),
+    ("AL093", "multiplication_costs 複雜度模型", "src/exact", "O(log n)"),
+    ("AL094", "f5p_irreducibles / f5p_embed / f5p_divmod", "src/algebra", "O(5^d·d³)"),
+    ("AL095", "ore_even_odd / ore_reduced_norm / ore_bound", "src/algebra", "O(d²)"),
+    ("AL096", "ore_central_decomposition / ore_two_level_factor", "src/algebra", "O(5^d·d³)"),
+    ("AL097", "sfq_module_groebner（leading-degree RREF）", "src/algebra", "O((df+dg)³)"),
+    ("AL098", "sfq_specialize / parametric_gcrd_strata", "src/algebra", "O(5·(df+dg)³)"),
+    ("AL099", "fp5_translate / fp5_delta δ-Galois 群", "src/algebra", "O(5³)"),
+    ("AL100", "fu_gcd_ext / a1_homotopy / theorem_a1_*", "src/algebra", "O(125²·d²)"),
+    ("AL101", "fcbo_run / cbo_closure_count", "src/galois", "O(|concepts|·n²)"),
+    ("AL102", "pfcbo_workers 層級 L 之 round-robin 分發", "src/galois", "O(w·|queue|)"),
+    ("AL103", "persistent_laplacian_from_delta / kernel_projector", "src/graphs", "O(m³+k²m)"),
+    ("AL104", "persistent_sheaf_bars 多尺度 filtration", "src/graphs", "O(n·m³)"),
+    ("AL105", "leray_number / induced_complex / kalai_meshulam_witness", "src/graphs", "O(2^n·n³)"),
+    ("AL106", "sigma_f / pullback_f / pi_f / pushforward_monad", "src/compose", "O(2^{nx+ny})"),
+    ("AL107", "lan_presheaf / ran_presheaf / codensity_value", "src/compose", "O(2^{m+n}mn)"),
+    ("AL108", "library_signature / library_clustering", "src/compose", "O(N²)"),
+    ("AL109", "connes_rank_one / regularized_determinant / spectral_zeta", "src/series", "O(τ(n)³)"),
+    ("AL110", "spec_z_zeta_series / adelic_abel_jacobi", "src/series", "O(cut²+2^p)"),
+]
+for id_, stmt, pkg, cx in new_algos4:
+    add("演算法", id_, stmt, pkg, cx, "困難度 P；局部 moon test --deny-warn + inspect")
+
+new_eqs4 = [
+    ("E51", "Kinoshita–Li PowProj", "[x^N] P/Q = 偶部 U(x²)+x·奇部 U(x²)/A(x²)", "src/series"),
+    ("E52", "NTT 卷積", "c = NTT⁻¹(NTT(a)·NTT(b)) mod p, p=998244353", "src/exact"),
+    ("E53", "Toom–3", "C(z)=Σ_j ℓ_j(z)·A(z_j)B(z_j)，5 次半尺寸乘法", "src/exact"),
+    ("E54", "Reduced norm", "N(f)=Aσ(A)−t Bσ(B) ∈ F_5[t]，t=x²", "src/algebra"),
+    ("E55", "Ore bound", "deg φ ≤ 2 deg f；φ = N(f)/lc(N(f))", "src/algebra"),
+    ("E56", "FCbO 守恆律", "closures(FCbO)+skipped = closures(CbO)", "src/galois"),
+    ("E57", "Persistent sheaf Laplacian", "Δ₀^{X,Y}=M Proj_Θ Mᵀ，Proj_Θ=I−Aᵀ(AAᵀ)⁻¹A", "src/graphs"),
+    ("E58", "Persistent Betti", "β₀^{X,Y}=(n−rankδ_Y)−((n−k)−rankδ_Y[:,k:])", "src/graphs"),
+    ("E59", "Kalai–Meshulam", "M⊆X ⇒ ∃τ∈X: ρ(V∖τ) ≤ λ(X)", "src/graphs"),
+    ("E60", "Pushforward monad", "T=Π_f f*=Ran_f f*；T(B)=B∪(Y∖im f)", "src/compose"),
+    ("E61", "Ran / codensity", "(Ran_K F)(q)=⋀_{q≤Kp}F(p)；(Ran_K K)(q)=min{Kp|q≤Kp}", "src/compose"),
+    ("E62", "Connes rank-one", "det(D+I+aP)=det(D+I)(1+a)", "src/series"),
+    ("E63", "Lefschetz zeta", "Z(X,t)=exp(Σ_k #X(F_{q^k})t^k/k)=1/(1−t)^{ω(n)}", "src/series"),
+    ("E64", "Adelic Abel–Jacobi", "AJ(D)=∏_p p^{e_p}；div(AJ(D))=D", "src/series"),
+    ("E65", "A¹-同倫不變性", "K₀(F_5[u])≅K₀(F_5)≅ℤ；det[[a,b],[−q,p]]=1", "src/algebra"),
+]
+for id_, name, formula, pkg in new_eqs4:
+    add("等式", id_, name, pkg, formula, "由對應定理憑證驗證")
+
+REFS = REFS + [
+    ("R37", "Kinoshita–Li, Power Series Composition in Near-Linear Time, FOCS 2024 (arXiv:2404.05177v2, Algorithm 1 PowProj / Algorithm 2 Comp)", "2024", "https://arxiv.org/html/2404.05177v2", "Algorithm 1 Graeffe U=P Q(−x)、A=Q Q(−x)、偶奇壓縮；Algorithm 2 F_{d,m} 反轉多項式、V(x,y) 壓縮、遞迴 W=Comp(⌈n/2⌉,e,m,P,V)、B=W(x²,y)Q(−x,y)；O(M(n)log m+M(m))"),
+    ("R38", "Krajča–Outrata–Vychodil, Advances in Algorithms Based on CbO (CLA 2010, CEUR Vol-672 paper29)", "2010", "https://ceur-ws.org/Vol-672/paper29.pdf", "Lemma 1 之新增 canonicity test：N_j∩Y_j⊆B∩Y_j 才計算 D；失敗時 M_j=D 傳遞子樹；PFCbO 在層級 L 分發 queue；Prop.3.2 譜與定向無關"),
+    ("R39", "Wei–Wei, Persistent Sheaf Laplacians, arXiv:2112.10906 / Foundations of Data Science 7(2) 2025", "2021/25", "https://arxiv.org/pdf/2112.10906", "Θ^{q+1}_{X,Y}={x∈C^{q+1}(Y;G)|(d_Y^q)*x∈C^q(X;F)}；Δ_q^{X,Y}=D*P⁻¹Dᵀ+d_X^{q−1}(d_X^{q−1})ᵀ；ker Δ_q^{X,Y}≅π•(H^q(Y;G))；Prop.3.1 矩陣式、Prop.3.2 定向不變"),
+    ("R40", "Doña Mateo, Pushforward monads, TAC 44(30) 2025", "2025", "http://tac.mta.ca/tac/volumes/44/30/44-30.pdf", "pushforward monad = Ran_G(GT)；Ran 之 end 公式；codensity monad 為 closure operator；極限完備性不變"),
+    ("R41", "Connes–Consani–Moscovici, Zeta Spectral Triples (arXiv:2511.22755)", "2025/26", "https://arxiv.org/pdf/2511.22755", "rank-one 擾動 scaling Hamiltonian、有限 Euler 積、正則化行列式 det_ζ、譜 zeta 逼近 Riemann Ξ"),
+    ("R42", "Connes–Consani, On the Jacobian of Spec Z (arXiv:2602.15941)", "2026", "https://arxiv.org/pdf/2602.15941", "Arakelov 除子、adelic Abel–Jacobi、Weil 顯式公式 = Lefschetz 跡公式；Pic(Spec Z) 么半群"),
+    ("R43", "Kalai–Meshulam, A topological colourful Helly theorem / Intersections of Leray complexes (2005/2006)", "2005/06", "https://www.math.cmu.edu/users/alanlew/files/theses/phd%20thesis.pdf", "X 為 d-Leray、M 為擬陣且 M⊆X ⇒ ∃τ∈X 使 ρ(V∖τ)≤d；λ(X)=max_{U⊆V} top H̃(X[U])+1"),
+    ("R44", "Caruso–Le Borgne, Fast factorization of skew polynomials / Gómez-Torrecillas et al., Computing the bound of an Ore polynomial", "2017/2013", "https://xavier.caruso.ovh/papers/publis/fastfactor.pdf", "reduced norm N:k[X;σ]→k^σ[X^r]、Azumaya 代數、最小中心左倍式；Giesbrecht 兩層模組分解；ISSAC'24 模組 Gröbner 求參數 gcrd"),
+    ("R45", "Oberwolfach Report 36/2025 Algebraic K-theory / Quillen–Suslin / Bass fundamental theorem", "2025", "https://publications.mfo.de/bitstream/handle/mfo/4320/OWR_2025_36.pdf", "A¹-同倫不變性 K₀(R[t])≅K₀(R)；K₀(R[t,t⁻¹])≅K₀(R)⊕K₋₁(R)；么模列補全；非交換動機"),
+]
+
 def mb_escape(s: str) -> str:
     return s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ")
 
@@ -484,8 +609,8 @@ def generate_xlsx():
 
     from datetime import datetime
     wb = Workbook()
-    wb.properties.created = datetime(2026, 11, 7, 0, 0, 0)
-    wb.properties.modified = datetime(2026, 11, 7, 0, 0, 0)
+    wb.properties.created = datetime(2026, 11, 8, 0, 0, 0)
+    wb.properties.modified = datetime(2026, 11, 8, 0, 0, 0)
     head_font = Font(bold=True, color="FFFFFF")
     head_fill = PatternFill("solid", fgColor="1F4E79")
     wrap = Alignment(wrap_text=True, vertical="top")
@@ -493,7 +618,7 @@ def generate_xlsx():
     # 索引
     ws = wb.active
     ws.title = "索引"
-    ws.append(["C1 algorithm.xlsx", "全局公理：伽羅瓦對應", "回合 C1-03", "2026-11-07"])
+    ws.append(["C1 algorithm.xlsx", "全局公理：伽羅瓦對應", "回合 C1-04", "2026-11-08"])
     ws.append([])
     ws.append(["類別", "筆數", "來源", "驗證"])
     for c in ws[3]:
@@ -504,7 +629,7 @@ def generate_xlsx():
         n = sum(1 for e in A if e["kind"] == k)
         ws.append([k, n, "docs/catalog.json / src/catalog", "moon check + moon prove + 即時驗題"])
     ws.append(["合計", len(A), "", ""])
-    ws.append(["前沿文獻", len(REFS), "docs/catalog.json / Dev.txt §2", "聯網查證（C1-01 R1..R12 + C1-02 R13..R25 + C1-03 R26..R36）"])
+    ws.append(["前沿文獻", len(REFS), "docs/catalog.json / Dev.txt §2", "聯網查證（C1-01 R1..R12 + C1-02 R13..R25 + C1-03 R26..R36 + C1-04 R37..R45）"])
     ws.column_dimensions["A"].width = 22
     ws.column_dimensions["B"].width = 10
     ws.column_dimensions["C"].width = 36
@@ -534,7 +659,7 @@ def generate_xlsx():
         for e in A:
             if e["kind"] != k:
                 continue
-            sheet.append([e["id"], e["statement"], e["package"], e["formula"], e["verification"], "C1-03"])
+            sheet.append([e["id"], e["statement"], e["package"], e["formula"], e["verification"], e["round"]])
         for i, w in enumerate([12, 58, 20, 62, 40, 10], start=1):
             sheet.column_dimensions[get_column_letter(i)].width = w
         for row in sheet.iter_rows(min_row=2):
@@ -546,24 +671,35 @@ def generate_xlsx():
     path = os.path.join(ROOT, "algorithm.xlsx")
     # 固定 zip 時間戳，讓 xlsx 為可重現（byte-identical）之建置產物
     import io
+    import re
     import zipfile
     buf = io.BytesIO()
     wb.save(buf)
     buf.seek(0)
+    # openpyxl 於 save 時會以當下時間覆寫 dcterms:modified；此處正規化為
+    # 固定值，確保整個 xlsx 為 byte-identical 之可重現建置產物。
+    fixed_stamp = b"2026-11-08T00:00:00Z"
     with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as zout:
         with zipfile.ZipFile(buf) as zin:
             for item in zin.infolist():
-                zi = zipfile.ZipInfo(item.filename, date_time=(2026, 11, 7, 0, 0, 0))
+                data = zin.read(item.filename)
+                if item.filename == "docProps/core.xml":
+                    data = re.sub(
+                        rb"(<dcterms:(?:created|modified)[^>]*>)[^<]*(</dcterms:(?:created|modified)>)",
+                        lambda m: m.group(1) + fixed_stamp + m.group(2),
+                        data,
+                    )
+                zi = zipfile.ZipInfo(item.filename, date_time=(2026, 11, 8, 0, 0, 0))
                 zi.compress_type = zipfile.ZIP_DEFLATED
                 zi.external_attr = item.external_attr
-                zout.writestr(zi, zin.read(item.filename))
+                zout.writestr(zi, data)
     return path
 
 
 def main():
     os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
     with open(os.path.join(ROOT, "docs/catalog.json"), "w", encoding="utf-8") as f:
-        json.dump({"round": "C1-03", "global_axiom": "伽羅瓦對應",
+        json.dump({"round": "C1-04", "global_axiom": "伽羅瓦對應",
                    "entries": A, "references": REFS}, f, ensure_ascii=False, indent=2)
     generate_mbt()
     p = generate_xlsx()
