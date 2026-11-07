@@ -297,7 +297,7 @@ new_eqs = [
 for id_, name, formula, pkg in new_eqs:
     add("等式", id_, name, pkg, formula, "由對應定理憑證驗證")
 
-# ── 前沿文獻（C1-01 R1..R12 + C1-02 R13..R25）────────────────────────
+# ── 前沿文獻（C1-01 R1..R12 + C1-02 R13..R25 + C1-03 R26..R36）────────────────────────
 REFS = [
     ("R1", "Bigatti–Caboara–Robbiano, Hilbert–Poincaré series of monomial ideals (1991)", "1991", "https://www.researchgate.net/publication/220537752_On_the_Computation_of_Hilbert-Poincare_Series", "單項式理想 Hilbert 級數演算法 HP"),
     ("R2", "Lezama et al., Ore and Goldie theorems for skew PBW extensions", "2013", "https://www.researchgate.net/publication/256327517_Ore_and_Goldie_theorems_for_skew_PBW_extensions", "skew PBW 廣義 Hilbert 級數可計算"),
@@ -324,6 +324,96 @@ REFS = [
     ("R23", "de Moraes et al., Parallelism in the Generation of Concepts Through Formal Context Object Partitioning (In-Close 4, OpenMP)", "2023", "https://www.scitepress.org/Papers/2023/119915/119915.pdf", "以物件子脈絡切分工作單元；4 threads 最高 1.425× speedup、71% 效率；冗餘屬性先移除"),
     ("R24", "Bastioni–Micheli–Zhao, On the Characteristic Polynomial of Linearized Polynomials", "2025", "https://arxiv.org/abs/2506.16937", "O(n(log n)^4) F_q 運算，對低次線性化多項式達平方根級改進"),
     ("R25", "Krajca–Outrata–Vychodil, Parallel CbO / FCbO canonicity test", "2010s", "http://outrata.inf.upol.cz/publications.en.html", "改進 canonicity test 減少重複概念；同層 fixpoints 可平行處理"),
+]
+
+# ── C1-03：算術譜／三類圖譜／離散微分幾何／泛性質／歪多項式 K 理論 ──────
+new_theorems3 = [
+    ("T-X1", "Faddeev–LeVerrier 特徵多項式滿足 Cayley–Hamilton 與 det/tr 恆等式", "src/exact"),
+    ("T-Gph2", "Newton 恆等式：tr(L^j) 由 det(tI−L) 係數決定", "src/graphs"),
+    ("T-Gph3", "Kirchhoff：L·1=0、rank(L)=n−#components、生成樹 >0 ⟺ 連通", "src/graphs"),
+    ("T-Gph4", "Chung/Dodziuk–Alon–Milman Cheeger：λ₂/2 ≤ h ≤ √(2λ₂)", "src/graphs"),
+    ("T-Gph5", "KG(5,2)=Petersen：L 譜 {0,2⁵,5⁴}，ℒ 譜 {0,(2/3)⁵,(5/3)⁴}", "src/graphs"),
+    ("T-Gph6", "BFS 測地距離為度量（對稱、三角不等式）", "src/graphs"),
+    ("T-Gph7", "切束維度 Σ_v dim T_v = 2|E|，餘切由 Chu 對偶給出", "src/graphs"),
+    ("T-Gph8", "離散 Hodge：Δ⁰=δᵀδ=聯絡 Laplacian，ker Δ⁰=ker δ", "src/graphs"),
+    ("T-Gph9", "O(1) 線叢平坦 ⟺ 環 holonomy=+1 ⟺ dim H⁰=1", "src/graphs"),
+    ("T-Gph10", "測地線平行移動 holonomy ∈{±1} 且路徑反向不變", "src/graphs"),
+    ("T-A1", "算術 ζ/Poincaré 多項式 Σ_{d|n}t^{Ω(d)} = ∏(1+...+t^{e_i})", "src/series"),
+    ("T-A2", "算術 spectral triple：χ_D=∏(t−Ω(d))、[D,E_p]=0、[D,T_p]=T_p", "src/series"),
+    ("T-A3", "Spec(ℤ/nℤ) 之 Zariski 極性為伽羅瓦對應（伴隨性＋閉包三律）", "src/series"),
+    ("T-A4", "Σ_{d|n}φ(d)=n、Σ_{d|n}μ(d)=[n=1]、φ(n)=n∏(1−1/p)", "src/series"),
+    ("T-K0-1", "G₀(R/(f)) ≅ ℤ^s，s=相異不可約右因子數；合成因子次數和=deg f", "src/algebra"),
+    ("T-K0-2", "Quillen–Grayson 基本定理：H_R(t)=1/(1−t)，秩 1→2→1→0，Euler=0", "src/algebra"),
+    ("T-K0-3", "Morita 不變性：2×2 冪等矩陣 tr(e)=rank(e)·1", "src/algebra"),
+    ("T-K0-4", "K₀ 函子性：局部化泛性質與基本定理複合為零", "src/algebra"),
+    ("T-K0-5", "δ=0 時 x^k r = σ^k(r) x^k（Shin 2024 q-binomial 之 σ²=id 特例）", "src/algebra"),
+    ("T-C17", "泛性質：纖維積中介態射唯一、自由么半群 |Hom|=x²、函子性", "src/compose"),
+    ("T-C18", "21×14 衍生方向相容矩陣非平凡；GF(2) 秩=12", "src/compose"),
+    ("T-C19", "泛性質 × 21 動詞 × 14 手法之一致性", "src/compose"),
+]
+for id_, stmt, pkg in new_theorems3:
+    add("定理", id_, stmt, pkg, "", "局部編譯 + 即寫即驗即刪；有限穷舉/精確有理憑證")
+
+new_algos3 = [
+    ("AL063", "mat_det / mat_rank 有理高斯消去", "src/exact", "O(n³)"),
+    ("AL064", "mat_charpoly Faddeev–LeVerrier", "src/exact", "O(n⁴)"),
+    ("AL065", "poly_from_points Newton 差商插值（無溢位）", "src/exact", "O(n²)"),
+    ("AL066", "mat_generalized_charpoly det(A−tB) 求值插值", "src/exact", "O(n⁴)"),
+    ("AL067", "poly_smallest_positive_root 1/8 網格根隔離", "src/exact", "O(deg·16)"),
+    ("AL068", "spectral_power_sums Newton 恆等式冪和", "src/graphs", "O(k²)"),
+    ("AL069", "graph_spanning_trees Kirchhoff 餘子式", "src/graphs", "O(n³)"),
+    ("AL070", "graph_conductance 體積加權最小割", "src/graphs", "O(2^n·n)"),
+    ("AL071", "graph_normalized_charpoly 廣義特徵多項式", "src/graphs", "O(n⁴)"),
+    ("AL072", "geodesic_distances / geodesic_path BFS", "src/graphs", "O(n²)"),
+    ("AL073", "tangent_space 切空間基底", "src/graphs", "O(n)"),
+    ("AL074", "cycle_basis BFS 樹補邊 + LCA 基本環", "src/graphs", "O(n³)"),
+    ("AL075", "holonomy / curvature 平行移動與曲率", "src/graphs", "O(|E|)"),
+    ("AL076", "sheaf_coboundary / sheaf_laplacian", "src/graphs", "O(|E|n²)"),
+    ("AL077", "connection_laplacian O(1) 線叢", "src/graphs", "O(n²)"),
+    ("AL078", "prime_factorization / divisors_of / big_omega", "src/series", "O(n)"),
+    ("AL079", "arithmetic_zeta_poly 算術 ζ 多項式", "src/series", "O(τ(n))"),
+    ("AL080", "arithmetic_hecke 升階算子 T_p", "src/series", "O(τ(n)²)"),
+    ("AL081", "theorem_arithmetic_galois Zariski 極性有限穷舉", "src/series", "O(2^{p+d})"),
+    ("AL082", "sfq_factor 歪多項式右因子分解", "src/algebra", "O(25^{d}·deg²)"),
+    ("AL083", "sfq_distinct_factors G₀ 生成元", "src/algebra", "O(k²)"),
+    ("AL084", "theorem_universal_property_pullback 中介態射枚舉", "src/compose", "O(n^{2q})"),
+    ("AL085", "verb_apply 21 衍生方向動詞變換", "src/compose", "O(n²)"),
+    ("AL086", "deriv_invariant 14 手法不變量", "src/compose", "O(2^n)"),
+    ("AL087", "verb_pattern_matrix / stable_pairs / row_classes", "src/compose", "O(21·14·C)"),
+    ("AL088", "verb_composition_closure 441 組動詞複合", "src/compose", "O(441·14·C)"),
+]
+for id_, stmt, pkg, cx in new_algos3:
+    add("演算法", id_, stmt, pkg, cx, "困難度 P；局部編譯 + inspect")
+
+new_eqs3 = [
+    ("E39", "特徵多項式", "p_M(t) = det(tI − M) = t^n + c_{n−1}t^{n−1} + ⋯ + c₀", "src/exact"),
+    ("E40", "Cayley–Hamilton", "p_M(M) = 0；det(M) = (−1)^n p_M(0)", "src/exact"),
+    ("E41", "Newton 冪和", "p_k = e₁p_{k−1} − e₂p_{k−2} + ⋯ + (−1)^{k−1}k e_k", "src/graphs"),
+    ("E42", "Kirchhoff", "τ(G) = det L^{(i,i)}；rank L = n − c(G)", "src/graphs"),
+    ("E43", "Cheeger", "λ₂/2 ≤ h(G) ≤ √(2λ₂)", "src/graphs"),
+    ("E44", "正規化廣義特徵", "det(L − tD) = det(D)·∏(λ_i(ℒ) − t)", "src/graphs"),
+    ("E45", "離散 Hodge", "Δ⁰_F = δᵀδ；ker Δ⁰ = H⁰(G;F)", "src/graphs"),
+    ("E46", "算術 ζ", "Σ_{d|n} t^{Ω(d)} = ∏_i (1+t+⋯+t^{e_i})", "src/series"),
+    ("E47", "Dirac–Hecke 交換子", "[D,E_p]=0；[D,T_p]=T_p；tr D² = Σ_k c_k k²", "src/series"),
+    ("E48", "K₀ 基本定理", "K₀(R[t,t⁻¹]) ≅ K₀(R) ⊕ K₋₁(R)；Euler: 1−2+1−0=0", "src/algebra"),
+    ("E49", "G₀ 商環", "G₀(R/(f)) ≅ ℤ^{#distinct irreducible right factors}", "src/algebra"),
+    ("E50", "衍生相容矩陣", "M[v][p] = [inv_p(V_v(D₀)) = inv_p(D₀)] ∈ F₂^{21×14}", "src/compose"),
+]
+for id_, name, formula, pkg in new_eqs3:
+    add("等式", id_, name, pkg, formula, "由對應定理憑證驗證")
+
+REFS = REFS + [
+    ("R26", "Connes–Consani–Moscovici, Zeta Spectral Triples, arXiv:2511.22755 / EMS 2026", "2025/26", "https://arxiv.org/abs/2511.22755", "rank-one 擾動之 scaling spectral triple + p≤λ² 有限 Euler 積；譜逼近 ζ 零點；正則化行列式 → Riemann Ξ；收斂證明等價 RH"),
+    ("R27", "Connes–Consani, On the Jacobian of Spec Z, arXiv:2602.15941 / JNCG 2026", "2026", "https://arxiv.org/pdf/2602.15941", "Spec Z 為無限虧格算術曲線；Pic(Spec Z) 么半群、Arakelov 度量除子、adelic Abel–Jacobi；Weil 顯式公式 = Lefschetz 跡公式"),
+    ("R28", "Hansen–Ghrist, Toward a Spectral Theory of Cellular Sheaves / Laplacians of Cellular Sheaves", "2010s", "https://jakobhansen.org/publications/spectralsheaves.pdf", "F:(K,≤)→Vect；H⁰=ker δ；Δ⁰=δᵀδ；ker Δ⁰=H⁰；O(n) 向量叢 → Singer–Wu graph connection Laplacian"),
+    ("R29", "Wei et al., Persistent Sheaf Laplacians, Foundations of Data Science 7(2) 2025 pp.446–463", "2025", "https://users.math.msu.edu/users/weig/paper/p341.pdf", "多尺度 sheaf Laplacian；π• 導出 persistent sheaf Betti 數；捕捉非幾何標記資訊"),
+    ("R30", "Cellular Sheaves on Higher-Dimensional Structures, arXiv:2505.23993", "2025", "https://www.arxiv.org/pdf/2505.23993v1", "環/模值層、張量積層、Kronecker 積還原圖 Laplacian；2-維單純複形之 1-st sheaf Laplacian"),
+    ("R31", "Chung 正規化 Laplacian / Kwok–Lau–Lee–Oveis Gharan–Trevisan Improved Cheeger / Kinoshita? 2026 second-gap Cheeger / Re-imagining Spectral Graph Theory arXiv:2504.10624", "1978–2026", "https://cs.uwaterloo.ca/~lapchi/papers/Cheeger.pdf", "λ₂/2≤h≤√(2λ₂)；φ(G)=O(k)λ₂/√λ_k；inner product Laplacian 統一 combinatorial/normalized/hypergraph/directed"),
+    ("R32", "Budninskiy et al., Parallel Transport Unfolding (PTU)", "2018", "https://www.geometry.caltech.edu/pubs/BYFTD18.pdf", "離散局部切空間（SVD 基底）、離散度量聯絡之平行移動、測地距離估計；收斂到 Levi-Civita 聯絡"),
+    ("R33", "Doña Mateo, Pushforward monads, TAC 44(30) 2025 / arXiv:2406.15256", "2025", "http://tac.mta.ca/tac/volumes/44/30/44-30.pdf", "Ran_G(GT) 給 G♯T 單子；兩個泛性質；Mnd(A)↔Mnd(B) 伴隨；codensity monad 極限完備不變性"),
+    ("R34", "Quillen–Grayson 代數 K 理論基本定理 / Skew PBW Extensions (Quillen–Suslin 演算法)", "1976–2020", "https://en.wikipedia.org/wiki/Fundamental_theorem_of_algebraic_K-theory", "G_i(R[t])=G_i(R)；G_i(R[t,t⁻¹])=G_i(R)⊕G_{i−1}(R)；局部化長正合序列；冪等矩陣 → 投影模基底"),
+    ("R35", "Shin, Jacobson Radicals of Ore Extensions, arXiv:2405.16342 / Lorensen–Öinert arXiv:2505.21030", "2024/25", "https://arxiv.org/pdf/2405.16342", "q-skew σ-導子與 q-二項式公式 x^k r = Σ [k choose i]_q σ^i D^{k−i}(r) x^i；Ore 擴張之 rank condition"),
+    ("R36", "Oberwolfach Report 36/2025: Algebraic K-theory", "2025", "https://publications.mfo.de/bitstream/handle/mfo/4320/OWR_2025_36.pdf", "A¹-不變性、非交換動機、Grayson Γ 函子 K(ΓC)≃ΣK(C)、對數/導出方案之 K 理論"),
 ]
 
 def mb_escape(s: str) -> str:
@@ -403,7 +493,7 @@ def generate_xlsx():
     # 索引
     ws = wb.active
     ws.title = "索引"
-    ws.append(["C1 algorithm.xlsx", "全局公理：伽羅瓦對應", "回合 C1-02", "2026-11-07"])
+    ws.append(["C1 algorithm.xlsx", "全局公理：伽羅瓦對應", "回合 C1-03", "2026-11-07"])
     ws.append([])
     ws.append(["類別", "筆數", "來源", "驗證"])
     for c in ws[3]:
@@ -414,7 +504,7 @@ def generate_xlsx():
         n = sum(1 for e in A if e["kind"] == k)
         ws.append([k, n, "docs/catalog.json / src/catalog", "moon check + moon prove + 即時驗題"])
     ws.append(["合計", len(A), "", ""])
-    ws.append(["前沿文獻", len(REFS), "docs/catalog.json / Dev.txt §2", "聯網查證（C1-01 R1..R12 + C1-02 R13..R25）"])
+    ws.append(["前沿文獻", len(REFS), "docs/catalog.json / Dev.txt §2", "聯網查證（C1-01 R1..R12 + C1-02 R13..R25 + C1-03 R26..R36）"])
     ws.column_dimensions["A"].width = 22
     ws.column_dimensions["B"].width = 10
     ws.column_dimensions["C"].width = 36
@@ -444,7 +534,7 @@ def generate_xlsx():
         for e in A:
             if e["kind"] != k:
                 continue
-            sheet.append([e["id"], e["statement"], e["package"], e["formula"], e["verification"], "C1-02"])
+            sheet.append([e["id"], e["statement"], e["package"], e["formula"], e["verification"], "C1-03"])
         for i, w in enumerate([12, 58, 20, 62, 40, 10], start=1):
             sheet.column_dimensions[get_column_letter(i)].width = w
         for row in sheet.iter_rows(min_row=2):
@@ -473,7 +563,7 @@ def generate_xlsx():
 def main():
     os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
     with open(os.path.join(ROOT, "docs/catalog.json"), "w", encoding="utf-8") as f:
-        json.dump({"round": "C1-02", "global_axiom": "伽羅瓦對應",
+        json.dump({"round": "C1-03", "global_axiom": "伽羅瓦對應",
                    "entries": A, "references": REFS}, f, ensure_ascii=False, indent=2)
     generate_mbt()
     p = generate_xlsx()

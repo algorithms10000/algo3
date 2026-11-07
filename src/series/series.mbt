@@ -996,3 +996,266 @@ pub fn theorem_graeffe_coeff(n : Int) -> Bool {
   }
   true
 }
+
+///|
+// ════════════════════════════════════════════════════════════════════════
+// C1-03：算術譜（Spec Z 之有限模型 / spectral triple）
+// 依據 R26 Connes–Consani–Moscovici Zeta Spectral Triples (2025/26)、
+// R27 Connes–Consani On the Jacobian of Spec Z (JNCG 2026)、
+// R10 Arakelov 除子與 Pic(Spec Z)。取有限算術曲線 Spec(ℤ/nℤ)：
+//   H = ℚ^{Div(n)}，D = diag Ω(d)（算術 Dirac），
+//   A 由「p | d」之冪等對角算子生成，T_p 為 Hecke 升階算子。
+// ════════════════════════════════════════════════════════════════════════
+
+///|
+pub fn prime_factorization(n : Int64) -> Array[Array[Int64]] {
+  let out : Array[Array[Int64]] = []
+  let mut t = n
+  let mut p = 2L
+  while p * p <= t {
+    if t % p == 0L {
+      let mut e = 0L
+      while t % p == 0L { t = t / p; e += 1L }
+      out.push([p, e])
+    }
+    p += 1L
+  }
+  if t > 1L { out.push([t, 1L]) }
+  out
+}
+
+///|
+pub fn prime_divisors(n : Int64) -> Array[Int64] {
+  let f = prime_factorization(n)
+  let out : Array[Int64] = []
+  for i in 0..<f.length() { out.push(f[i][0]) }
+  out
+}
+
+///|
+pub fn divisors_of(n : Int64) -> Array[Int64] {
+  let out : Array[Int64] = []
+  let mut d = 1L
+  while d <= n {
+    if n % d == 0L { out.push(d) }
+    d += 1L
+  }
+  out
+}
+
+///|
+/// Ω(n)：素因子個數（計重數），即算術 Dirac 算子之特徵值。
+pub fn big_omega(n : Int64) -> Int {
+  let f = prime_factorization(n)
+  let mut s = 0L
+  for i in 0..<f.length() { s += f[i][1] }
+  s.to_int()
+}
+
+///|
+pub fn euler_phi(n : Int64) -> Int64 {
+  let mut c = 0L
+  for k in 1..<(n.to_int() + 1) {
+    if @exact.gcd(k.to_int64(), n) == 1L { c += 1L }
+  }
+  c
+}
+
+///|
+/// 算術譜：D 之特徵值多重集 {Ω(d) : d | n}。
+pub fn arithmetic_spectrum(n : Int64) -> Array[@exact.Rat] {
+  let ds = divisors_of(n)
+  let out : Array[@exact.Rat] = []
+  for i in 0..<ds.length() { out.push(rint(big_omega(ds[i]).to_int64())) }
+  out
+}
+
+///|
+/// 算術 zeta / Poincaré 多項式：Σ_{d|n} t^{Ω(d)} = ∏_i (1+t+...+t^{e_i})。
+pub fn arithmetic_zeta_poly(n : Int64) -> Poly {
+  let mut acc : Array[@exact.Rat] = [rat1()]
+  let f = prime_factorization(n)
+  for i in 0..<f.length() {
+    let e = f[i][1]
+    let factor : Array[@exact.Rat] = Array::make((e + 1L).to_int(), rat1())
+    acc = @exact.poly_mul(acc, factor)
+  }
+  poly(acc)
+}
+
+///|
+/// 算術 Dirac 算子 D = diag Ω(d)（以 divisor 為基底）。
+pub fn arithmetic_dirac(n : Int64) -> @exact.Mat {
+  let ds = divisors_of(n)
+  let m = @exact.mat_new(ds.length(), ds.length())
+  for i in 0..<ds.length() {
+    m.a[i][i] = rint(big_omega(ds[i]).to_int64())
+  }
+  m
+}
+
+///|
+/// Hecke 升階算子 T_p：e_d ↦ e_{dp}（若 p 尚可再乘一次）。
+pub fn arithmetic_hecke(n : Int64, p : Int64) -> @exact.Mat {
+  let ds = divisors_of(n)
+  let m = @exact.mat_new(ds.length(), ds.length())
+  for j in 0..<ds.length() {
+    if ds[j] * p <= n && n % (ds[j] * p) == 0L {
+      for i in 0..<ds.length() {
+        if ds[i] == ds[j] * p { m.a[i][j] = rat1() }
+      }
+    }
+  }
+  m
+}
+
+///|
+/// 代數 A 之生成元 E_p = diag([p | d])，為冪等對角算子。
+pub fn arithmetic_idempotent(n : Int64, p : Int64) -> @exact.Mat {
+  let ds = divisors_of(n)
+  let m = @exact.mat_new(ds.length(), ds.length())
+  for i in 0..<ds.length() {
+    if ds[i] % p == 0L { m.a[i][i] = rat1() }
+  }
+  m
+}
+
+///|
+/// 定理 T-A1：算術 zeta 多項式之係數 = Ω 分層計數，
+/// 且滿足 Euler 乘積 ∏(1+t+...+t^{e_i})；Σ c_k = τ(n)。
+pub fn theorem_arithmetic_zeta(n : Int64) -> Bool {
+  let z = arithmetic_zeta_poly(n)
+  let ds = divisors_of(n)
+  let counts : Array[Int] = Array::make(z.coeffs.length(), 0)
+  for i in 0..<ds.length() {
+    let k = big_omega(ds[i])
+    if k < counts.length() { counts[k] += 1 }
+  }
+  for k in 0..<z.coeffs.length() {
+    if !z.coeffs[k].equal(rint(counts[k].to_int64())) { return false }
+  }
+  let mut total = 0L
+  for k in 0..<counts.length() { total += counts[k].to_int64() }
+  total == ds.length().to_int64()
+}
+
+///|
+/// 定理 T-A2（spectral triple）：Faddeev–LeVerrier 特徵多項式
+/// 與 ∏(t−Ω(d)) 一致；[D, E_p] = 0（有界交換子）；
+/// [D, T_p] = T_p（Hecke 升階使 Ω 加 1）；
+/// 譜作用 Σ_d Ω(d)² = Σ_k c_k k²。
+pub fn theorem_arithmetic_spectral_triple(n : Int64) -> Bool {
+  let d = arithmetic_dirac(n)
+  let spec = arithmetic_spectrum(n)
+  let c1 = @exact.mat_charpoly(d)
+  let c2 = @exact.poly_from_roots(spec)
+  if c1.length() != c2.length() { return false }
+  for i in 0..<c1.length() {
+    if !c1[i].equal(c2[i]) { return false }
+  }
+  let ps = prime_divisors(n)
+  for i in 0..<ps.length() {
+    let e = arithmetic_idempotent(n, ps[i])
+    let comm = @exact.mat_sub(
+      @exact.mat_mul(d, e), @exact.mat_mul(e, d),
+    )
+    for r in 0..<comm.a.length() {
+      for c in 0..<comm.a[r].length() {
+        if !comm.a[r][c].is_zero() { return false }
+      }
+    }
+    let t = arithmetic_hecke(n, ps[i])
+    let comm2 = @exact.mat_sub(
+      @exact.mat_mul(d, t), @exact.mat_mul(t, d),
+    )
+    if !@exact.mat_equal(comm2, t) { return false }
+  }
+  // 譜作用：tr(D²) = Σ_k c_k k²
+  let z = arithmetic_zeta_poly(n)
+  let mut action = rat0()
+  for k in 0..<z.coeffs.length() {
+    action = action.add(z.coeffs[k].mul(rint((k * k).to_int64())))
+  }
+  @exact.mat_trace(@exact.mat_mul(d, d)).equal(action)
+}
+
+///|
+/// 定理 T-A3：Spec(ℤ/nℤ) 之 Zariski 極性為伽羅瓦對應（全局公理 G）。
+/// X = 素因子子集合，Y = 除子；R(S,d) ⟺ ∀p∈S, p|d。
+/// 驗證伴隨性 S ⊆ H(T) ⟺ T ⊆ F(S) 與閉包三律。
+pub fn theorem_arithmetic_galois(n : Int64) -> Bool {
+  let primes = prime_divisors(n)
+  let ds = divisors_of(n)
+  let np = primes.length()
+  let nd = ds.length()
+  // 有限穷舉邊界：|Div(n)| ≤ 14 且素因子 ≤ 6（憑證為有限計算，非無限宣稱）
+  if np > 6 || nd > 14 { return false }
+  // F(S) = { d | ∀p∈S, p|d }；H(T) = { p | ∀d∈T, p|d }
+  let fs : Array[UInt64] = []
+  for s in 0..<(1 << np) {
+    let mut mask = 0UL
+    for j in 0..<nd {
+      let mut ok = true
+      for i in 0..<np {
+        if ((s.to_uint64() >> i) & 1UL) == 1UL && ds[j] % primes[i] != 0L {
+          ok = false
+          break
+        }
+      }
+      if ok { mask = @exact.set_bit(mask, j) }
+    }
+    fs.push(mask)
+  }
+  let ht : Array[UInt64] = []
+  for t in 0..<(1 << nd) {
+    let mut mask = 0UL
+    for i in 0..<np {
+      let mut ok = true
+      for j in 0..<nd {
+        if ((t.to_uint64() >> j) & 1UL) == 1UL && ds[j] % primes[i] != 0L {
+          ok = false
+          break
+        }
+      }
+      if ok { mask = @exact.set_bit(mask, i) }
+    }
+    ht.push(mask)
+  }
+  // 伴隨性
+  for s in 0..<(1 << np) {
+    for t in 0..<(1 << nd) {
+      let left = (s.to_uint64() & ht[t]) == s.to_uint64()
+      let right = (t.to_uint64() & fs[s]) == t.to_uint64()
+      if left != right { return false }
+    }
+  }
+  // 閉包 c = H∘F 三律
+  let full = (1UL << np) - 1UL
+  for s in 0..<(1 << np) {
+    let c = ht[fs[s].to_int()].to_int()
+    if (s.to_uint64() & c.to_uint64()) != s.to_uint64() { return false }
+    if ht[fs[c].to_int()] != c.to_uint64() { return false }
+    if (c.to_uint64() & full) != c.to_uint64() { return false }
+  }
+  true
+}
+
+///|
+/// 定理 T-A4：算術函數恆等式 Σ_{d|n} φ(d) = n、Σ_{d|n} μ(d) = [n=1]、
+/// φ(n) = n·∏_{p|n}(1 − 1/p)、Dirichlet 卷積 μ * 1 = ε。
+pub fn theorem_arithmetic_functions(n : Int64) -> Bool {
+  let ds = divisors_of(n)
+  let mut sphi = 0L
+  let mut smu = 0L
+  for i in 0..<ds.length() {
+    sphi += euler_phi(ds[i])
+    smu += mobius(ds[i].to_int())
+  }
+  let expected_mu = if n == 1L { 1L } else { 0L }
+  let mut prod = rint(n)
+  let ps = prime_divisors(n)
+  for i in 0..<ps.length() {
+    prod = prod.mul(rfrac(ps[i] - 1L, ps[i]))
+  }
+  sphi == n && smu == expected_mu && prod.equal(rint(euler_phi(n)))
+}

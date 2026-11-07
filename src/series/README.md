@@ -1,6 +1,6 @@
 # src/series — 局部公理 L1/L2/L3：多項式、形式冪級數、洛朗、狄利克雷、商環、全純
 
-> C1-01 首次開發切片／C1-02 補回更新。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得公理
 
@@ -24,6 +24,10 @@
 - **T-S9** Karatsuba 卷積與 school-book 卷積逐項相等
 - **T-S10** Bostan–Mori Graeffe 係數抽取與 Newton 反演一致
 - **T-S11** Brent–Kung baby-step/giant-step 合成與直接合成一致
+- **T-A1** 算術 ζ/Poincaré 多項式 Σ_{d|n}t^{Ω(d)} = ∏(1+...+t^{e_i})
+- **T-A2** 算術 spectral triple：χ_D=∏(t−Ω(d))、[D,E_p]=0、[D,T_p]=T_p
+- **T-A3** Spec(ℤ/nℤ) 之 Zariski 極性為伽羅瓦對應（伴隨性＋閉包三律）
+- **T-A4** Σ_{d|n}φ(d)=n、Σ_{d|n}μ(d)=[n=1]、φ(n)=n∏(1−1/p)
 
 ## 已實作演算法列表
 
@@ -45,6 +49,10 @@
 - **AL060** kar_mul Karatsuba 次二次卷積（O(n^1.585)）
 - **AL061** fps_compose_bk Brent–Kung baby-step/giant-step 合成（O((N/B+B)·M(N))）
 - **AL062** graeffe_coeff Bostan–Mori Graeffe 係數抽取（O(M(N) log N)）
+- **AL078** prime_factorization / divisors_of / big_omega（O(n)）
+- **AL079** arithmetic_zeta_poly 算術 ζ 多項式（O(τ(n))）
+- **AL080** arithmetic_hecke 升階算子 T_p（O(τ(n)²)）
+- **AL081** theorem_arithmetic_galois Zariski 極性有限穷舉（O(2^{p+d})）
 
 ## 等式
 
@@ -58,6 +66,8 @@
 - **E36** Karatsuba 遞迴：`T(n) = 3T(n/2) + O(n) = O(n^{log₂3})`
 - **E37** Graeffe 減半：`[t^N] P/Q = [t^{⌊N/2⌋}] U_{parity}/V`
 - **E38** BK 合成分解：`f(g) = Σ_i (Σ_{j<B} f_{iB+j} g^j) · g^{iB}`
+- **E46** 算術 ζ：`Σ_{d|n} t^{Ω(d)} = ∏_i (1+t+⋯+t^{e_i})`
+- **E47** Dirac–Hecke 交換子：`[D,E_p]=0；[D,T_p]=T_p；tr D² = Σ_k c_k k²`
 
 ## 資料夾視角依賴關係圖
 
@@ -102,9 +112,12 @@
   theorem_dirichlet_mobius  theorem_euler_product  conv_mul  ConvAlg::equal
   theorem_conv_associative  lan_along_phi  theorem_lan_ring_hom  poly_mul_karatsuba
   fps_mul_karatsuba  theorem_karatsuba_equivalence  fps_compose_bk  theorem_bk_composition
-  graeffe_coeff  theorem_graeffe_coeff  Poly  Fps
-  Laurent  Dirichlet  Quot  DivMod
-  ConvAlg
+  graeffe_coeff  theorem_graeffe_coeff  prime_factorization  prime_divisors
+  divisors_of  big_omega  euler_phi  arithmetic_spectrum
+  arithmetic_zeta_poly  arithmetic_dirac  arithmetic_hecke  arithmetic_idempotent
+  theorem_arithmetic_zeta  theorem_arithmetic_spectral_triple  theorem_arithmetic_galois  theorem_arithmetic_functions
+  Poly  Fps  Laurent  Dirichlet
+  Quot  DivMod  ConvAlg
 ```
 
 ## 驗證

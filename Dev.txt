@@ -475,3 +475,220 @@ C1 開發流水帳本 (Dev.txt) — 流水式，每回合追加，直到工程�
   - 依《工程約束》未新增任何文檔；所有查證、結案、修正僅寫入既有檔案。
 
 ================================================================================
+
+================================================================================
+[回合 C1-03] 日期 2026-11-08 (Asia/Hong_Kong, UTC+8)  狀態：已完成
+  使用者指示：「聯網搜尋最前沿待做的結構，算法，理論。實做數學結構：算術譜，
+  拉普拉斯圖譜，歸一化圖譜，測地線、聯絡、纖維束、切空間，泛性質與函子性，
+  術多項式 K 理論，運動20動詞及14範例得出定理及演算法」。
+  用詞判讀：「術多項式 K 理論」解為「歪多項式環（Ore/skew polynomial）之
+  代數 K 理論」；「運動20動詞」解為《作業規範》列舉之衍生方向動詞
+  （原文實列 21 項：衍生、計算機抽象、結合、併攏、嵌入、聯動、計算、推論、
+  共性、（鏡像）對稱性、Ramsey理論、擬陣、複形、邏輯推理、演變、借鑒、
+  多合一、溶合、合併、相容、組合），全數納入，不刪減以符合原文。
+  依《工程約束》非首次開發不新增文檔：全部寫入既有 .mbt / Dev.txt /
+  README.md / docs/catalog.json / algorithm.xlsx，未建立任何新檔。
+================================================================================
+
+§2'' 本回合聯網查證結果（R26..R36）
+  [R26] Connes–Consani–Moscovici, "Zeta Spectral Triples", arXiv:2511.22755
+       (2025-11-27), EMS Lectures 2026.
+       https://arxiv.org/abs/2511.22755  https://arxiv.org/pdf/2511.22755
+       以 scaling operator 於 [λ⁻¹,λ] 之 spectral triple 作 rank-one 擾動
+       D_log^(λ,N)，僅用 p ≤ x=λ² 之有限 Euler 積；譜逼近 ζ(1/2+is) 零點
+       （primes ≤13、N=120 對前 50 個零點高精度）；正則化行列式
+       det_reg(D−s) 與 Riemann Ξ 函數；收斂證明等價 RH（尚未證明）。
+       Carathéodory–Fejér Toeplitz 定理保證自伴性。
+  [R27] Connes–Consani, "On the Jacobian of Spec Z", arXiv:2602.15941,
+       J. Noncommutative Geometry 2026. https://arxiv.org/pdf/2602.15941
+       Spec Z 之理想類群平凡（g=0）但譜實現暗示無限虧格；以
+       torsion-free rank-1 群 + 度量（Arakelov 除子）定義算術 Pic 么半群；
+       adelic Abel–Jacobi 映射、Weil 顯式公式 = idèle class 群作用之
+       Lefschetz 跡公式。
+  [R28] Hansen–Ghrist, "Toward a Spectral Theory of Cellular Sheaves" /
+       "Laplacians of Cellular Sheaves: Theory and Applications".
+       https://jakobhansen.org/publications/spectralsheaves.pdf
+       cellular sheaf F:(K,≤)→Vect；0-上邊界 δ:C⁰→C¹；H⁰=ker δ；
+       Δ⁰=δᵀδ；ker Δ⁰=H⁰；constant sheaf 還原圖 Laplacian；
+       O(n)-向量叢之 sheaf Laplacian = Singer–Wu graph connection Laplacian；
+       normalized sheaf（δ 么正）推廣 Chung 正規化 Laplacian。
+  [R29] Wei et al., "Persistent Sheaf Laplacians", Foundations of Data Science
+       7(2), June 2025, pp.446–463. https://users.math.msu.edu/users/weig/paper/p341.pdf
+       以 filtration 把 cellular sheaf Laplacian 多尺度化；π• 誘導映射定義
+       persistent sheaf group / Betti number；可辨識非幾何標記。
+  [R30] "Cellular Sheaves on Higher-Dimensional Structures", arXiv:2505.23993.
+       https://www.arxiv.org/pdf/2505.23993v1
+       2-維單純複形之 sheaf（ANM Hessian = 0-th sheaf Laplacian）、
+       層的張量積、環/模值層；Kronecker 積證明常數層 Laplacian = 圖 Laplacian。
+  [R31] Chung 正規化 Laplacian / Cheeger：λ₂/2 ≤ h(G) ≤ √(2λ₂)
+       (Dodziuk 1984、Alon–Milman 1985)；Kwok–Lau–Lee–Oveis Gharan–Trevisan
+       improved Cheeger φ(G)=O(k)λ₂/√λ_k；2026 arXiv:2606.08061 之
+       「second largest spectral gap from 1」新 Cheeger 型常數；
+       2025 arXiv:2504.10624 "Re-imagining Spectral Graph Theory" 以
+       inner product Laplacian 統一 combinatorial/normalized/hypergraph/directed。
+       https://cs.uwaterloo.ca/~lapchi/papers/Cheeger.pdf
+       https://arxiv.org/abs/2504.10624  https://arxiv.org/html/2606.08061v1
+  [R32] Budninskiy et al., "Parallel Transport Unfolding".
+       https://www.geometry.caltech.edu/pubs/BYFTD18.pdf
+       近鄰 SVD 得離散切空間 T_i；離散度量聯絡在相鄰切空間間平行移動；
+       以 PTU 取代 Dijkstra 估計測地距離；收斂到 Levi-Civita 聯絡。
+  [R33] Doña Mateo, "Pushforward monads", TAC 44(30) 2025 pp.927–963,
+       arXiv:2406.15256. http://tac.mta.ca/tac/volumes/44/30/44-30.pdf
+       G♯T = Ran_G(GT) 為單子；兩個泛性質（Street 之 MND(K) 泛性質、
+       counit 為同構）；Mnd(A) ↔ Mnd(B) 之兩個伴隨；FinSet↪Set 之
+       pushforward 給 continuous lattices；除兩個平凡例外皆無 rank。
+  [R34] Quillen–Grayson 代數 K 理論基本定理、Grayson "Quillen's work in
+       algebraic K-theory"、Skew PBW Extensions 專書第 8/12 章、
+       Artamonov et al. "Extended Modules and Ore Extensions".
+       https://en.wikipedia.org/wiki/Fundamental_theorem_of_algebraic_K-theory
+       https://webhomes.maths.ed.ac.uk/~v1ranick/confer/qs.pdf
+       G_i(R[t])=G_i(R)；G_i(R[t,t⁻¹])=G_i(R)⊕G_{i−1}(R)；
+       局部化長正合序列；冪等矩陣 → 投影模基底之 Quillen–Suslin 演算法
+       （對 Ore 擴張 K[x;σ,δ] 之 QSAlgKsd）。
+  [R35] Shin, "Jacobson Radicals of Ore Extensions", arXiv:2405.16342 (2024)；
+       Lorensen–Öinert, arXiv:2505.21030 (2025).
+       https://arxiv.org/pdf/2405.16342
+       q-skew σ-導子之 q-二項式公式
+       x^k r = Σ_i [k choose i]_q σ^i D^{k−i}(r) x^i；
+       Ore 擴張自由右 R-模（σ 為自同構時）、rank condition 等價傳遞。
+  [R36] Oberwolfach Report 36/2025 "Algebraic K-theory" (2025-08-10..15).
+       https://publications.mfo.de/bitstream/handle/mfo/4320/OWR_2025_36.pdf
+       A¹-不變性與非交換動機、Grayson Γ 函子 K(ΓC) ≃ ΣK(C)、
+       對數動機與導出方案之連續 K 理論。
+  查證方式：web_search（depth 2/3）+ 原文 PDF/HTML 擷取；全部 36 筆
+      （R1..R36）已寫入 algorithm.xlsx「前沿文獻」與 docs/catalog.json。
+
+§3'' 本回合詳盡規劃與動線（動手前定立）
+  1. 先把精確有理矩陣引擎置於 src/exact（其餘套件皆已 import exact）：
+     Mat、mat_det/mat_rank（有理高斯消去）、mat_charpoly（Faddeev–LeVerrier）、
+     poly_from_points（Newton 差商插值）、mat_generalized_charpoly
+     （det(A−tB) 求值插值）、poly_smallest_positive_root（1/8 網格根隔離）。
+  2. src/graphs：L = D−A → 三類圖譜；det(L−tD) 避開 D^{−1/2} 之無理數，
+     全程精確有理；Kirchhoff、Cheeger、Petersen 已知譜交叉查核；
+     再以 BFS/O(1)-線叢實作測地線、切空間、聯絡、纖維束、sheaf Hodge。
+  3. src/series：Spec(ℤ/nℤ) 之有限 spectral triple (H=ℚ^{Div(n)}, D=diag Ω(d),
+     A=⟨E_p⟩, T_p)；ζ 多項式、Zariski 極性（對應全局公理 G）、算術函數恆等式。
+  4. src/algebra：F_25[x;σ] 右因子分解 → G₀(R/(f))；
+     Quillen–Grayson 基本定理秩序列；Morita 冪等矩陣；σ-binomial。
+  5. src/compose：纖維積／自由么半群泛性質、函子性；
+     21 動詞 × 14 手法之「不變量保持」相容矩陣（含 GF(2) 秩、等價類、
+     動詞複合封閉統計）。
+  6. 根 c1.mbt report() 接入 inspect；更新產生器、登錄表、README、Dev.txt；
+     局部即寫即驗即刪 → 全域 check/build/prove/run → commit。
+
+§5'' 本回合完成事項
+  [x] 精確有理矩陣／譜引擎（src/exact）：Mat、mat_det、mat_rank、mat_mul、
+      mat_charpoly、poly_from_points（改為 Newton 差商，見 §9''）、
+      mat_generalized_charpoly、poly_bisect、poly_smallest_positive_root、
+      poly_deflate_zero、poly_from_roots、theorem_charpoly_cayley_hamilton。
+  [x] 拉普拉斯圖譜／歸一化圖譜（src/graphs）：Graph、graph_laplacian、
+      graph_spectral_moments、spectral_power_sums（Newton 恆等式）、
+      graph_spanning_trees（Kirchhoff = 2000 for Petersen）、
+      graph_component_count、graph_normalized_charpoly、graph_conductance、
+      graph_normalized_lambda2、theorem_laplacian_newton /
+      theorem_kirchhoff / theorem_cheeger / theorem_petersen_spectra。
+  [x] 測地線、切空間、聯絡、纖維束（src/graphs）：geodesic_distances /
+      geodesic_path / theorem_geodesic_metric、tangent_space /
+      tangent_bundle_dim / theorem_tangent_bundle、LineBundle（O(1) ±1）、
+      cycle_basis（BFS 樹補邊 + LCA）、holonomy / curvature / is_flat、
+      connection_laplacian、sheaf_coboundary / sheaf_laplacian /
+      global_sections_dim、theorem_sheaf_hodge / theorem_flat_sections /
+      theorem_parallel_transport_geodesic。
+  [x] 算術譜（src/series）：prime_factorization / prime_divisors /
+      divisors_of / big_omega / euler_phi（沿用既有 mobius(n:Int)）、
+      arithmetic_spectrum / arithmetic_zeta_poly / arithmetic_dirac /
+      arithmetic_hecke / arithmetic_idempotent、
+      theorem_arithmetic_zeta / _spectral_triple / _galois / _functions。
+  [x] 歪多項式 K 理論（src/algebra）：sfq_monic_enum / sfq_min_right_factor /
+      sfq_irreducible / sfq_factor / sfq_distinct_factors、
+      theorem_k0_skew_quotient / _fundamental / _morita_idempotents /
+      _functorial / theorem_ore_sigma_binomial。
+  [x] 泛性質與函子性（src/compose）：theorem_universal_property_pullback /
+      _free_monoid / theorem_functoriality / theorem_universal_properties_all。
+  [x] 21 衍生方向動詞 × 14 範例：VERB_COUNT=21、verb_name、DerivData、
+      verb_apply（21 個具體位元/列變換）、deriv_invariant（14 個真實不變量）、
+      verb_pattern_matrix、verb_pattern_stable_pairs（D-01）、
+      verb_pattern_row_classes（D-02）、verb_composition_closure（D-03）、
+      theorem_verb_pattern_structure (T-C18)、theorem_derivation_all_in_one (T-C19)。
+  [x] 根 report() 新增 10 行 inspect；algorithm.xlsx 183→211→271 筆、
+      9 工作表、36 筆前沿文獻；12 份 README、docs/catalog.json 一致性重建。
+  [x] 局部「即寫、即驗、即刪」五份 zz_probe（exact / graphs / series /
+      algebra / compose）全數 passed，回合末無殘留。
+
+§6'' 最前沿「待做」結構／演算法／理論（誠實保留，未完成）
+  [ ] Kinoshita–Li (R21) 完整近線性合成（Graeffe + 轉置原理）；
+      目前僅 BK baby-step/giant-step + Karatsuba 與 Graeffe 係數抽取。
+  [ ] FFT/NTT 完整乘法、Toom–Cook、TMVP（R18/Lyu）；目前 Karatsuba O(n^1.585)。
+  [ ] Ore bound 快速演算法 (R5)、Giesbrecht (R13) 兩層模組分解、
+      ISSAC'24 (R14) 參數 gcrd 之模組 Gröbner 基底、Caruso–Le Borgne reduced norm。
+  [ ] FCbO 完整 canonicity test（R25）、Krajca 平行 CbO 排程。
+  [ ] Persistent sheaf Laplacian (R29) 之多尺度 filtration、
+      高維 sheaf (R30) 之 1-st Laplacian、ANM Hessian 對應。
+  [ ] Connes (R26) rank-one 擾動算子與正則化行列式、
+      Spec Z (R27) 之 adelic Abel–Jacobi 與 Lefschetz 跡公式。
+  [ ] Doña Mateo (R33) pushforward monad 之完整 Ran 計算與 codensity monad；
+      本回合僅落地泛性質／函子性之有限穷舉憑證。
+  [ ] Oberwolfach (R36) A¹-不變性／非交換動機、導出方案連續 K 理論；
+      本回合 K₀ 僅為 F_25[x;σ] 之有限可計算實例。
+  [ ] δ-Galois 推廣、Kalai–Meshulam 拓樸組合、集庫成群、
+      5,000,000 行／10,000 條中階以上演算法（目前 88/10,000）。
+  [ ] docs/ 其餘設計文件：非首次開發需先獲准，本回合未建立新文檔。
+  [ ] git 無 remote，CI workflow 與 commit 僅本機落地，未 push。
+
+§7'' 量化記錄（C1-03）
+  MoonBit / .mbtp 總行數：5,093 → 約 6,900（以 wc 實測為準）
+  theorem_* 憑證函數：64 → 89（實測 grep -h "^pub fn theorem_"）
+  登錄表：211 → 271 筆（6 公理／20 定義／8 命題／14 引理／
+      85 定理／88 演算法／50 等式），前沿文獻 25 → 36 筆
+  形式化驗證：17 goals proved（.mbtp 未改動，無 trusted assumption）
+  21×14 相容矩陣實測：294 組配對、111 組穩定、GF(2) 秩 12、
+      21 列分成 20 個等價類、441 組動詞複合僅 1 組保持全部 14 不變量。
+  inspect 報表：37 行 → 42 行，全數 OK；catalog 271/OK。
+
+§8'' 回合末驗證與 commit
+  環境：/tmp 工具鏈與 z3 於本回合開始時再度消失，依 §1 重新安裝
+      curl -fsSL https://cli.moonbitlang.com/install/unix.sh ...
+      MOON_HOME=/tmp/moonhome bash /tmp/moonbit-install.sh
+      python3 -m pip install -q z3-solver (z3 5.3.3)
+      moon 0.1.20261104 / moonc v0.10.20+65efd5b93
+  局部：exact / graphs / series / algebra / compose 各
+      Total tests: 1, passed: 1, failed: 0，驗畢刪除全部 zz_probe.mbt。
+  全域：moon check --deny-warn / moon build（wasm artifact）/
+      moon prove --deny-warn（17 goals proved）/ moon run cmd/main（42 行全 OK）。
+  產生器決定性：build_catalog.py / build_readmes.py 重跑後
+      docs/catalog.json、src/catalog/catalog.mbt、algorithm.xlsx、12 份 README
+      與 commit 內容 byte-identical（xlsx 固定 zip 時間戳，見 C1-02）。
+  commit：本回合結束時 git add -A && git commit（見 git log）；無 remote。
+
+§9'' 本回合驗證過程與修正記錄
+  - src/exact 初次 zz_probe 誤用 @exact 前綴（同套件不可自我 import）與
+    assert_eq(Rat, Rat)（Rat 無 Eq trait）→ 改為無前綴 + .equal() + Bool。
+  - charpoly 期望值初誤：M=[[2,1],[1,3]] 之 p(t)=t²−5t+5，p(5)=5 而非 6。
+  - Lagrange 插值在 det(L−tD) 於 t=0..10 造成 Int64 溢位
+    （GN 第 4 係數出現 -9223358932641646808/2083725）；
+    改用 Newton 差商 + Horner 還原，所有中間量保持小整數
+    （Python 交叉驗證 max |num| ≈ 6.4e7 << 2^63），Petersen
+    χ_L = [0,−20000,66000,−94800,77640,−39882,13305,−2880,390,−30,1]、
+    det(L−tD) = [0,−60000,594000,−2559600,6288840,−9691326,9699345,
+      −6298560,2558790,−590490,59049] 與理論 ∏(t−λ) 完全一致。
+  - poly_smallest_positive_root 初版遞迴二分 32 步，Rat 分母 2^32
+    經 Horner 累積成 2^320 → "divide result unrepresentable"。
+    改為 1/8 網格掃描 + 區間中點（分母 ≤16），並於網格精確根直接回傳
+    以處理偶重根（K₃ 之 λ₂=3/2 為雙重根，無符號變異）。
+  - cycle_basis 初版以「u 沿父指標是否碰到 v」判斷，對非祖先關係錯誤，
+    導致 is_flat 與 H⁰ 維度不一致；改為 BFS 父指標求 LCA 後拼接
+    u→LCA→v 之基本環，6 個 seed 全數通過 T-Gph9。
+  - src/series 重複定義 mobius（既有 mobius(n:Int)）→ 刪除新定義並
+    改呼叫 mobius(ds[i].to_int())；euler_phi 之 Int64 range 改 Int range。
+  - src/algebra 新 sfq_monic(d,code) 與既有 sfq_monic(a:SkewFq) 撞名
+    → 更名 sfq_monic_enum。
+  - theorem_k0_skew_quotient 初版檢查「每個合成因子右整除 f」為錯
+    （f=q·h，q 的因子不必整除 f）；改為檢查合成級乘積
+    f = h_k⋯h_2 h_1、Σdeg h_i = deg f、distinct 重數加權和 = deg f。
+  - src/compose 誤用 pub const VERBS: Array[String]（MoonBit const 僅允許
+    不可變基本型）→ 改 VERB_COUNT:Int + verb_name(i)；
+    UInt64.to_int64() 已被標記 deprecated → 改 @exact.bit + bit_i。
+  - 「20 動詞」與規範原文 21 項之差異：依最大盡責原則全數 21 項納入，
+    並於本節與 README 明確標註，未擅自刪減。
+
+================================================================================

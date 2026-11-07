@@ -1,6 +1,6 @@
 # src/exact — 精確算術層：Rat、gcd/egcd、模算術、GF(2) 秩、Smith 標準型
 
-> C1-01 首次開發切片／C1-02 補回更新。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得公理
 
@@ -10,6 +10,7 @@
 ## 已獲得定理列表
 
 - **L14** GF(2) 秩-零化度：dim ker = ncols − rank
+- **T-X1** Faddeev–LeVerrier 特徵多項式滿足 Cayley–Hamilton 與 det/tr 恆等式
 
 ## 已實作演算法列表
 
@@ -22,6 +23,16 @@
 - **AL007** gf2_rank / gf2_nullity 位元打包消去（O(rows·cols/64)）
 - **AL008** rank_mod_p 素數體矩陣秩（O(r²c)）
 - **AL009** smith_invariants Smith 標準型與可整除鏈（多項式時間）
+- **AL063** mat_det / mat_rank 有理高斯消去（O(n³)）
+- **AL064** mat_charpoly Faddeev–LeVerrier（O(n⁴)）
+- **AL065** poly_from_points Newton 差商插值（無溢位）（O(n²)）
+- **AL066** mat_generalized_charpoly det(A−tB) 求值插值（O(n⁴)）
+- **AL067** poly_smallest_positive_root 1/8 網格根隔離（O(deg·16)）
+
+## 等式
+
+- **E39** 特徵多項式：`p_M(t) = det(tI − M) = t^n + c_{n−1}t^{n−1} + ⋯ + c₀`
+- **E40** Cayley–Hamilton：`p_M(M) = 0；det(M) = (−1)^n p_M(0)`
 
 ## 資料夾視角依賴關係圖
 
@@ -54,8 +65,14 @@ Int64/UInt64 位元 → gcd/Rat/矩陣秩 → 供所有上層套件做精確係�
   mod_inv  fp_add  fp_mul  fp_sub
   binom  factorial  popcount  bit
   set_bit  clear_bit  gf2_rank  gf2_nullity
-  rank_mod_p  smith_invariants  det2  Rat
-  Bezout
+  rank_mod_p  smith_invariants  det2  mat_from
+  mat_new  mat_clone  mat_identity  mat_scale
+  mat_add  mat_sub  mat_mul  mat_transpose
+  mat_equal  mat_trace  mat_det  mat_rank
+  poly_add  poly_scale  poly_mul  poly_eval
+  mat_charpoly  poly_from_points  mat_generalized_charpoly  poly_bisect
+  poly_smallest_positive_root  poly_deflate_zero  poly_from_roots  theorem_charpoly_cayley_hamilton
+  Rat  Bezout  Mat
 ```
 
 ## 驗證

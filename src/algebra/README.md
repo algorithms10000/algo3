@@ -1,6 +1,6 @@
 # src/algebra — Ore 歪多項式環、Hilbert–Poincaré、局部化、Ext¹、Morita
 
-> C1-01 首次開發切片／C1-02 補回更新。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得定理列表
 
@@ -24,6 +24,11 @@
 - **T-Ore7** deg lclm = deg f + deg g − deg gcrd = rank(Sylvester)，lclm 為公共右倍式
 - **T-Ore8** F_25 上多組非交換實例的 lclm/Sylvester 恆等式穷舉
 - **T-Ore9** σ ≠ id：x·θ = −θ·x，Ore 環真正非交換
+- **T-K0-1** G₀(R/(f)) ≅ ℤ^s，s=相異不可約右因子數；合成因子次數和=deg f
+- **T-K0-2** Quillen–Grayson 基本定理：H_R(t)=1/(1−t)，秩 1→2→1→0，Euler=0
+- **T-K0-3** Morita 不變性：2×2 冪等矩陣 tr(e)=rank(e)·1
+- **T-K0-4** K₀ 函子性：局部化泛性質與基本定理複合為零
+- **T-K0-5** δ=0 時 x^k r = σ^k(r) x^k（Shin 2024 q-binomial 之 σ²=id 特例）
 
 ## 已實作演算法列表
 
@@ -39,6 +44,8 @@
 - **AL054** sfq_sylvester_rank Ore Sylvester 矩陣秩（ISSAC'24）（O((df+dg)³)）
 - **AL055** fq2_rank F_25 高斯消去與 fq2_inv 範數求逆（O(r·c·min(r,c))）
 - **AL056** sfq_divmod F_25 上 σ^k 修正之右除（O(deg²)）
+- **AL082** sfq_factor 歪多項式右因子分解（O(25^{d}·deg²)）
+- **AL083** sfq_distinct_factors G₀ 生成元（O(k²)）
 
 ## 等式
 
@@ -52,6 +59,8 @@
 - **E31** Ore 度數公式：`deg lclm(f,g) = deg f + deg g − deg gcrd(f,g)`
 - **E32** Sylvester 秩：`deg lclm(f,g) = rank Syl(f,g)`
 - **E33** F_25 係數體：`θ² = 2, σ(θ) = θ⁵ = −θ, σ² = id`
+- **E48** K₀ 基本定理：`K₀(R[t,t⁻¹]) ≅ K₀(R) ⊕ K₋₁(R)；Euler: 1−2+1−0=0`
+- **E49** G₀ 商環：`G₀(R/(f)) ≅ ℤ^{#distinct irreducible right factors}`
 
 ## 資料夾視角依賴關係圖
 
@@ -97,8 +106,11 @@
   sfq_monic  sfq_divmod  sfq_gcrd_lclm  fq2_rank
   sfq_sylvester  sfq_sylvester_rank  sfq_right_divides  theorem_ore_lclm
   sfq_sample  theorem_ore_lclm_batch  theorem_fq2_field  theorem_ore_noncommutative
-  sfq_equal  SkewPoly  OreDiv  Fq2
-  SkewFq  SFqDiv  OreGCL
+  sfq_equal  sfq_monic_enum  sfq_min_right_factor  sfq_irreducible
+  sfq_factor  sfq_distinct_factors  theorem_k0_skew_quotient  theorem_k0_fundamental
+  theorem_k0_morita_idempotents  theorem_k0_functorial  theorem_ore_sigma_binomial  SkewPoly
+  OreDiv  Fq2  SkewFq  SFqDiv
+  OreGCL
 ```
 
 ## 驗證

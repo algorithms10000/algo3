@@ -66,7 +66,7 @@ moon run cmd/main
 | `moon prove --deny-warn` | `1 of 1 packages proved, 17 goals proved` |
 | `moon build` | wasm artifact 生成 |
 | `moon run cmd/main` | 31 行真實 inspect 憑證，全數 OK |
-| 登錄表 | 6 公理／20 定義／8 命題／14 引理／63 定理／62 演算法／38 等式 = 211 筆；前沿文獻 25 筆 |
+| 登錄表 | 6 公理／20 定義／8 命題／14 引理／85 定理／88 演算法／50 等式 = 271 筆；前沿文獻 36 筆 |
 | CI | `.github/workflows/c1-ci.yml` 推送全域編譯與形式化驗證 |
 
 ## C1-02：前沿查證與 §6 待辦補回
@@ -100,9 +100,45 @@ moon run cmd/main
 θ²=2 在 F_5 中非平方，故 F_25 為體且 σ ≠ id，實作的是**真正非交換** Ore 環，
 非退化為交換多項式環的玩具模型。
 
+## C1-03：最前沿查證與數學結構落地
+
+依《作業規範》「不時聯網搜查及查證最前沿論文」，本回合查證 R26..R36 共 11 組
+（2024 ISSAC/FOCS、2025 TAC/Oberwolfach/FDS、2026 CASC/JNCG），完整書目見
+`algorithm.xlsx`「前沿文獻」工作表、`docs/catalog.json` 與 `Dev.txt §2''`。重點：
+
+- **算術譜**：Connes–Consani–Moscovici (arXiv:2511.22755) Zeta Spectral Triples 之
+  scaling spectral triple、有限 Euler 積與正則化行列式；Connes–Consani (JNCG 2026)
+  把 `Spec Z` 視為無限虧格算術曲線、以 Pic 么半群與 Arakelov 除子推廣 Jacobian。
+- **圖譜／離散微分幾何**：Hansen–Ghrist sheaf Laplacian 之 `Δ⁰ = δᵀδ`、
+  `ker Δ⁰ = H⁰`；2025 Persistent Sheaf Laplacians 與高維 cellular sheaves；
+  Chung 正規化 Laplacian 與 Cheeger `λ₂/2 ≤ h ≤ √(2λ₂)`、improved Cheeger；
+  Budninskiy et al. 之離散切空間／平行移動／測地線 PTU。
+- **泛性質與函子性**：Doña Mateo (TAC 2025) pushforward monads 之兩個泛性質、
+  Kan 擴展 `Nat(Lan_K F, G) ≅ Nat(F, G∘K)`。
+- **歪多項式 K 理論**：Quillen–Grayson 基本定理與局部化長正合序列、
+  Quillen–Suslin 冪等矩陣演算法、Shin (2024) q-binomial、Oberwolfach 2025 報告。
+
+據此落地（全部寫入既有套件，未新增文檔）：
+
+| 結構 | 實作 | 憑證 |
+| --- | --- | --- |
+| 算術譜 | `Spec(ℤ/nℤ)` 之 divisor 基底 spectral triple：D=diag Ω(d)、E_p、Hecke T_p、ζ 多項式、Zariski 極性 | T-A1..A4 |
+| 拉普拉斯圖譜 | `L=D−A`、Faddeev–LeVerrier χ、Newton 冪和、Kirchhoff 生成樹、KG(5,2) 譜 `{0,2⁵,5⁴}` | T-X1, T-Gph2/3/5 |
+| 歸一化圖譜 | `det(L−tD) = det(D)∏(λ_i(ℒ)−t)`、conductance、λ₂、Cheeger；Petersen ℒ 譜 `{0,(2/3)⁵,(5/3)⁴}` | T-Gph4/5 |
+| 測地線／切空間 | BFS 測地度量、切空間基底、切束維度 2|E|、Chu 對偶餘切 | T-Gph6/7 |
+| 聯絡／纖維束 | O(1) 線叢 ±1 轉移函數、BFS 樹補邊環基、holonomy/曲率、sheaf δ 與 connection Laplacian、Hodge 定理、平坦 ⟺ H⁰=1 | T-Gph8/9/10 |
+| 泛性質與函子性 | 纖維積中介態射唯一性、自由么半群 `|Hom|=x²`、關係複合函子性與 Chu 反變性 | T-C17 |
+| 歪多項式 K 理論 | F_25[x;σ] 右因子分解、`G₀(R/(f))≅ℤ^s`、基本定理秩序列 1→2→1→0、Morita 冪等 `tr=rank`、σ-binomial | T-K0-1..5 |
+| 衍生方向 × 14 範例 | 21 動詞具體變換 × 14 手法不變量 → 21×14 相容矩陣 | T-C18/C19 |
+
+**21×14 相容矩陣實測結果**（`moon run cmd/main`）：294 組配對中 **111 組穩定**
+（動詞保持手法不變量）、GF(2) 秩 **12**、動詞列等價類 **20**、441 組動詞複合中
+僅 **1 組**保持全部 14 不變量。此為真實計算之非平凡結構，非恆真判定：
+`衍生` 保持 12 項、`計算機抽象` 僅 2 項。
+
 ## 未完成（誠實標記）
 
-- 5,000,000 行程式碼、10,000 條中階以上演算法、集庫成群：目前仍為早期切片，遠未達成。
+- 5,000,000 行程式碼、10,000 條中階以上演算法、集庫成群：目前 88 / 10,000 條演算法，仍為早期切片。
 - Kinoshita–Li 之**完整近線性合成**（Graeffe + 轉置原理）尚未落地；本回合僅實作
   BK baby-step/giant-step 搭配 Karatsuba，以及 Bostan–Mori 係數抽取之 Graeffe 遞迴。
 - FFT/NTT 完整乘法、Ore bound 演算法、Giesbrecht 兩層模組分解、參數 gcrd Gröbner
@@ -110,6 +146,10 @@ moon run cmd/main
 - 多元優質算法庫之跨回合延伸、δ-Galois 推廣、Kalai–Meshulam 拓樸組合。
 - `docs/` 其餘設計文件：依《工程約束》「非首次開發、創建新文檔前需先獲准」，
   本回合不另建新文檔，改以既有 `Dev.txt`、`README.md` 與各資料夾 README 記錄。
+- 更前沿待做：Kinoshita–Li 完整近線性合成、FFT/NTT 完整乘法、Ore bound (R5)、
+  Giesbrecht (R13) 兩層模組分解、參數 gcrd 模組 Gröbner 基底、FCbO canonicity test、
+  persistent sheaf Laplacian 多尺度實作、Connes zeta spectral triple 之 rank-one 擾動算子、
+  δ-Galois 推廣、Kalai–Meshulam 拓樸組合。
 
 ## 接入／輸出接口
 

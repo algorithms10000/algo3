@@ -1,6 +1,6 @@
 # src/galois — 全局公理 G：有限冪集伽羅瓦對應、NextClosure、楚對偶、完備格表示
 
-> C1-01 首次開發切片／C1-02 補回更新。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得公理
 

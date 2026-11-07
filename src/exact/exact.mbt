@@ -424,3 +424,358 @@ pub fn smith_invariants(input : Array[Array[Int64]]) -> Array[Int64] {
 ///|
 /// 整數矩陣的行列式（2×2，精確）。
 pub fn det2(a : Int64, b : Int64, c : Int64, d : Int64) -> Int64 { a * d - b * c }
+
+///|
+// ════════════════════════════════════════════════════════════════════════
+// C1-03：精確有理矩陣與譜引擎（算術譜／拉普拉斯圖譜／歸一化圖譜／K 理論共用）
+// 全部運算在 ℚ 上以 (n,d) 正規化完成，無浮點誤差。
+// 依據 Chung 正規化 Laplacian、Hansen–Ghrist sheaf Laplacian、
+// Faddeev–LeVerrier 特徵多項式、Kirchhoff 矩陣樹定理。
+// ════════════════════════════════════════════════════════════════════════
+
+///|
+pub(all) struct Mat {
+  a : Array[Array[Rat]]
+}
+
+///|
+pub fn mat_from(a : Array[Array[Rat]]) -> Mat { Mat::{ a } }
+
+///|
+pub fn mat_new(n : Int, m : Int) -> Mat {
+  let rows : Array[Array[Rat]] = []
+  for _i in 0..<n { rows.push(Array::make(m, rat_zero())) }
+  Mat::{ a: rows }
+}
+
+///|
+pub fn mat_clone(x : Mat) -> Mat {
+  let rows : Array[Array[Rat]] = []
+  for i in 0..<x.a.length() {
+    let row : Array[Rat] = Array::make(x.a[i].length(), rat_zero())
+    for j in 0..<x.a[i].length() { row[j] = x.a[i][j] }
+    rows.push(row)
+  }
+  Mat::{ a: rows }
+}
+
+///|
+pub fn mat_identity(n : Int) -> Mat {
+  let m = mat_new(n, n)
+  for i in 0..<n { m.a[i][i] = rat_one() }
+  m
+}
+
+///|
+pub fn mat_scale(x : Mat, s : Rat) -> Mat {
+  let m = mat_new(x.a.length(), if x.a.length() == 0 { 0 } else { x.a[0].length() })
+  for i in 0..<x.a.length() {
+    for j in 0..<x.a[i].length() { m.a[i][j] = x.a[i][j].mul(s) }
+  }
+  m
+}
+
+///|
+pub fn mat_add(x : Mat, y : Mat) -> Mat {
+  let m = mat_clone(x)
+  for i in 0..<x.a.length() {
+    for j in 0..<x.a[i].length() { m.a[i][j] = x.a[i][j].add(y.a[i][j]) }
+  }
+  m
+}
+
+///|
+pub fn mat_sub(x : Mat, y : Mat) -> Mat { mat_add(x, mat_scale(y, rat_int(-1L))) }
+
+///|
+pub fn mat_mul(x : Mat, y : Mat) -> Mat {
+  let n = x.a.length()
+  let k = if x.a.length() == 0 { 0 } else { x.a[0].length() }
+  let p = if y.a.length() == 0 { 0 } else { y.a[0].length() }
+  let m = mat_new(n, p)
+  for i in 0..<n {
+    for j in 0..<p {
+      let mut acc = rat_zero()
+      for t in 0..<k { acc = acc.add(x.a[i][t].mul(y.a[t][j])) }
+      m.a[i][j] = acc
+    }
+  }
+  m
+}
+
+///|
+pub fn mat_transpose(x : Mat) -> Mat {
+  let n = x.a.length()
+  let p = if n == 0 { 0 } else { x.a[0].length() }
+  let m = mat_new(p, n)
+  for i in 0..<n {
+    for j in 0..<p { m.a[j][i] = x.a[i][j] }
+  }
+  m
+}
+
+///|
+pub fn mat_equal(x : Mat, y : Mat) -> Bool {
+  if x.a.length() != y.a.length() { return false }
+  for i in 0..<x.a.length() {
+    if x.a[i].length() != y.a[i].length() { return false }
+    for j in 0..<x.a[i].length() {
+      if !x.a[i][j].equal(y.a[i][j]) { return false }
+    }
+  }
+  true
+}
+
+///|
+pub fn mat_trace(x : Mat) -> Rat {
+  let mut acc = rat_zero()
+  for i in 0..<x.a.length() { acc = acc.add(x.a[i][i]) }
+  acc
+}
+
+///|
+/// 有理高斯消去行列式（奇異矩陣回傳 0，無除以零捷徑）。
+pub fn mat_det(x : Mat) -> Rat {
+  let n = x.a.length()
+  if n == 0 { return rat_one() }
+  let a = mat_clone(x)
+  let mut det = rat_one()
+  for c in 0..<n {
+    let mut piv = -1
+    for i in c..<n {
+      if !a.a[i][c].is_zero() { piv = i; break }
+    }
+    if piv < 0 { return rat_zero() }
+    if piv != c {
+      let tmp = a.a[c]
+      a.a[c] = a.a[piv]
+      a.a[piv] = tmp
+      det = det.neg()
+    }
+    let p = a.a[c][c]
+    det = det.mul(p)
+    for j in 0..<n { a.a[c][j] = a.a[c][j].div(p).unwrap() }
+    for i in (c + 1)..<n {
+      let fac = a.a[i][c]
+      if fac.is_zero() { continue }
+      for j in 0..<n {
+        a.a[i][j] = a.a[i][j].sub(fac.mul(a.a[c][j]))
+      }
+    }
+  }
+  det
+}
+
+///|
+/// 有理列消去之秩（RREF 主元數）。
+pub fn mat_rank(x : Mat) -> Int {
+  if x.a.length() == 0 { return 0 }
+  let a = mat_clone(x)
+  let n = x.a.length()
+  let m = x.a[0].length()
+  let mut r = 0
+  for c in 0..<m {
+    let mut piv = -1
+    for i in r..<n {
+      if !a.a[i][c].is_zero() { piv = i; break }
+    }
+    if piv < 0 { continue }
+    let tmp = a.a[r]
+    a.a[r] = a.a[piv]
+    a.a[piv] = tmp
+    let p = a.a[r][c]
+    for j in 0..<m { a.a[r][j] = a.a[r][j].div(p).unwrap() }
+    for i in 0..<n {
+      if i == r { continue }
+      let fac = a.a[i][c]
+      if fac.is_zero() { continue }
+      for j in 0..<m { a.a[i][j] = a.a[i][j].sub(fac.mul(a.a[r][j])) }
+    }
+    r += 1
+    if r == n { break }
+  }
+  r
+}
+
+///|
+/// 多項式（升冪係數）加法、乘法、純量乘、求值。
+pub fn poly_add(a : Array[Rat], b : Array[Rat]) -> Array[Rat] {
+  let n = if a.length() > b.length() { a.length() } else { b.length() }
+  let out : Array[Rat] = Array::make(n, rat_zero())
+  for i in 0..<a.length() { out[i] = out[i].add(a[i]) }
+  for i in 0..<b.length() { out[i] = out[i].add(b[i]) }
+  out
+}
+
+///|
+pub fn poly_scale(a : Array[Rat], s : Rat) -> Array[Rat] {
+  let out : Array[Rat] = Array::make(a.length(), rat_zero())
+  for i in 0..<a.length() { out[i] = a[i].mul(s) }
+  out
+}
+
+///|
+pub fn poly_mul(a : Array[Rat], b : Array[Rat]) -> Array[Rat] {
+  if a.length() == 0 || b.length() == 0 { return [] }
+  let out : Array[Rat] = Array::make(a.length() + b.length() - 1, rat_zero())
+  for i in 0..<a.length() {
+    for j in 0..<b.length() {
+      out[i + j] = out[i + j].add(a[i].mul(b[j]))
+    }
+  }
+  out
+}
+
+///|
+pub fn poly_eval(c : Array[Rat], x : Rat) -> Rat {
+  let mut acc = rat_zero()
+  let mut i = c.length()
+  while i > 0 {
+    i -= 1
+    acc = acc.mul(x).add(c[i])
+  }
+  acc
+}
+
+///|
+/// Faddeev–LeVerrier：B_k = M·B_{k−1} + c_k I，
+/// c_k = −tr(M·B_{k−1})/k；回傳升冪係數 [c_n, ..., c_1, 1]。
+pub fn mat_charpoly(x : Mat) -> Array[Rat] {
+  let n = x.a.length()
+  if n == 0 { return [rat_one()] }
+  let mut b = mat_identity(n)
+  let cs : Array[Rat] = []
+  for k in 1..<(n + 1) {
+    let mb = mat_mul(x, b)
+    let tr = mat_trace(mb)
+    let ck = rat_int(-(k.to_int64())).inv().unwrap().mul(tr)
+    cs.push(ck)
+    b = mat_add(mb, mat_scale(mat_identity(n), ck))
+  }
+  let out : Array[Rat] = []
+  out.push(cs[n - 1])
+  for k in 1..<n { out.push(cs[n - 1 - k]) }
+  out.push(rat_one())
+  out
+}
+
+///|
+/// Lagrange 插值：由 n+1 個 (x_i, y_i) 求次數 ≤ n 之多項式（升冪）。
+pub fn poly_from_points(xs : Array[Rat], ys : Array[Rat]) -> Array[Rat] {
+  let n = xs.length()
+  if n == 0 { return [] }
+  // Newton 差商 + Horner 還原：與 Lagrange 等價，但中間量保持小整數，
+  // 避免節點乘積造成 Int64 溢位（C1-03 修正）。
+  let c : Array[Rat] = []
+  for i in 0..<n { c.push(ys[i]) }
+  for j in 1..<n {
+    let mut i = n - 1
+    while i >= j {
+      c[i] = c[i].sub(c[i - 1]).div(xs[i].sub(xs[i - j])).unwrap()
+      i -= 1
+    }
+  }
+  let mut acc : Array[Rat] = [c[n - 1]]
+  let mut k = n - 2
+  while k >= 0 {
+    acc = poly_add(poly_mul(acc, [xs[k].neg(), rat_one()]), [c[k]])
+    k -= 1
+  }
+  acc
+}
+
+///|
+/// det(A − tB)：以 t = 0,1,...,n 求值後插值，得廣義特徵多項式（升冪）。
+/// 用於 ℒ = I − D^{−1/2}AD^{−1/2} 之等價廣義特徵問題 L x = λ D x。
+pub fn mat_generalized_charpoly(a : Mat, b : Mat) -> Array[Rat] {
+  let n = a.a.length()
+  let xs : Array[Rat] = []
+  let ys : Array[Rat] = []
+  for t in 0..<(n + 1) {
+    let tv = rat_int(t.to_int64())
+    xs.push(tv)
+    ys.push(mat_det(mat_sub(a, mat_scale(b, tv))))
+  }
+  poly_from_points(xs, ys)
+}
+
+///|
+fn sign_of(x : Rat) -> Int {
+  if x.n > 0L { 1 } else if x.n < 0L { -1 } else { 0 }
+}
+
+///|
+/// 有理二分法：在 [lo,hi] 且有符號變異時隔離一個實根（回傳 lo 端近似）。
+pub fn poly_bisect(c : Array[Rat], lo0 : Rat, hi0 : Rat, steps : Int) -> Rat {
+  let mut lo = lo0
+  let mut hi = hi0
+  let slo = sign_of(poly_eval(c, lo))
+  for _i in 0..<steps {
+    let mid = lo.add(hi).mul(rat(1L, 2L))
+    let sm = sign_of(poly_eval(c, mid))
+    if sm == 0 { return mid }
+    if sm == slo { lo = mid } else { hi = mid }
+  }
+  lo
+}
+
+///|
+/// 最小正實根：在 (0,2] 以 1/8 步長掃描精確根或首個符號變異。
+/// 刻意不遞迴二分，以保持分母 ≤ 16、所有中間量為可表示之 Int64 有理數；
+/// 回傳值誤差 ≤ 1/16，為「可驗證之下界／上界」而非浮點近似。
+pub fn poly_smallest_positive_root(c : Array[Rat]) -> Rat? {
+  let s0 = sign_of(poly_eval(c, rat_zero()))
+  if s0 == 0 { return None }
+  let mut prev = rat_zero()
+  for i in 1..<17 {
+    let t = rat(i.to_int64(), 8L)
+    let s = sign_of(poly_eval(c, t))
+    // 網格上的精確根（含偶重根，如 K₃ 之 λ₂=3/2）直接回傳，不依賴符號變異。
+    if s == 0 { return Some(t) }
+    if s != s0 { return Some(prev.add(t).mul(rat(1L, 2L))) }
+    prev = t
+  }
+  None
+}
+
+///|
+/// 多項式降一次（去掉已知根 t=0）：c(t)/t，升冪係數左移。
+pub fn poly_deflate_zero(c : Array[Rat]) -> Array[Rat] {
+  let out : Array[Rat] = []
+  for i in 1..<c.length() { out.push(c[i]) }
+  out
+}
+
+///|
+/// 由根集合建構多項式 ∏(t − r_i)（升冪係數）。
+pub fn poly_from_roots(roots : Array[Rat]) -> Array[Rat] {
+  let mut acc : Array[Rat] = [rat_one()]
+  for i in 0..<roots.length() {
+    acc = poly_mul(acc, [roots[i].neg(), rat_one()])
+  }
+  acc
+}
+
+///|
+/// 定理 T-X1：Faddeev–LeVerrier 特徵多項式滿足 Cayley–Hamilton p(M)=0，
+/// 且 det(M) = (−1)^n p(0)、tr(M) = −p 之次高係數。
+pub fn theorem_charpoly_cayley_hamilton(x : Mat) -> Bool {
+  let n = x.a.length()
+  if n == 0 { return false }
+  let c = mat_charpoly(x)
+  let mut acc = mat_new(n, n)
+  let mut power = mat_identity(n)
+  for k in 0..<(n + 1) {
+    acc = mat_add(acc, mat_scale(power, c[k]))
+    power = mat_mul(power, x)
+  }
+  for i in 0..<n {
+    for j in 0..<n {
+      if !acc.a[i][j].is_zero() { return false }
+    }
+  }
+  let det = mat_det(x)
+  let p0 = c[0]
+  let expected = if n % 2 == 0 { p0 } else { p0.neg() }
+  det.equal(expected) && c[n - 1].equal(mat_trace(x).neg())
+}

@@ -108,6 +108,48 @@ pub fn report() -> String {
       @series.Fps::{ coeffs: cf }, @series.Fps::{ coeffs: cg }, 3,
     )))
   push_line(buf, "T-C16 前沿方法一致性", flag(@compose.theorem_frontier_all_in_one()))
+  let gpet = @graphs.graph(10, @graphs.kneser_adjacency(5, 2))
+  push_line(buf, "T-X1 Cayley–Hamilton",
+    flag(@exact.theorem_charpoly_cayley_hamilton(@graphs.graph_laplacian(gpet))))
+  push_line(buf, "T-Gph2/5 L 譜 Newton / Petersen L·ℒ 譜",
+    flag(@graphs.theorem_laplacian_newton(gpet, 4)) + "/" +
+      flag(@graphs.theorem_petersen_spectra()))
+  push_line(buf, "T-Gph3/4 Kirchhoff 生成樹 / Cheeger",
+    @graphs.graph_spanning_trees(gpet).to_string() + "/" +
+      flag(@graphs.theorem_cheeger(gpet)))
+  let b3 = @graphs.line_bundle(gpet, 3)
+  push_line(buf, "T-Gph6/7/8/9 測地線/切束/sheaf Hodge/平坦截面",
+    flag(@graphs.theorem_geodesic_metric(gpet)) + "/" +
+      flag(@graphs.theorem_tangent_bundle(gpet)) + "/" +
+      flag(@graphs.theorem_sheaf_hodge(b3)) + "/" +
+      flag(@graphs.theorem_flat_sections(b3)))
+  push_line(buf, "T-A1..A4 算術譜 Spec(Z/60Z)",
+    flag(@series.theorem_arithmetic_zeta(60L)) + "/" +
+      flag(@series.theorem_arithmetic_spectral_triple(60L)) + "/" +
+      flag(@series.theorem_arithmetic_galois(60L)) + "/" +
+      flag(@series.theorem_arithmetic_functions(60L)))
+  let kf = @algebra.sfq_sample(2)
+  push_line(buf, "T-K0-1..5 歪多項式 K 理論",
+    flag(@algebra.theorem_k0_skew_quotient(kf[0])) + "/" +
+      flag(@algebra.theorem_k0_fundamental(6)) + "/" +
+      flag(@algebra.theorem_k0_morita_idempotents()) + "/" +
+      flag(@algebra.theorem_ore_sigma_binomial()))
+  push_line(buf, "T-C17 泛性質與函子性",
+    flag(@compose.theorem_universal_properties_all()))
+  let vm = @compose.verb_pattern_matrix()
+  let vmat : Array[Array[Int64]] = []
+  for v in 0..<vm.length() {
+    let row : Array[Int64] = []
+    for p in 0..<14 { row.push(if vm[v][p] { 1L } else { 0L }) }
+    vmat.push(row)
+  }
+  let vclasses = @compose.verb_pattern_row_classes()
+  let vcc = @compose.verb_composition_closure()
+  push_line(buf, "T-C18/C19 21×14 衍生矩陣 穩定/秩/類別/複合封閉",
+    @compose.verb_pattern_stable_pairs().length().to_string() + "/" +
+      @exact.rank_mod_p(vmat, 2L).to_string() + "/" +
+      vclasses[0].to_string() + "/" + vcc[0].to_string() + "/" +
+      vcc[1].to_string())
   push_line(buf, "catalog 登錄筆數 / 一致性",
     @catalog.catalog_size().to_string() + "/" +
       flag(@catalog.theorem_catalog_consistent()))
