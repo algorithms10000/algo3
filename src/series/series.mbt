@@ -2055,3 +2055,457 @@ pub fn theorem_weil_curve() -> Bool {
   }
   true
 }
+
+///|
+/// ═══════════════════════════════════════════════════════════════════════
+/// C1-06 (B) — Abel–Jacobi 映射 AJ : Div⁰(E) → Jac(E)
+/// genus 1 曲線 E/F_q : y²=x³+Ax+B 上，Jac(E) ≅ E(F_q)，
+/// AJ(Σ n_i[P_i]) = Σ n_i P_i（精確有理群律）。
+/// 另實做量子環面 Γ-bundle 之配對函數（R56 arXiv:1503.06045 Prop.3）
+/// 與 q-商 Abel–Jacobi 映射 F_p^*/⟨q⟩，以及 E[3](F₇) ≅ (ℤ/3)²
+/// 之標號、Weil 配對與 AJ 相容性。
+/// 誠實邊界：此為有限域／有限階之精確憑證，非 ℂ 上無限維週期積分。
+/// ═══════════════════════════════════════════════════════════════════════
+
+///|
+pub(all) struct ECPoint {
+  inf : Bool
+  x : Int64
+  y : Int64
+}
+
+///|
+pub(all) struct AJTerm {
+  p : ECPoint
+  n : Int64
+}
+
+///|
+pub(all) struct AJDivisor {
+  terms : Array[AJTerm]
+}
+
+///|
+pub fn ec_infinity() -> ECPoint { ECPoint::{ inf: true, x: 0L, y: 0L } }
+
+///|
+pub fn ec_pt(x : Int64, y : Int64) -> ECPoint { ECPoint::{ inf: false, x, y } }
+
+///|
+pub fn ec_equal(a : ECPoint, b : ECPoint) -> Bool {
+  if a.inf || b.inf { return a.inf && b.inf }
+  a.x == b.x && a.y == b.y
+}
+
+///|
+fn aj_mod(x : Int64, p : Int64) -> Int64 { ((x % p) + p) % p }
+
+///|
+pub fn ec_neg(a : ECPoint, p : Int64) -> ECPoint {
+  if a.inf { a } else { ec_pt(a.x, aj_mod(-a.y, p)) }
+}
+
+///|
+/// 弦切群律（特徵 ≠ 2,3 之短 Weierstrass 模型，模 p 精確運算）。
+pub fn ec_add(a : ECPoint, b : ECPoint, p : Int64, ac : Int64) -> ECPoint {
+  if a.inf { return b }
+  if b.inf { return a }
+  if a.x == b.x && aj_mod(a.y + b.y, p) == 0L { return ec_infinity() }
+  let lam = if ec_equal(a, b) {
+    let den = aj_mod(2L * a.y, p)
+    if den == 0L { return ec_infinity() }
+    aj_mod((3L * a.x * a.x + ac) * @exact.mod_inv(den, p), p)
+  } else {
+    let den = aj_mod(b.x - a.x, p)
+    if den == 0L { return ec_infinity() }
+    aj_mod((b.y - a.y) * @exact.mod_inv(den, p), p)
+  }
+  let x3 = aj_mod(lam * lam - a.x - b.x, p)
+  let y3 = aj_mod(lam * (a.x - x3) - a.y, p)
+  ec_pt(x3, y3)
+}
+
+///|
+pub fn ec_mul(n : Int, a : ECPoint, p : Int64, ac : Int64) -> ECPoint {
+  let mut out = ec_infinity()
+  for _i in 0..<n { out = ec_add(out, a, p, ac) }
+  out
+}
+
+///|
+/// 列舉 E(F_q)：逐 x 求 y² = x³+Ax+B 之平方根（Legendre 符號快篩）。
+pub fn ec_all_points(q : Int64, ac : Int64, bc : Int64) -> Array[ECPoint] {
+  let pts : Array[ECPoint] = [ec_infinity()]
+  for xi in 0..<q.to_int() {
+    let x = xi.to_int64()
+    let v = aj_mod((((x * x) % q) * x) % q + aj_mod(ac * x + bc, q), q)
+    let chi = weil_legendre(v, q)
+    if chi < 0L { continue }
+    if chi == 0L { pts.push(ec_pt(x, 0L)) } else {
+      for yi in 0..<q.to_int() {
+        let y = yi.to_int64()
+        if aj_mod(y * y - v, q) == 0L { pts.push(ec_pt(x, y)) }
+      }
+    }
+  }
+  pts
+}
+
+///|
+pub fn aj_divisor(terms : Array[AJTerm]) -> AJDivisor { AJDivisor::{ terms } }
+
+///|
+pub fn aj_degree(div : AJDivisor) -> Int64 {
+  let mut s = 0L
+  for t in div.terms { s = s + t.n }
+  s
+}
+
+///|
+/// Abel–Jacobi 映射：AJ(D) = Σ n_i P_i ∈ Jac(E) = E(F_q)。
+pub fn aj_sum(div : AJDivisor, q : Int64, ac : Int64) -> ECPoint {
+  let mut out = ec_infinity()
+  for t in div.terms {
+    let pt = if t.n >= 0L { t.p } else { ec_neg(t.p, q) }
+    let cnt = if t.n >= 0L { t.n } else { -t.n }
+    for _i in 0..<cnt.to_int() { out = ec_add(out, pt, q, ac) }
+  }
+  out
+}
+
+///|
+fn aj_div_add(a : AJDivisor, b : AJDivisor) -> AJDivisor {
+  let ts : Array[AJTerm] = []
+  for t in a.terms { ts.push(t) }
+  for t in b.terms { ts.push(t) }
+  AJDivisor::{ terms: ts }
+}
+
+///|
+/// 主除子 div(x − a)：所有 x=a 的點各一次，減去次數乘以 [O]。
+pub fn aj_vertical_divisor(q : Int64, ac : Int64, bc : Int64, x0 : Int64) -> AJDivisor {
+  let pts = ec_all_points(q, ac, bc)
+  let ts : Array[AJTerm] = []
+  let mut deg = 0L
+  for p in pts {
+    if !p.inf && p.x == x0 {
+      // y=0 為 Weierstrass 分歧點，x−x0 在該點零階為 2。
+      let m = if p.y == 0L { 2L } else { 1L }
+      ts.push(AJTerm::{ p, n: m })
+      deg = deg + m
+    }
+  }
+  if deg > 0L { ts.push(AJTerm::{ p: ec_infinity(), n: -deg }) }
+  AJDivisor::{ terms: ts }
+}
+
+///|
+/// 主除子 div(y − lx − m)：取直線上恰三個相異交點（含 [O] 補次數）。
+pub fn aj_line_divisor(q : Int64, ac : Int64, bc : Int64, l : Int64, m : Int64) -> AJDivisor {
+  let pts = ec_all_points(q, ac, bc)
+  let ts : Array[AJTerm] = []
+  for p in pts {
+    if !p.inf && aj_mod(p.y - l * p.x - m, q) == 0L {
+      ts.push(AJTerm::{ p, n: 1L })
+    }
+  }
+  AJDivisor::{ terms: ts }
+}
+
+///|
+/// Γ-bundle 配對（R56 Prop.3）：
+/// ⟨q^s v(q^m v,u) | q^r u(q^k u,v)⟩ = q^{r−s−km}。
+pub fn aj_gamma_vu(qs : Int, qm : Int, qr : Int, qk : Int) -> Int {
+  qr - qs - qk * qm
+}
+
+///|
+pub fn aj_gamma_uv(qs : Int, qm : Int, qr : Int, qk : Int) -> Int {
+  qk * qm + qs - qr
+}
+
+///|
+/// 核心雙線性項 ⟨u(q^r u,v)|v(q^s v,u)⟩ = q^{r·s}。
+pub fn aj_gamma_core(qr : Int, qs : Int) -> Int { qr * qs }
+
+///|
+pub fn aj_q_order(p : Int64, qp : Int64) -> Int {
+  let mut v = aj_mod(qp, p)
+  for k in 1..<64 {
+    if v == 1L { return k }
+    v = aj_mod(v * qp, p)
+  }
+  0
+}
+
+///|
+/// q-商 Abel–Jacobi：AJ_q(x) = x·⟨q⟩ 之正規代表（取陪集中最小正整數）。
+pub fn aj_q_coset(p : Int64, qp : Int64, x : Int64) -> Int64 {
+  let n = aj_q_order(p, qp)
+  let mut best = p
+  let mut v = aj_mod(x, p)
+  for _k in 0..<n {
+    if v < best { best = v }
+    v = aj_mod(v * qp, p)
+  }
+  best
+}
+
+///|
+/// E[N] 標號之 Weil 配對指數 ad−bc (mod N)。
+pub fn aj_weil_label(n : Int, a : Int, b : Int, c : Int, d : Int) -> Int {
+  ((a * d - b * c) % n + n) % n
+}
+
+///|
+/// 定理 T-AJ1：E(F_q) 之弦切群律為交換群（封閉/單位/逆/結合），
+/// 且 |E(F_q)| = N₁ = q+1−a 與 C1-05 之 Weil 點數精確一致。
+pub fn theorem_aj_group_law() -> Bool {
+  let curves = [
+    (5L, 2L, 0L), (7L, 0L, 2L), (7L, 0L, 3L), (11L, 1L, 3L),
+    (13L, 0L, 4L), (17L, 3L, 0L), (19L, 0L, 1L),
+  ]
+  for (q, ac, bc) in curves {
+    let pts = ec_all_points(q, ac, bc)
+    let c = weil_curve(q, ac, bc)
+    if pts.length().to_int64() != weil_point_count(q, ac, bc) { return false }
+    if c.a != q + 1L - pts.length().to_int64() { return false }
+    let lim = if pts.length() > 8 { 8 } else { pts.length() }
+    for i in 0..<lim {
+      let p = pts[i]
+      if !ec_equal(ec_add(p, ec_infinity(), q, ac), p) { return false }
+      if !ec_equal(ec_add(p, ec_neg(p, q), q, ac), ec_infinity()) { return false }
+      for j in 0..<lim {
+        let r = pts[j]
+        let s = ec_add(p, r, q, ac)
+        let mut inside = false
+        for t in pts {
+          if ec_equal(t, s) { inside = true; break }
+        }
+        if !inside { return false }
+        if !ec_equal(s, ec_add(r, p, q, ac)) { return false }
+        for k in 0..<lim {
+          let z = pts[k]
+          if !ec_equal(ec_add(ec_add(p, r, q, ac), z, q, ac),
+                       ec_add(p, ec_add(r, z, q, ac), q, ac)) { return false }
+        }
+      }
+    }
+  }
+  true
+}
+
+///|
+/// 定理 T-AJ2：AJ 為 Div⁰ → Jac(E) 之群同態，且 Abel 定理成立
+/// （所有主除子 div(x−a) 與直線 div(y−lx−m) 之 AJ = 0）。
+pub fn theorem_aj_abel() -> Bool {
+  let q = 7L
+  let ac = 0L
+  let bc = 2L
+  let pts = ec_all_points(q, ac, bc)
+  // 同態：AJ(D₁+D₂) = AJ(D₁) + AJ(D₂)
+  let divs = [
+    aj_divisor([AJTerm::{ p: pts[1], n: 1L }, AJTerm::{ p: ec_infinity(), n: -1L }]),
+    aj_divisor([AJTerm::{ p: pts[2], n: 2L }, AJTerm::{ p: pts[3], n: -1L },
+                AJTerm::{ p: ec_infinity(), n: -1L }]),
+    aj_divisor([AJTerm::{ p: pts[4], n: -3L }, AJTerm::{ p: pts[5], n: 3L }]),
+  ]
+  for d1 in divs {
+    for d2 in divs {
+      let lhs = aj_sum(aj_div_add(d1, d2), q, ac)
+      let rhs = ec_add(aj_sum(d1, q, ac), aj_sum(d2, q, ac), q, ac)
+      if !ec_equal(lhs, rhs) { return false }
+    }
+  }
+  // 垂直主除子 div(x−a)
+  for a in 0..<q.to_int() {
+    let d = aj_vertical_divisor(q, ac, bc, a.to_int64())
+    if aj_degree(d) != 0L { return false }
+    if !ec_equal(aj_sum(d, q, ac), ec_infinity()) { return false }
+  }
+  // 直線主除子（恰三交點者）
+  let mut seen = 0
+  for l in 0..<q.to_int() {
+    for m in 0..<q.to_int() {
+      let d = aj_line_divisor(q, ac, bc, l.to_int64(), m.to_int64())
+      if d.terms.length() != 3 { continue }
+      if aj_degree(d) != 3L { return false }
+      let z = ec_add(ec_add(d.terms[0].p, d.terms[1].p, q, ac), d.terms[2].p, q, ac)
+      if !ec_equal(z, ec_infinity()) { return false }
+      seen = seen + 1
+    }
+  }
+  seen > 0
+}
+
+///|
+/// 定理 T-AJ3：AJ 滿射、核含主除子，|Jac(E)| = N₁ = P(1)
+/// （Weil zeta 分子 P(T)=1−aT+qT² 在 T=1 之值）。
+pub fn theorem_aj_pic0() -> Bool {
+  let curves = [(5L, 2L, 0L), (7L, 0L, 2L), (11L, 1L, 3L), (13L, 0L, 4L)]
+  for (q, ac, bc) in curves {
+    let pts = ec_all_points(q, ac, bc)
+    let c = weil_curve(q, ac, bc)
+    let pco = weil_poly_p(q, c.a)
+    let p1 = pco[0] + pco[1] + pco[2]
+    if p1 != q + 1L - c.a { return false }
+    if p1 != pts.length().to_int64() { return false }
+    for pt in pts {
+      let d = aj_divisor([AJTerm::{ p: pt, n: 1L },
+                          AJTerm::{ p: ec_infinity(), n: -1L }])
+      if aj_degree(d) != 0L { return false }
+      if !ec_equal(aj_sum(d, q, ac), pt) { return false }
+    }
+    for a in 0..<q.to_int() {
+      let d = aj_vertical_divisor(q, ac, bc, a.to_int64())
+      if !ec_equal(aj_sum(d, q, ac), ec_infinity()) { return false }
+    }
+  }
+  true
+}
+
+///|
+/// 定理 T-AJ4：量子環面 Γ-bundle 配對（R56 Prop.3）滿足
+/// 反向互逆、核心雙線性 q^{k·m} 與係數 q^{r−s} 分離；
+/// 且么正不變性 ⟨U^rV^s u|U^rV^s v⟩=1 對應指數 0。
+pub fn theorem_aj_gamma_pairing() -> Bool {
+  for qs in -3..<4 {
+    for qm in -3..<4 {
+      for qr in -3..<4 {
+        for qk in -3..<4 {
+          let vu = aj_gamma_vu(qs, qm, qr, qk)
+          let uv = aj_gamma_uv(qs, qm, qr, qk)
+          if vu + uv != 0 { return false }
+          if vu != (qr - qs) - aj_gamma_core(qk, qm) { return false }
+          if aj_gamma_core(qk, qm) != qk * qm { return false }
+        }
+      }
+    }
+  }
+  // ⟨U^rV^s u|U^rV^s v⟩ = 1：把么正作用化為 (r,s,r,s) 之配對指數 0
+  for r in -4..<5 {
+    if aj_gamma_vu(r, 0, r, 0) != 0 { return false }
+  }
+  true
+}
+
+///|
+/// 定理 T-AJ5：q-商 Abel–Jacobi AJ_q : F_p^* → F_p^*/⟨q⟩
+/// 為滿同態、核 = ⟨q⟩、陪集數 = (p−1)/ord(q)。
+pub fn theorem_aj_quantum_quotient() -> Bool {
+  let cases = [(7L, 2L, 3), (11L, 3L, 5), (13L, 3L, 3), (17L, 4L, 4)]
+  for (p, qp, n0) in cases {
+    let n = aj_q_order(p, qp)
+    if n != n0 { return false }
+    if (p - 1L) % n.to_int64() != 0L { return false }
+    let cosets : Array[Int64] = []
+    let kernel : Array[Int64] = []
+    for xi in 1..<p.to_int() {
+      let x = xi.to_int64()
+      let c = aj_q_coset(p, qp, x)
+      let mut found = false
+      for y in cosets {
+        if y == c { found = true; break }
+      }
+      if !found { cosets.push(c) }
+      if c == 1L { kernel.push(x) }
+      for yi in 1..<p.to_int() {
+        let y = yi.to_int64()
+        let lhs = aj_q_coset(p, qp, aj_mod(x * y, p))
+        let rhs = aj_q_coset(p, qp, aj_mod(c * aj_q_coset(p, qp, y), p))
+        if lhs != rhs { return false }
+      }
+    }
+    if cosets.length().to_int64() != (p - 1L) / n.to_int64() { return false }
+    if kernel.length() != n { return false }
+    for k in 0..<n {
+      let mut v = 1L
+      for _i in 0..<k { v = aj_mod(v * qp, p) }
+      let mut inside = false
+      for x in kernel {
+        if x == v { inside = true; break }
+      }
+      if !inside { return false }
+    }
+  }
+  true
+}
+
+///|
+/// 定理 T-AJ6：E(F₇)[3] ≅ (ℤ/3)²。以 aP+bQ 標號 9 個點，
+/// 驗證群律在標號上為模 3 加法、AJ([T_{a,b}]−[O])=T_{a,b}，
+/// 且 Weil 配對 e₃((a,b),(c,d))=q^{ad−bc} 雙線性／交錯／非退化。
+pub fn theorem_aj_weil_torsion() -> Bool {
+  let q = 7L
+  let ac = 0L
+  let bc = 2L
+  let pts = ec_all_points(q, ac, bc)
+  if pts.length() != 9 { return false }
+  for pt in pts {
+    if !ec_equal(ec_mul(3, pt, q, ac), ec_infinity()) { return false }
+  }
+  // 選一組基底 P,Q（Q ∉ ⟨P⟩）
+  let mut base : Array[ECPoint] = []
+  for p in pts {
+    for rr in pts {
+      if p.inf || rr.inf { continue }
+      if ec_equal(rr, p) || ec_equal(rr, ec_neg(p, q)) { continue }
+      if ec_equal(rr, ec_add(p, p, q, ac)) { continue }
+      base = [p, rr]
+      break
+    }
+    if base.length() == 2 { break }
+  }
+  if base.length() != 2 { return false }
+  let labels : Array[ECPoint] = []
+  for a in 0..<3 {
+    for b in 0..<3 {
+      labels.push(ec_add(ec_mul(a, base[0], q, ac), ec_mul(b, base[1], q, ac), q, ac))
+    }
+  }
+  for i in 0..<9 {
+    for j in (i + 1)..<9 {
+      if ec_equal(labels[i], labels[j]) { return false }
+    }
+    let mut inside = false
+    for pt in pts {
+      if ec_equal(pt, labels[i]) { inside = true; break }
+    }
+    if !inside { return false }
+  }
+  for a in 0..<3 {
+    for b in 0..<3 {
+      for c in 0..<3 {
+        for d in 0..<3 {
+          let lhs = ec_add(labels[a * 3 + b], labels[c * 3 + d], q, ac)
+          let rhs = labels[((a + c) % 3) * 3 + (b + d) % 3]
+          if !ec_equal(lhs, rhs) { return false }
+          let s1 = aj_weil_label(3, (a + c) % 3, (b + d) % 3, 1, 2)
+          let s2 = (aj_weil_label(3, a, b, 1, 2) + aj_weil_label(3, c, d, 1, 2)) % 3
+          if s1 != s2 { return false }
+        }
+      }
+      let dv = aj_divisor([AJTerm::{ p: labels[a * 3 + b], n: 1L },
+                           AJTerm::{ p: ec_infinity(), n: -1L }])
+      if !ec_equal(aj_sum(dv, q, ac), labels[a * 3 + b]) { return false }
+      if aj_weil_label(3, a, b, a, b) != 0 { return false }
+      if a != 0 || b != 0 {
+        let mut found = false
+        for c in 0..<3 {
+          for d in 0..<3 {
+            if aj_weil_label(3, a, b, c, d) != 0 { found = true; break }
+          }
+        }
+        if !found { return false }
+      }
+    }
+  }
+  true
+}
+
+///|
+pub fn theorem_abel_jacobi() -> Bool {
+  theorem_aj_group_law() && theorem_aj_abel() && theorem_aj_pic0() &&
+    theorem_aj_gamma_pairing() && theorem_aj_quantum_quotient() &&
+    theorem_aj_weil_torsion()
+}

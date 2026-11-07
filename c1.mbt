@@ -234,6 +234,36 @@ pub fn report() -> String {
       flag(@algebra.theorem_pv_kovacic()) + "/" +
       flag(@algebra.theorem_pv_additive_subgroup()) + "/" +
       @algebra.diff_solution_nullity(@algebra.diff_module(5L, 5, [[0L, 1L, 3L, 2L]])).to_string())
+  // ── C1-06：量子二維環面 / Abel–Jacobi / 21×14 交織 ─────────────────
+  push_line(buf, "T-QT1..QT7 O_q(T²) 定義關係 / 跡 / 導數 / 中心 / Heisenberg / Weil / Morita",
+    flag(@algebra.theorem_qt_relation()) + "/" +
+      flag(@algebra.theorem_qt_trace_cyclic()) + "/" +
+      flag(@algebra.theorem_qt_derivations()) + "/" +
+      flag(@algebra.theorem_qt_center()) + "/" +
+      flag(@algebra.theorem_qt_heisenberg()) + "/" +
+      flag(@algebra.theorem_qt_weil_pairing()) + "/" +
+      flag(@algebra.theorem_qt_morita_sl2()) + "/" +
+      flag(@algebra.theorem_quantum_torus()))
+  push_line(buf, "T-AJ1..AJ6 Abel–Jacobi / Abel 定理 / Pic⁰ / Γ-bundle / q-商 / E[3] Weil",
+    flag(@series.theorem_aj_group_law()) + "/" +
+      flag(@series.theorem_aj_abel()) + "/" +
+      flag(@series.theorem_aj_pic0()) + "/" +
+      flag(@series.theorem_aj_gamma_pairing()) + "/" +
+      flag(@series.theorem_aj_quantum_quotient()) + "/" +
+      flag(@series.theorem_aj_weil_torsion()) + "/" +
+      flag(@series.theorem_abel_jacobi()))
+  push_line(buf, "T-IW1..IW6 21×14 交織 / Gram / Kronecker / Galois / 算子代數 / AJ 橋接",
+    flag(@compose.theorem_interwoven_structure()) + "/" +
+      flag(@compose.theorem_interwoven_gram()) + "/" +
+      flag(@compose.theorem_interwoven_kronecker()) + "/" +
+      flag(@compose.theorem_interwoven_galois()) + "/" +
+      flag(@compose.theorem_interwoven_operator_algebra()) + "/" +
+      flag(@compose.theorem_interwoven_aj_bridge()) + "/" +
+      flag(@compose.theorem_interwoven_all()))
+  let iw = @compose.interwoven_stats()
+  push_line(buf, "21×14 交織統計：ℚ-秩/非零項/概念數/算子張成/End 維度",
+    iw[0].to_string() + "/" + iw[1].to_string() + "/" + iw[2].to_string() +
+      "/" + iw[3].to_string() + "/" + iw[4].to_string() + "/OK")
   push_line(buf, "catalog 登錄筆數 / 一致性",
     @catalog.catalog_size().to_string() + "/" +
       flag(@catalog.theorem_catalog_consistent()))

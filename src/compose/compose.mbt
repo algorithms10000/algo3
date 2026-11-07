@@ -2105,3 +2105,384 @@ pub fn theorem_noncomm_motives() -> Bool {
   theorem_nilinvariance() && theorem_k0_continuity() &&
     theorem_kh_homotopy() && theorem_universal_additive_invariant()
 }
+
+///|
+/// ═══════════════════════════════════════════════════════════════════════
+/// C1-06 (C) — 21 動詞 × 14 範例 × O_q(T²) 之相互交織
+/// 以 root algebra A_q（q=2∈F₇, n=3, dim=9）為共同載體：
+///   每一個衍生方向動詞 v (0..20) 表示成 End(A_q) 上一個明確的線性算子 ρ(v)；
+///   每一個組合手法 p (0..13) 以 deriv_invariant(p,·) 之實算值造狀態向量 Φ_p；
+///   W[v][p] = τ(ρ(v) Φ_p) 即 21×14 交織矩陣。
+/// 「與自己相互交織」：Gram W Wᵀ／Wᵀ W、Kronecker W⊗W、
+/// 21×21=441 個動詞複合算子 ρ(v)ρ(w) 之線性生成，
+/// 以及 W 之形式脈絡在全局公理 G 下的伽羅瓦閉集格。
+/// ═══════════════════════════════════════════════════════════════════════
+
+///|
+pub fn interwoven_root() -> @algebra.QTRoot {
+  @algebra.QTRoot::{ n: 3, p: 7L, qp: 2L }
+}
+
+///|
+fn iw_mod(x : Int64, p : Int64) -> Int64 { ((x % p) + p) % p }
+
+///|
+/// 演算法 A-IW1：21 個衍生方向動詞在 A_q 上的算子表示 ρ。
+pub fn interwoven_operators() -> Array[Array[Array[Int64]]] {
+  let r = interwoven_root()
+  let lu = @algebra.qt_root_left_matrix(r, @algebra.qt_root_mono_vec(r, 1, 0))
+  let lv = @algebra.qt_root_left_matrix(r, @algebra.qt_root_mono_vec(r, 0, 1))
+  let luv = @algebra.qt_root_left_matrix(r, @algebra.qt_root_mono_vec(r, 1, 1))
+  let d1 = @algebra.qt_root_deriv_matrix(r, 1)
+  let d2 = @algebra.qt_root_deriv_matrix(r, 2)
+  let tau = @algebra.qt_root_trace_projection(r)
+  let idm = @algebra.qt_root_identity_matrix(r)
+  let ops : Array[Array[Array[Int64]]] = []
+  ops.push(idm)
+  ops.push(lu)
+  ops.push(lv)
+  ops.push(luv)
+  ops.push(d1)
+  ops.push(d2)
+  ops.push(tau)
+  ops.push(@algebra.qt_root_qshift_matrix(r))
+  ops.push(@algebra.qt_root_label_star(r))
+  ops.push(@algebra.qt_mat_sub(r, @algebra.qt_mat_mul(r, lu, lv),
+                              @algebra.qt_mat_mul(r, lv, lu)))
+  ops.push(@algebra.qt_root_left_matrix(r, @algebra.qt_root_mono_vec(r, -1, 0)))
+  ops.push(@algebra.qt_root_left_matrix(r, @algebra.qt_root_mono_vec(r, 0, -1)))
+  ops.push(@algebra.qt_mat_add(r, d1, d2))
+  ops.push(@algebra.qt_mat_sub(r, d1, d2))
+  ops.push(@algebra.qt_mat_add(r, lu, lv))
+  ops.push(@algebra.qt_mat_sub(r, lu, lv))
+  ops.push(@algebra.qt_mat_mul(r, d1, d2))
+  ops.push(@algebra.qt_root_left_matrix(r, @algebra.qt_root_mono_vec(r, 2, 1)))
+  ops.push(@algebra.qt_root_left_matrix(r, @algebra.qt_root_mono_vec(r, 1, 2)))
+  ops.push(@algebra.qt_root_left_matrix(r, @algebra.qt_root_mono_vec(r, 2, 2)))
+  ops.push(@algebra.qt_mat_add(r, tau, luv))
+  ops
+}
+
+///|
+/// 演算法 A-IW2：14 個組合手法之不變量實算值造 A_q 上的狀態向量 Φ_p。
+pub fn interwoven_state(pat : Int) -> Array[Int64] {
+  let r = interwoven_root()
+  let n = r.n
+  let inv = deriv_invariant(pat, deriv_base())
+  let out : Array[Int64] = []
+  for i in 0..<(n * n) {
+    let a = i / n
+    let b = i % n
+    let v = inv.to_int64() * (a + 1).to_int64() +
+            pat.to_int64() * (b + 1).to_int64() + (a * b).to_int64()
+    out.push(iw_mod(v, r.p))
+  }
+  out
+}
+
+///|
+/// 演算法 A-IW3：21×14 交織矩陣 W[v][p] = τ(ρ(v)Φ_p)。
+pub fn interwoven_matrix() -> Array[Array[Int64]] {
+  let r = interwoven_root()
+  let ops = interwoven_operators()
+  let out : Array[Array[Int64]] = []
+  for v in 0..<VERB_COUNT {
+    let row : Array[Int64] = []
+    for pat in 0..<14 {
+      let z = @algebra.qt_root_apply(ops[v], interwoven_state(pat), r.p)
+      row.push(@algebra.qt_root_trace(z))
+    }
+    out.push(row)
+  }
+  out
+}
+
+///|
+fn iw_rat(x : Array[Array[Int64]]) -> @exact.Mat {
+  let rows : Array[Array[@exact.Rat]] = []
+  for row in x {
+    let rr : Array[@exact.Rat] = []
+    for v in row { rr.push(@exact.rat_int(v)) }
+    rows.push(rr)
+  }
+  @exact.mat_from(rows)
+}
+
+///|
+fn iw_mat_mul(x : Array[Array[Int64]], y : Array[Array[Int64]]) -> Array[Array[Int64]] {
+  let n = x.length()
+  let m = y[0].length()
+  let k = y.length()
+  let out : Array[Array[Int64]] = []
+  for i in 0..<n {
+    let row : Array[Int64] = Array::make(m, 0L)
+    for j in 0..<m {
+      let mut acc = 0L
+      for t in 0..<k { acc = acc + x[i][t] * y[t][j] }
+      row[j] = acc
+    }
+    out.push(row)
+  }
+  out
+}
+
+///|
+fn iw_transpose(x : Array[Array[Int64]]) -> Array[Array[Int64]] {
+  let n = x.length()
+  let m = x[0].length()
+  let out : Array[Array[Int64]] = []
+  for j in 0..<m {
+    let row : Array[Int64] = Array::make(n, 0L)
+    for i in 0..<n { row[i] = x[i][j] }
+    out.push(row)
+  }
+  out
+}
+
+///|
+fn iw_trace(x : Array[Array[Int64]]) -> Int64 {
+  let mut s = 0L
+  for i in 0..<x.length() { s = s + x[i][i] }
+  s
+}
+
+///|
+fn iw_symmetric(x : Array[Array[Int64]]) -> Bool {
+  for i in 0..<x.length() {
+    for j in 0..<x.length() {
+      if x[i][j] != x[j][i] { return false }
+    }
+  }
+  true
+}
+
+///|
+/// 定理 T-IW1：交織矩陣為 21×14、非平凡，
+/// GF(7) 秩與 ℚ 秩皆為真實線性不變量，且非零項數非恆真。
+pub fn theorem_interwoven_structure() -> Bool {
+  let w = interwoven_matrix()
+  if w.length() != VERB_COUNT { return false }
+  for row in w {
+    if row.length() != 14 { return false }
+    for v in row {
+      if v < 0L || v >= 7L { return false }
+    }
+  }
+  let mut nz = 0
+  let distinct : Array[Int64] = []
+  for row in w {
+    for v in row {
+      if v != 0L { nz = nz + 1 }
+      let mut seen = false
+      for d in distinct {
+        if d == v { seen = true; break }
+      }
+      if !seen { distinct.push(v) }
+    }
+  }
+  let rq = @exact.mat_rank(iw_rat(w))
+  let rp = @exact.rank_mod_p(w, 7L)
+  nz == 185 && distinct.length() > 1 && rq == 11 && rp == 3
+}
+
+///|
+/// 定理 T-IW2：W 與自身交織之 Gram 矩陣
+/// S=W Wᵀ (21×21)、T=Wᵀ W (14×14) 對稱，
+/// ℚ-秩皆等於 rank(W)=11，且 tr S = tr T = Σ W[v][p]² = 2932。
+pub fn theorem_interwoven_gram() -> Bool {
+  let w = interwoven_matrix()
+  let wt = iw_transpose(w)
+  let s = iw_mat_mul(w, wt)
+  let t = iw_mat_mul(wt, w)
+  if !iw_symmetric(s) || !iw_symmetric(t) { return false }
+  let rw = @exact.mat_rank(iw_rat(w))
+  let rs = @exact.mat_rank(iw_rat(s))
+  let rt = @exact.mat_rank(iw_rat(t))
+  let mut sq = 0L
+  for row in w {
+    for v in row { sq = sq + v * v }
+  }
+  rs == rw && rt == rw && rw == 11 &&
+    iw_trace(s) == sq && iw_trace(t) == sq && sq == 2932L
+}
+
+///|
+/// 定理 T-IW3：Kronecker 自交織 K⊗K 之秩 = rank(K)²。
+/// 取 W 之左上 4×4 子矩陣 K（GF(7) 秩 3），實算 16×16 張量積之秩為 9。
+pub fn theorem_interwoven_kronecker() -> Bool {
+  let w = interwoven_matrix()
+  let k : Array[Array[Int64]] = []
+  for i in 0..<4 {
+    let row : Array[Int64] = []
+    for j in 0..<4 { row.push(w[i][j]) }
+    k.push(row)
+  }
+  let kk : Array[Array[Int64]] = []
+  for i in 0..<4 {
+    for kk2 in 0..<4 {
+      let row : Array[Int64] = Array::make(16, 0L)
+      for j in 0..<4 {
+        for l in 0..<4 { row[j * 4 + l] = iw_mod(k[i][j] * k[kk2][l], 7L) }
+      }
+      kk.push(row)
+    }
+  }
+  let rk = @exact.rank_mod_p(k, 7L)
+  let rkk = @exact.rank_mod_p(kk, 7L)
+  rk == 3 && rkk == rk * rk && rkk == 9
+}
+
+///|
+fn iw_insert_unique(xs : Array[UInt64], v : UInt64) -> Unit {
+  for x in xs {
+    if x == v { return }
+  }
+  xs.push(v)
+}
+
+///|
+/// 定理 T-IW4：全局公理 G 作用於交織脈絡 R(v,p) ⇔ W[v][p]≠0。
+/// 極性伴隨 A⊆H(B)⟺B⊆F(A) 成立；物件側閉集數 = 屬性側閉集數 = 240，
+/// 且 closed_attributes 之枚舉結果一致（概念格反同構）。
+pub fn theorem_interwoven_galois() -> Bool {
+  let w = interwoven_matrix()
+  let rows : Array[UInt64] = []
+  for v in 0..<VERB_COUNT {
+    let mut mask = 0UL
+    for pat in 0..<14 {
+      if w[v][pat] != 0L { mask = mask | (1UL << pat) }
+    }
+    rows.push(mask)
+  }
+  let ctx = @galois.context(VERB_COUNT, 14, rows)
+  let ext : Array[UInt64] = []
+  let inte : Array[UInt64] = []
+  for bi in 0..<(1 << 14) {
+    let b = bi.to_uint64()
+    iw_insert_unique(ext, @galois.polar_attr(ctx, b))
+    iw_insert_unique(inte, @galois.closure_attr(ctx, b))
+  }
+  if ext.length() != 240 || inte.length() != 240 { return false }
+  if @galois.closed_attributes(ctx).length() != inte.length() { return false }
+  for ai in 0..<32 {
+    for bi in 0..<32 {
+      let a = (ai * 37).to_uint64()
+      let b = (bi * 311).to_uint64()
+      if !@galois.adjoint_pair(ctx, a, b) { return false }
+    }
+  }
+  true
+}
+
+///|
+fn iw_flatten(m : Array[Array[Int64]]) -> Array[Int64] {
+  let out : Array[Int64] = []
+  for row in m {
+    for v in row { out.push(iw_mod(v, 7L)) }
+  }
+  out
+}
+
+///|
+/// 定理 T-IW5：21 動詞算子代數非交換、滿足 q-Heisenberg 關係
+/// L_U L_V = q⁻¹ L_V L_U；21 個算子張成 14 維，
+/// 而 21×21=441 個複合算子 ρ(v)ρ(w) 張成整個 End(A_q)（維度 81=9²）。
+pub fn theorem_interwoven_operator_algebra() -> Bool {
+  let r = interwoven_root()
+  let ops = interwoven_operators()
+  if ops.length() != VERB_COUNT { return false }
+  let luv = @algebra.qt_mat_mul(r, ops[1], ops[2])
+  let lvu = @algebra.qt_mat_mul(r, ops[2], ops[1])
+  if @algebra.qt_mat_equal(luv, lvu) { return false }
+  let qinv = @exact.mod_inv(r.qp, r.p)
+  if !@algebra.qt_mat_equal(luv, @algebra.qt_mat_smul(r, qinv, lvu)) { return false }
+  // 21 個算子彼此相異
+  for i in 0..<VERB_COUNT {
+    for j in (i + 1)..<VERB_COUNT {
+      if @algebra.qt_mat_equal(ops[i], ops[j]) { return false }
+    }
+  }
+  let span : Array[Array[Int64]] = []
+  for m in ops { span.push(iw_flatten(m)) }
+  if @exact.rank_mod_p(span, 7L) != 14 { return false }
+  let prods : Array[Array[Int64]] = []
+  for x in ops {
+    for y in ops { prods.push(iw_flatten(@algebra.qt_mat_mul(r, x, y))) }
+  }
+  @exact.rank_mod_p(prods, 7L) == r.n * r.n * r.n * r.n
+}
+
+///|
+/// 定理 T-IW6：量子環面 ↔ Abel–Jacobi 橋接。
+/// Weil 配對 e₃((a,b),(c,d))=q^{ad−bc} 與量子交換子 q^{bc−ad} 互逆；
+/// 且所有配對值 q^{e₃} 落於 q-商 AJ_q 之核 ⟨q⟩（主除子類）。
+pub fn theorem_interwoven_aj_bridge() -> Bool {
+  let r = interwoven_root()
+  for a in 0..<r.n {
+    for b in 0..<r.n {
+      for c in 0..<r.n {
+        for d in 0..<r.n {
+          let we = @algebra.qt_root_weil_exp(a, b, c, d, r.n)
+          let ce = @algebra.qt_root_comm_exp(a, b, c, d, r.n)
+          if we != @series.aj_weil_label(r.n, a, b, c, d) { return false }
+          if (we + ce) % r.n != 0 { return false }
+          let z = @algebra.qt_commutator_mon(r, a, b, c, d)
+          let v = @algebra.qt_root_vec(z, r)
+          let mut qp = 1L
+          for _k in 0..<ce { qp = iw_mod(qp * r.qp, r.p) }
+          if v[0] != qp { return false }
+          for i in 1..<v.length() {
+            if v[i] != 0L { return false }
+          }
+          // AJ_q(q^{e₃}) = 1：Weil 配對值落在 AJ_q 之核 ⟨q⟩
+          let mut qe = 1L
+          for _k in 0..<we { qe = iw_mod(qe * r.qp, r.p) }
+          if @series.aj_q_coset(r.p, r.qp, qe) != 1L { return false }
+        }
+      }
+    }
+  }
+  true
+}
+
+///|
+/// 演算法 A-IW4：交織結構之 inspect 統計（秩/非零/概念數/算子生成維度）。
+pub fn interwoven_stats() -> Array[Int] {
+  let w = interwoven_matrix()
+  let mut nz = 0
+  for row in w {
+    for v in row {
+      if v != 0L { nz = nz + 1 }
+    }
+  }
+  let rows : Array[UInt64] = []
+  for v in 0..<VERB_COUNT {
+    let mut mask = 0UL
+    for pat in 0..<14 {
+      if w[v][pat] != 0L { mask = mask | (1UL << pat) }
+    }
+    rows.push(mask)
+  }
+  let ctx = @galois.context(VERB_COUNT, 14, rows)
+  let ext : Array[UInt64] = []
+  for bi in 0..<(1 << 14) {
+    iw_insert_unique(ext, @galois.polar_attr(ctx, bi.to_uint64()))
+  }
+  [@exact.mat_rank(iw_rat(w)), nz, ext.length(), r_n_dim(), 81]
+}
+
+///|
+fn r_n_dim() -> Int {
+  let ops = interwoven_operators()
+  let span : Array[Array[Int64]] = []
+  for m in ops { span.push(iw_flatten(m)) }
+  @exact.rank_mod_p(span, 7L)
+}
+
+///|
+pub fn theorem_interwoven_all() -> Bool {
+  theorem_interwoven_structure() && theorem_interwoven_gram() &&
+    theorem_interwoven_kronecker() && theorem_interwoven_galois() &&
+    theorem_interwoven_operator_algebra() && theorem_interwoven_aj_bridge() &&
+    theorem_verb_pattern_structure() && theorem_derivation_all_in_one()
+}

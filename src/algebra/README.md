@@ -1,6 +1,6 @@
 # src/algebra — Ore 歪多項式環、Hilbert–Poincaré、局部化、Ext¹、Morita
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得定理列表
 
@@ -42,6 +42,14 @@
 - **T-PV2** δ-Galois gauge 群精確階數：480 / 20 / 16 / 480 與乘法封閉
 - **T-PV3** Kovacic 第一型有限 Galois 對應：Riccati 根數 = 不變直線數 = dim V
 - **T-PV4** C1-04 G_a(F₅) 模型嵌入一般 gauge 群之階 p 加法子群
+- **T-QT1** 定義關係 VU=qUV、U/V 可逆、乘法結合（2-上循環 ω=b·c）
+- **T-QT2** 正則跡 τ 為循環跡 τ(xy)=τ(yx)
+- **T-QT3** δ₁,δ₂ 滿足 Leibniz／交換／τ∘δᵢ=0；Connes 循環 2-上循環循環不變且非恆零
+- **T-QT4** qⁿ=1 時中心由 Uⁿ,Vⁿ 生成：U^aV^b 與 U,V 同時交換 ⟺ n|a 且 n|b
+- **T-QT5** Heisenberg clock/shift 表示 VU=qUV、U³=V³=I、L_U L_V=q⁻¹L_V L_U
+- **T-QT6** Weil 配對雙線性／交錯／非退化；[g_x,g_y]=q^{bc−ad}=e_n(x,y)⁻¹
+- **T-QT7** SL₂(ℤ) Morita 作用：么模基底變換、ℤ+θℤ 保持、(gh)·θ=g·(h·θ)
+- **T-QT8** 量子二維環面七項憑證合取
 
 ## 已實作演算法列表
 
@@ -71,6 +79,14 @@
 - **AL128** diff_solution_nullity（2m×2m F_p 線性映射秩）（O(m³)）
 - **AL129** dm_gl2 / diff_gauge_group / diff_invariant_lines（O(p⁴·m+p²·|G|)）
 - **AL130** diff_riccati_roots / theorem_pv_kovacic（O(p·m²)）
+- **AL131** qt_mul / qt_add / qt_norm（2-上循環 ω=b·c）（O(|x|·|y|)）
+- **AL132** qt_trace / qt_deriv / qt_star / qt_commutator_mon（O(|x|²)）
+- **AL133** qt_root_vec / qt_root_mul_vec（n² 維 F_p 代數）（O(n⁴)）
+- **AL134** qt_root_left_matrix / qt_root_deriv_matrix / qt_root_label_star（O(n⁴)）
+- **AL135** qt_mat_add / qt_mat_sub / qt_mat_mul / qt_mat_smul（O(n⁶)）
+- **AL136** qt_root_weil_exp / qt_root_comm_exp（O(1)）
+- **AL137** theorem_qt_morita_sl2（SL₂(ℤ) 有理分式作用與群律）（O(|G|²)）
+- **AL155** qt_root_qshift_matrix / qt_root_trace_projection（O(n⁴)）
 
 ## 等式
 
@@ -90,6 +106,14 @@
 - **E55** Ore bound：`deg φ ≤ 2 deg f；φ = N(f)/lc(N(f))`
 - **E65** A¹-同倫不變性：`K₀(F_5[u])≅K₀(F_5)≅ℤ；det[[a,b],[−q,p]]=1`
 - **E80** δ-Galois / Abel / Kovacic：`δ(det Y)=tr(A)det Y；G=⋂Z_{GL₂}(A_k)；δu+u²+a₁u+a₀=0`
+- **E81** 量子環面定義關係：`VU = q UV；ω((a,b),(c,d)) = b·c`
+- **E82** 單項乘法：`(q^{e₁}U^{a₁}V^{b₁})(q^{e₂}U^{a₂}V^{b₂}) = q^{e₁+e₂+b₁a₂}U^{a₁+a₂}V^{b₁+b₂}`
+- **E83** 正則跡：`τ(Σ c_{a,b}U^aV^b) = c_{0,0}；τ(xy)=τ(yx)`
+- **E84** Connes 循環 2-上循環：`φ(x⁰,x¹,x²)=τ(x⁰δ₁x¹δ₂x²−x⁰δ₂x¹δ₁x²)，φ 循環不變`
+- **E85** root of unity 中心：`qⁿ=1 ⇒ Z(A_q)=F[Uⁿ,Vⁿ]；[U^aV^b,U]=0∧[U^aV^b,V]=0 ⟺ n|a,n|b`
+- **E86** Weil pairing：`e_n((a,b),(c,d))=q^{ad−bc}；[g_x,g_y]=q^{bc−ad}=e_n(x,y)⁻¹`
+- **E87** Heisenberg 表示：`U=diag(q^{−i}), V e_i=e_{i+1} ⇒ VU=qUV, Uⁿ=Vⁿ=I`
+- **E88** SL₂(ℤ) Morita：`θ↦(aθ+b)/(cθ+d)；ℤ+θℤ ≅ (cθ+d)⁻¹(ℤ+θℤ)；K₀(A_θ)≅ℤ+θℤ`
 
 ## 資料夾視角依賴關係圖
 
@@ -145,10 +169,22 @@
   theorem_delta_galois  fu_gcd_ext  a1_homotopy  theorem_a1_invariance
   theorem_a1_laurent  diff_module  diff_fundamental  theorem_pv_wronskian
   diff_solution_nullity  diff_gauge_group  diff_invariant_lines  diff_riccati_roots
-  theorem_pv_gauge_group  theorem_pv_kovacic  theorem_pv_additive_subgroup  SkewPoly
+  theorem_pv_gauge_group  theorem_pv_kovacic  theorem_pv_additive_subgroup  qt_mono
+  qt_zero  qt_one  qt_u  qt_v
+  qt_q  qt_u_inv  qt_v_inv  qt_add
+  qt_neg  qt_sub  qt_mul  qt_equal
+  qt_trace  qt_deriv  qt_star  qt_commutator_mon
+  qt_root_reduce  qt_root_vec  qt_root_mono_vec  qt_root_mul_vec
+  qt_root_trace  qt_root_left_matrix  qt_root_identity_matrix  qt_root_deriv_matrix
+  qt_root_label_star  qt_mat_add  qt_mat_sub  qt_mat_mul
+  qt_mat_smul  qt_mat_equal  qt_root_apply  qt_root_weil_exp
+  qt_root_comm_exp  qt_root_qshift_matrix  qt_root_trace_projection  theorem_qt_relation
+  theorem_qt_trace_cyclic  theorem_qt_derivations  theorem_qt_center  theorem_qt_heisenberg
+  theorem_qt_weil_pairing  theorem_qt_morita_sl2  theorem_quantum_torus  SkewPoly
   OreDiv  Fq2  SkewFq  SFqDiv
   OreGCL  F5pDiv  SkewGB  FuDiv
-  FuBezout  DiffModule
+  FuBezout  DiffModule  QTMon  QTElem
+  QTRoot
 ```
 
 ## 驗證

@@ -2057,3 +2057,704 @@ pub fn theorem_pv_additive_subgroup() -> Bool {
   cnt == 5 && closed && g.length() == 20 && g.length() % cnt == 0 &&
     theorem_pv_wronskian() && theorem_pv_gauge_group() && theorem_pv_kovacic()
 }
+
+///|
+/// ═══════════════════════════════════════════════════════════════════════
+/// C1-06 (A) — 量子二維環面 O_q(T²) = O_q((F^×)²)
+/// 生成元 U^{±1}, V^{±1}，定義關係 VU = q UV（R56 arXiv:1503.06045 §1）。
+/// 單項 q^e U^a V^b，2-上循環 ω((a,b),(c,d)) = b·c：
+///   (q^{e₁}U^{a₁}V^{b₁})(q^{e₂}U^{a₂}V^{b₂})
+///     = q^{e₁+e₂+b₁a₂} U^{a₁+a₂} V^{b₁+b₂}.
+/// 提供正則跡 τ、導數 δ₁/δ₂、對合 *、交換子、
+/// qⁿ=1 之中心、Weil 配對、Heisenberg clock/shift 表示、
+/// Rieffel–Schwarz SL₂(ℤ) Morita 作用，以及 (ℤ/n)² 上之有限矩陣 API。
+/// ═══════════════════════════════════════════════════════════════════════
+
+///|
+pub(all) struct QTMon {
+  e : Int
+  a : Int
+  b : Int
+  c : Int64
+}
+
+///|
+pub(all) struct QTElem {
+  terms : Array[QTMon]
+}
+
+///|
+/// q 為 F_p 中階數 n 的元素（qⁿ=1），root algebra 為 n² 維 F_p-代數。
+pub(all) struct QTRoot {
+  n : Int
+  p : Int64
+  qp : Int64
+}
+
+///|
+fn qt_key(x : QTMon, y : QTMon) -> Bool {
+  x.e == y.e && x.a == y.a && x.b == y.b
+}
+
+///|
+fn qt_norm(ts : Array[QTMon]) -> Array[QTMon] {
+  let out : Array[QTMon] = []
+  for t in ts {
+    let mut found = false
+    for i in 0..<out.length() {
+      if qt_key(out[i], t) {
+        out[i] = QTMon::{ e: out[i].e, a: out[i].a, b: out[i].b, c: out[i].c + t.c }
+        found = true
+        break
+      }
+    }
+    if !found { out.push(t) }
+  }
+  let res : Array[QTMon] = []
+  for t in out {
+    if t.c != 0L { res.push(t) }
+  }
+  res
+}
+
+///|
+pub fn qt_mono(e : Int, a : Int, b : Int, c : Int64) -> QTElem {
+  QTElem::{ terms: [QTMon::{ e, a, b, c }] }
+}
+
+///|
+pub fn qt_zero() -> QTElem { QTElem::{ terms: [] } }
+
+///|
+pub fn qt_one() -> QTElem { qt_mono(0, 0, 0, 1L) }
+
+///|
+pub fn qt_u() -> QTElem { qt_mono(0, 1, 0, 1L) }
+
+///|
+pub fn qt_v() -> QTElem { qt_mono(0, 0, 1, 1L) }
+
+///|
+pub fn qt_q() -> QTElem { qt_mono(1, 0, 0, 1L) }
+
+///|
+pub fn qt_u_inv() -> QTElem { qt_mono(0, -1, 0, 1L) }
+
+///|
+pub fn qt_v_inv() -> QTElem { qt_mono(0, 0, -1, 1L) }
+
+///|
+pub fn qt_add(x : QTElem, y : QTElem) -> QTElem {
+  let ts : Array[QTMon] = []
+  for t in x.terms { ts.push(t) }
+  for t in y.terms { ts.push(t) }
+  QTElem::{ terms: qt_norm(ts) }
+}
+
+///|
+pub fn qt_neg(x : QTElem) -> QTElem {
+  let ts : Array[QTMon] = []
+  for t in x.terms { ts.push(QTMon::{ e: t.e, a: t.a, b: t.b, c: -t.c }) }
+  QTElem::{ terms: qt_norm(ts) }
+}
+
+///|
+pub fn qt_sub(x : QTElem, y : QTElem) -> QTElem { qt_add(x, qt_neg(y)) }
+
+///|
+pub fn qt_mul(x : QTElem, y : QTElem) -> QTElem {
+  let ts : Array[QTMon] = []
+  for m in x.terms {
+    for t in y.terms {
+      ts.push(QTMon::{
+        e: m.e + t.e + m.b * t.a, a: m.a + t.a, b: m.b + t.b, c: m.c * t.c,
+      })
+    }
+  }
+  QTElem::{ terms: qt_norm(ts) }
+}
+
+///|
+pub fn qt_equal(x : QTElem, y : QTElem) -> Bool {
+  if x.terms.length() != y.terms.length() { return false }
+  for m in x.terms {
+    let mut ok = false
+    for t in y.terms {
+      if qt_key(m, t) && m.c == t.c { ok = true; break }
+    }
+    if !ok { return false }
+  }
+  true
+}
+
+///|
+/// 正則跡 τ：取 a=b=0 之子空間（係數為 q 的洛朗多項式）。
+pub fn qt_trace(x : QTElem) -> QTElem {
+  let ts : Array[QTMon] = []
+  for t in x.terms {
+    if t.a == 0 && t.b == 0 { ts.push(t) }
+  }
+  QTElem::{ terms: qt_norm(ts) }
+}
+
+///|
+/// δ₁(U^aV^b)=a·U^aV^b, δ₂(U^aV^b)=b·U^aV^b（Rieffel 導數）。
+pub fn qt_deriv(x : QTElem, k : Int) -> QTElem {
+  let ts : Array[QTMon] = []
+  for t in x.terms {
+    let w = if k == 1 { t.a } else { t.b }
+    ts.push(QTMon::{ e: t.e, a: t.a, b: t.b, c: t.c * w.to_int64() })
+  }
+  QTElem::{ terms: qt_norm(ts) }
+}
+
+///|
+/// 么正對合：U*=U⁻¹, V*=V⁻¹, q*=q⁻¹，(xy)*=y*x*，
+/// 故 (q^e U^a V^b)* = q^{−e+ab} U^{−a} V^{−b}。
+pub fn qt_star(x : QTElem) -> QTElem {
+  let ts : Array[QTMon] = []
+  for t in x.terms {
+    ts.push(QTMon::{
+      e: -t.e + t.a * t.b, a: -t.a, b: -t.b, c: t.c,
+    })
+  }
+  QTElem::{ terms: qt_norm(ts) }
+}
+
+///|
+/// 單項之逆：(q^e U^aV^b)⁻¹ = q^{−e+ab} U^{−a}V^{−b}。
+fn qt_mon_inv(t : QTMon) -> QTMon {
+  QTMon::{ e: -t.e + t.a * t.b, a: -t.a, b: -t.b, c: t.c }
+}
+
+///|
+/// 群交換子 [g_x,g_y] = g_x g_y g_x⁻¹ g_y⁻¹，於 qⁿ=1 之 root algebra
+/// 應等於 q^{bc−ad}·1（負的 symplectic/Weil 形式）。
+pub fn qt_commutator_mon(r : QTRoot, a : Int, b : Int, c : Int, d : Int) -> QTElem {
+  let gx = qt_mono(0, a, b, 1L)
+  let gy = qt_mono(0, c, d, 1L)
+  let gxi = QTElem::{ terms: [qt_mon_inv(QTMon::{ e: 0, a, b, c: 1L })] }
+  let gyi = QTElem::{ terms: [qt_mon_inv(QTMon::{ e: 0, a: c, b: d, c: 1L })] }
+  let z = qt_mul(qt_mul(qt_mul(gx, gy), gxi), gyi)
+  qt_root_reduce(z, r)
+}
+
+///|
+fn qpow_mod(base0 : Int64, e0 : Int, p : Int64) -> Int64 {
+  let mut base = ((base0 % p) + p) % p
+  let mut e = e0
+  let mut out = 1L
+  while e > 0 {
+    if (e & 1) == 1 { out = (out * base) % p }
+    base = (base * base) % p
+    e = e >> 1
+  }
+  out
+}
+
+///|
+fn qmod(x : Int, n : Int) -> Int { ((x % n) + n) % n }
+
+///|
+/// 在 qⁿ=1 下化簡：e,a,b 各取 mod n。
+pub fn qt_root_reduce(x : QTElem, r : QTRoot) -> QTElem {
+  let ts : Array[QTMon] = []
+  for t in x.terms {
+    ts.push(QTMon::{
+      e: qmod(t.e, r.n), a: qmod(t.a, r.n), b: qmod(t.b, r.n), c: t.c,
+    })
+  }
+  QTElem::{ terms: qt_norm(ts) }
+}
+
+///|
+/// 把 QTElem 轉成 root algebra 的 n² 維係數向量（q^e 以 qp^e ∈ F_p 代入）。
+pub fn qt_root_vec(x : QTElem, r : QTRoot) -> Array[Int64] {
+  let d = r.n * r.n
+  let out : Array[Int64] = Array::make(d, 0L)
+  for t in x.terms {
+    let e = qmod(t.e, r.n)
+    let a = qmod(t.a, r.n)
+    let b = qmod(t.b, r.n)
+    let idx = a * r.n + b
+    let c = (((t.c % r.p) + r.p) % r.p) * qpow_mod(r.qp, e, r.p)
+    out[idx] = ((out[idx] + c) % r.p + r.p) % r.p
+  }
+  out
+}
+
+///|
+pub fn qt_root_mono_vec(r : QTRoot, a : Int, b : Int) -> Array[Int64] {
+  qt_root_vec(qt_mono(0, a, b, 1L), r)
+}
+
+///|
+pub fn qt_root_mul_vec(r : QTRoot, x : Array[Int64], y : Array[Int64]) -> Array[Int64] {
+  let n = r.n
+  let out : Array[Int64] = Array::make(n * n, 0L)
+  for a1 in 0..<n {
+    for b1 in 0..<n {
+      let cx = x[a1 * n + b1]
+      if cx == 0L { continue }
+      for a2 in 0..<n {
+        for b2 in 0..<n {
+          let cy = y[a2 * n + b2]
+          if cy == 0L { continue }
+          let w = qpow_mod(r.qp, qmod(b1 * a2, n), r.p)
+          let idx = qmod(a1 + a2, n) * n + qmod(b1 + b2, n)
+          out[idx] = ((out[idx] + cx * cy % r.p * w) % r.p + r.p) % r.p
+        }
+      }
+    }
+  }
+  out
+}
+
+///|
+pub fn qt_root_trace(v : Array[Int64]) -> Int64 { v[0] }
+
+///|
+pub fn qt_root_left_matrix(r : QTRoot, v : Array[Int64]) -> Array[Array[Int64]] {
+  let d = r.n * r.n
+  let out : Array[Array[Int64]] = []
+  for _i in 0..<d { out.push(Array::make(d, 0L)) }
+  for j in 0..<d {
+    let e : Array[Int64] = Array::make(d, 0L)
+    e[j] = 1L
+    let col = qt_root_mul_vec(r, v, e)
+    for i in 0..<d { out[i][j] = col[i] }
+  }
+  out
+}
+
+///|
+pub fn qt_root_identity_matrix(r : QTRoot) -> Array[Array[Int64]] {
+  let d = r.n * r.n
+  let out : Array[Array[Int64]] = []
+  for i in 0..<d {
+    let row : Array[Int64] = Array::make(d, 0L)
+    row[i] = 1L
+    out.push(row)
+  }
+  out
+}
+
+///|
+pub fn qt_root_deriv_matrix(r : QTRoot, k : Int) -> Array[Array[Int64]] {
+  let d = r.n * r.n
+  let out : Array[Array[Int64]] = []
+  for i in 0..<d {
+    let row : Array[Int64] = Array::make(d, 0L)
+    let w = if k == 1 { i / r.n } else { i % r.n }
+    row[i] = w.to_int64() % r.p
+    out.push(row)
+  }
+  out
+}
+
+///|
+/// 標號對合 (a,b) ↦ (−a,−b) 的置換矩陣（21 動詞之鏡像對稱算子）。
+pub fn qt_root_label_star(r : QTRoot) -> Array[Array[Int64]] {
+  let d = r.n * r.n
+  let out : Array[Array[Int64]] = []
+  for _i in 0..<d { out.push(Array::make(d, 0L)) }
+  for a in 0..<r.n {
+    for b in 0..<r.n {
+      let src = a * r.n + b
+      let dst = qmod(-a, r.n) * r.n + qmod(-b, r.n)
+      out[dst][src] = 1L
+    }
+  }
+  out
+}
+
+///|
+pub fn qt_mat_add(r : QTRoot, x : Array[Array[Int64]], y : Array[Array[Int64]]) -> Array[Array[Int64]] {
+  let d = x.length()
+  let out : Array[Array[Int64]] = []
+  for i in 0..<d {
+    let row : Array[Int64] = Array::make(d, 0L)
+    for j in 0..<d { row[j] = ((x[i][j] + y[i][j]) % r.p + r.p) % r.p }
+    out.push(row)
+  }
+  out
+}
+
+///|
+pub fn qt_mat_sub(r : QTRoot, x : Array[Array[Int64]], y : Array[Array[Int64]]) -> Array[Array[Int64]] {
+  let d = x.length()
+  let out : Array[Array[Int64]] = []
+  for i in 0..<d {
+    let row : Array[Int64] = Array::make(d, 0L)
+    for j in 0..<d { row[j] = ((x[i][j] - y[i][j]) % r.p + r.p) % r.p }
+    out.push(row)
+  }
+  out
+}
+
+///|
+pub fn qt_mat_mul(r : QTRoot, x : Array[Array[Int64]], y : Array[Array[Int64]]) -> Array[Array[Int64]] {
+  let d = x.length()
+  let out : Array[Array[Int64]] = []
+  for i in 0..<d {
+    let row : Array[Int64] = Array::make(d, 0L)
+    for j in 0..<d {
+      let mut acc = 0L
+      for t in 0..<d { acc = (acc + x[i][t] * y[t][j]) % r.p }
+      row[j] = (acc + r.p) % r.p
+    }
+    out.push(row)
+  }
+  out
+}
+
+///|
+pub fn qt_mat_smul(r : QTRoot, s : Int64, x : Array[Array[Int64]]) -> Array[Array[Int64]] {
+  let d = x.length()
+  let out : Array[Array[Int64]] = []
+  for i in 0..<d {
+    let row : Array[Int64] = Array::make(d, 0L)
+    for j in 0..<d { row[j] = ((s * x[i][j]) % r.p + r.p) % r.p }
+    out.push(row)
+  }
+  out
+}
+
+///|
+pub fn qt_mat_equal(x : Array[Array[Int64]], y : Array[Array[Int64]]) -> Bool {
+  let d = x.length()
+  if d != y.length() { return false }
+  for i in 0..<d {
+    for j in 0..<d {
+      if x[i][j] != y[i][j] { return false }
+    }
+  }
+  true
+}
+
+///|
+pub fn qt_root_apply(m : Array[Array[Int64]], v : Array[Int64], p : Int64) -> Array[Int64] {
+  let d = v.length()
+  let out : Array[Int64] = Array::make(d, 0L)
+  for i in 0..<d {
+    let mut acc = 0L
+    for j in 0..<d { acc = (acc + m[i][j] * v[j]) % p }
+    out[i] = (acc + p) % p
+  }
+  out
+}
+
+///|
+/// Weil 配對 e_n((a,b),(c,d)) = q^{ad−bc}（symplectic 形式）。
+pub fn qt_root_weil_exp(a : Int, b : Int, c : Int, d : Int, n : Int) -> Int {
+  qmod(a * d - b * c, n)
+}
+
+///|
+/// 群交換子指數 bc−ad（= Weil 形式之負）。
+pub fn qt_root_comm_exp(a : Int, b : Int, c : Int, d : Int, n : Int) -> Int {
+  qmod(b * c - a * d, n)
+}
+
+///|
+pub fn qt_root_qshift_matrix(r : QTRoot) -> Array[Array[Int64]] {
+  qt_mat_smul(r, r.qp, qt_root_identity_matrix(r))
+}
+
+///|
+/// 正則跡投影：只保留 U⁰V⁰ 係數。
+pub fn qt_root_trace_projection(r : QTRoot) -> Array[Array[Int64]] {
+  let d = r.n * r.n
+  let out : Array[Array[Int64]] = []
+  for i in 0..<d {
+    let row : Array[Int64] = Array::make(d, 0L)
+    if i == 0 { row[0] = 1L }
+    out.push(row)
+  }
+  out
+}
+
+///|
+fn qt_mat_power(r : QTRoot, x : Array[Array[Int64]], k : Int) -> Array[Array[Int64]] {
+  let d = x.length()
+  let mut out : Array[Array[Int64]] = []
+  for i in 0..<d {
+    let row : Array[Int64] = Array::make(d, 0L)
+    row[i] = 1L
+    out.push(row)
+  }
+  for _i in 0..<k { out = qt_mat_mul(r, out, x) }
+  out
+}
+
+///|
+/// 定理 T-QT1：定義關係 VU=qUV、U/V 可逆、乘法結合（2-上循環 ω=b·c）。
+pub fn theorem_qt_relation() -> Bool {
+  if !qt_equal(qt_mul(qt_v(), qt_u()), qt_mul(qt_q(), qt_mul(qt_u(), qt_v()))) {
+    return false
+  }
+  for pair in [(qt_u(), qt_u_inv()), (qt_u_inv(), qt_u()),
+               (qt_v(), qt_v_inv()), (qt_v_inv(), qt_v())] {
+    if !qt_equal(qt_mul(pair.0, pair.1), qt_one()) { return false }
+  }
+  let samples = [
+    qt_mono(0, 1, 0, 1L), qt_mono(0, 0, 1, 1L), qt_mono(1, 2, -1, 1L),
+    qt_mono(-2, -1, 2, 1L), qt_mono(3, 0, 0, 1L), qt_mono(-1, 3, 1, 1L),
+  ]
+  for x in samples {
+    for y in samples {
+      for z in samples {
+        if !qt_equal(qt_mul(qt_mul(x, y), z), qt_mul(x, qt_mul(y, z))) {
+          return false
+        }
+      }
+    }
+  }
+  // ω 之 2-上循環條件：b₁a₂+(b₁+b₂)a₃ = b₂a₃+b₁(a₂+a₃)
+  for b1 in -2..<3 {
+    for a2 in -2..<3 {
+      for b2 in -2..<3 {
+        for a3 in -2..<3 {
+          let l = b1 * a2 + (b1 + b2) * a3
+          let rr = b2 * a3 + b1 * (a2 + a3)
+          if l != rr { return false }
+        }
+      }
+    }
+  }
+  true
+}
+
+///|
+/// 定理 T-QT2：正則跡 τ 為循環跡 τ(xy)=τ(yx)。
+pub fn theorem_qt_trace_cyclic() -> Bool {
+  let samples = [
+    qt_add(qt_u(), qt_v()),
+    qt_add(qt_mono(1, 2, -1, 3L), qt_mono(-1, -2, 1, 2L)),
+    qt_add(qt_mono(0, 0, 0, 5L), qt_add(qt_mono(2, 1, 1, 1L), qt_mono(-2, -1, -1, 4L))),
+    qt_add(qt_mono(0, 3, 0, 2L), qt_mono(0, -3, 0, 7L)),
+  ]
+  for x in samples {
+    for y in samples {
+      if !qt_equal(qt_trace(qt_mul(x, y)), qt_trace(qt_mul(y, x))) { return false }
+    }
+  }
+  true
+}
+
+///|
+/// 定理 T-QT3：δ₁,δ₂ 滿足 Leibniz、互相交換、τ∘δᵢ=0；
+/// Connes 循環 2-上循環 φ(x⁰,x¹,x²)=τ(x⁰δ₁x¹δ₂x²−x⁰δ₂x¹δ₁x²)
+/// 為循環不變且非恆零。
+pub fn theorem_qt_derivations() -> Bool {
+  let samples = [
+    qt_u(), qt_v(), qt_mul(qt_u(), qt_v()), qt_mono(2, 2, -1, 1L),
+    qt_mono(-1, -1, 2, 1L), qt_add(qt_u(), qt_mono(1, 0, 2, 3L)),
+  ]
+  for k in [1, 2] {
+    for x in samples {
+      for y in samples {
+        let lhs = qt_deriv(qt_mul(x, y), k)
+        let rhs = qt_add(qt_mul(qt_deriv(x, k), y), qt_mul(x, qt_deriv(y, k)))
+        if !qt_equal(lhs, rhs) { return false }
+      }
+    }
+  }
+  for x in samples {
+    if !qt_equal(qt_deriv(qt_deriv(x, 1), 2), qt_deriv(qt_deriv(x, 2), 1)) {
+      return false
+    }
+    if !qt_equal(qt_trace(qt_deriv(x, 1)), qt_zero()) { return false }
+    if !qt_equal(qt_trace(qt_deriv(x, 2)), qt_zero()) { return false }
+  }
+  // φ 之循環不變性與非平凡性
+  let cc = [
+    qt_one(), qt_u(), qt_v(), qt_mul(qt_u(), qt_v()),
+    qt_mono(0, -1, -1, 1L), qt_mono(0, 1, 1, 1L),
+    qt_mono(1, 2, -1, 1L), qt_mono(2, -1, 2, 1L),
+  ]
+  let mut nonzero = false
+  for x0 in cc {
+    for x1 in cc {
+      for x2 in cc {
+        let t1 = qt_mul(qt_mul(x0, qt_deriv(x1, 1)), qt_deriv(x2, 2))
+        let t2 = qt_mul(qt_mul(x0, qt_deriv(x1, 2)), qt_deriv(x2, 1))
+        let ph = qt_trace(qt_sub(t1, t2))
+        let t1c = qt_mul(qt_mul(x2, qt_deriv(x0, 1)), qt_deriv(x1, 2))
+        let t2c = qt_mul(qt_mul(x2, qt_deriv(x0, 2)), qt_deriv(x1, 1))
+        let phc = qt_trace(qt_sub(t1c, t2c))
+        if !qt_equal(ph, phc) { return false }
+        if ph.terms.length() > 0 { nonzero = true }
+      }
+    }
+  }
+  nonzero
+}
+
+///|
+/// 定理 T-QT4：qⁿ=1 時中心恰由 Uⁿ,Vⁿ 生成：
+/// 單項 U^aV^b 與 U、V 同時交換 ⟺ n|a 且 n|b。
+pub fn theorem_qt_center() -> Bool {
+  for n in [3, 5] {
+    let r = QTRoot::{ n, p: 11L, qp: 3L }
+    for a in -n..<(2 * n) {
+      for b in -n..<(2 * n) {
+        let m = qt_mono(0, a, b, 1L)
+        let cu = qt_equal(qt_root_reduce(qt_mul(m, qt_u()), r),
+                          qt_root_reduce(qt_mul(qt_u(), m), r))
+        let cv = qt_equal(qt_root_reduce(qt_mul(m, qt_v()), r),
+                          qt_root_reduce(qt_mul(qt_v(), m), r))
+        let want = qmod(a, n) == 0 && qmod(b, n) == 0
+        if (cu && cv) != want { return false }
+      }
+    }
+  }
+  true
+}
+
+///|
+/// 定理 T-QT5：Heisenberg clock/shift 表示（F₇, q=2, n=3）。
+/// U=diag(q^{−i}), V e_i=e_{i+1} ⇒ VU=qUV, U³=V³=I；
+/// 且 root algebra 之左乘算子滿足 L_U L_V = q⁻¹ L_V L_U。
+pub fn theorem_qt_heisenberg() -> Bool {
+  let r = QTRoot::{ n: 3, p: 7L, qp: 2L }
+  let qinv = @exact.mod_inv(r.qp, r.p)
+  let um : Array[Array[Int64]] = []
+  let vm : Array[Array[Int64]] = []
+  for i in 0..<r.n {
+    let ur : Array[Int64] = Array::make(r.n, 0L)
+    let vr : Array[Int64] = Array::make(r.n, 0L)
+    let mut pw = 1L
+    for _k in 0..<i { pw = (pw * qinv) % r.p }
+    ur[i] = pw
+    vr[qmod(i - 1, r.n)] = 1L
+    um.push(ur)
+    vm.push(vr)
+  }
+  let vu = qt_mat_mul(r, vm, um)
+  let quv = qt_mat_smul(r, r.qp, qt_mat_mul(r, um, vm))
+  if !qt_mat_equal(vu, quv) { return false }
+  let id3 : Array[Array[Int64]] = [
+    [1L, 0L, 0L], [0L, 1L, 0L], [0L, 0L, 1L],
+  ]
+  if !qt_mat_equal(qt_mat_power(r, um, r.n), id3) { return false }
+  if !qt_mat_equal(qt_mat_power(r, vm, r.n), id3) { return false }
+  let lu = qt_root_left_matrix(r, qt_root_mono_vec(r, 1, 0))
+  let lv = qt_root_left_matrix(r, qt_root_mono_vec(r, 0, 1))
+  let luv = qt_mat_mul(r, lu, lv)
+  let lvu = qt_mat_mul(r, lv, lu)
+  let qinv_scaled = qt_mat_smul(r, qinv, lvu)
+  qt_mat_equal(luv, qinv_scaled)
+}
+
+///|
+/// 定理 T-QT6：Weil 配對 e_n(x,y)=q^{ad−bc} 雙線性／交錯／非退化；
+/// 量子環面交換子 [g_x,g_y]=q^{bc−ad} = e_n(x,y)⁻¹（精確代數計算）。
+pub fn theorem_qt_weil_pairing() -> Bool {
+  let r = QTRoot::{ n: 3, p: 7L, qp: 2L }
+  let pts : Array[Array[Int]] = []
+  for a in 0..<r.n {
+    for b in 0..<r.n { pts.push([a, b]) }
+  }
+  for x in pts {
+    for y in pts {
+      for z in pts {
+        let sx = [qmod(x[0] + y[0], r.n), qmod(x[1] + y[1], r.n)]
+        let e1 = qt_root_weil_exp(sx[0], sx[1], z[0], z[1], r.n)
+        let e2 = qmod(qt_root_weil_exp(x[0], x[1], z[0], z[1], r.n) +
+                      qt_root_weil_exp(y[0], y[1], z[0], z[1], r.n), r.n)
+        if e1 != e2 { return false }
+        let e3 = qt_root_weil_exp(x[0], x[1], qmod(y[0] + z[0], r.n),
+                                  qmod(y[1] + z[1], r.n), r.n)
+        let e4 = qmod(qt_root_weil_exp(x[0], x[1], y[0], y[1], r.n) +
+                      qt_root_weil_exp(x[0], x[1], z[0], z[1], r.n), r.n)
+        if e3 != e4 { return false }
+      }
+    }
+    if qt_root_weil_exp(x[0], x[1], x[0], x[1], r.n) != 0 { return false }
+    if x[0] != 0 || x[1] != 0 {
+      let mut found = false
+      for y in pts {
+        if qt_root_weil_exp(x[0], x[1], y[0], y[1], r.n) != 0 { found = true; break }
+      }
+      if !found { return false }
+    }
+  }
+  // 交換子由代數乘積實算；其 root 向量須為 q^{bc−ad}·e₀
+  for x in pts {
+    for y in pts {
+      let z = qt_commutator_mon(r, x[0], x[1], y[0], y[1])
+      let v = qt_root_vec(z, r)
+      let expect = qpow_mod(r.qp, qt_root_comm_exp(x[0], x[1], y[0], y[1], r.n), r.p)
+      if v[0] != expect { return false }
+      for i in 1..<v.length() {
+        if v[i] != 0L { return false }
+      }
+      if qmod(qt_root_weil_exp(x[0], x[1], y[0], y[1], r.n) +
+              qt_root_comm_exp(x[0], x[1], y[0], y[1], r.n), r.n) != 0 { return false }
+    }
+  }
+  true
+}
+
+///|
+/// 定理 T-QT7：Rieffel–Schwarz SL₂(ℤ) Morita 作用 θ↦(aθ+b)/(cθ+d)。
+/// 對 θ=p/n，矩陣 [[d,b],[c,a]] 行列式 = ad−bc = 1 為么模基底變換，
+/// 故 ℤ+θℤ 映為 (cθ+d)⁻¹(ℤ+θℤ)；並驗證 (gh)·θ = g·(h·θ)。
+pub fn theorem_qt_morita_sl2() -> Bool {
+  let theta = @exact.rat(1L, 3L)
+  let gs = [
+    [0L, -1L, 1L, 0L], [1L, 1L, 0L, 1L], [1L, 0L, 1L, 1L],
+    [0L, -1L, 1L, 1L], [1L, -1L, 1L, 0L], [2L, 1L, 1L, 1L],
+  ]
+  fn act(g : Array[Int64], t : @exact.Rat) -> @exact.Rat? {
+    let num = @exact.rat_int(g[0]).mul(t).add(@exact.rat_int(g[1]))
+    let den = @exact.rat_int(g[2]).mul(t).add(@exact.rat_int(g[3]))
+    if den.is_zero() { None } else { num.div(den) }
+  }
+  for g in gs {
+    if g[0] * g[3] - g[1] * g[2] != 1L { return false }
+    let t = match act(g, theta) {
+      Some(v) => v
+      None => return false
+    }
+    // (cθ+d)·θ' = aθ+b
+    let den = @exact.rat_int(g[2]).mul(theta).add(@exact.rat_int(g[3]))
+    let lhs = den.mul(t)
+    let rhs = @exact.rat_int(g[0]).mul(theta).add(@exact.rat_int(g[1]))
+    if !lhs.equal(rhs) { return false }
+    // 基底變換 [[d,b],[c,a]] 之行列式 = 1
+    if g[3] * g[0] - g[1] * g[2] != 1L { return false }
+  }
+  for g in gs {
+    for h in gs {
+      let gh : Array[Int64] = [
+        g[0] * h[0] + g[1] * h[2], g[0] * h[1] + g[1] * h[3],
+        g[2] * h[0] + g[3] * h[2], g[2] * h[1] + g[3] * h[3],
+      ]
+      if gh[0] * gh[3] - gh[1] * gh[2] != 1L { return false }
+      let th = match act(h, theta) {
+        Some(v) => v
+        None => return false
+      }
+      let left = match act(gh, theta) {
+        Some(v) => v
+        None => return false
+      }
+      let right = match act(g, th) {
+        Some(v) => v
+        None => return false
+      }
+      if !left.equal(right) { return false }
+    }
+  }
+  true
+}
+
+///|
+pub fn theorem_quantum_torus() -> Bool {
+  theorem_qt_relation() && theorem_qt_trace_cyclic() &&
+    theorem_qt_derivations() && theorem_qt_center() &&
+    theorem_qt_heisenberg() && theorem_qt_weil_pairing() &&
+    theorem_qt_morita_sl2()
+}

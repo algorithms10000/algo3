@@ -1193,3 +1193,235 @@ C1 開發流水帳本 (Dev.txt) — 流水式，每回合追加，直到工程�
   - build_catalog.py 之 catalog.json round、xlsx 索引回合、
     文獻範圍字串全數由 C1-04 更新為 C1-05；README 之
     355/110/51/45 等舊數字全數更新為 421/130/56/55。
+
+================================================================================
+[回合 C1-06] 日期 2026-11-08 (Asia/Hong_Kong, UTC+8)
+  狀態：量子二維環面 O_q(T²)／Abel–Jacobi／21×14 動詞交織 已完成
+  使用者指示：「實做量子二維環面 O_q(T²) 及阿貝爾-雅可比映射，運用21動詞及14範例，
+  以致21×14加上數學結構與自己相互交織後，得出既定理及演算法。」
+  依《工程約束》「非首次開發、創建新文檔前需先獲准」，本回合僅修改既有檔案，
+  未新增任何文檔；查證、結案與實測全部寫入 Dev.txt、README.md
+  （由 tools/build_readmes.py 產生）、docs/catalog.json、src/catalog/catalog.mbt、
+  algorithm.xlsx 與既有 src/algebra、src/series、src/compose 三套件。
+  本回合不使用 --release、不做白箱/黑箱/冒煙測試、不做基準測試、無 stub/mock/
+  fake/玩具模型/恆真式；每組皆「Python 交叉原型 → MoonBit 局部 zz_probe
+  即寫即驗即刪 → 全域 check/build/prove/run → commit」。
+================================================================================
+
+§2''''' 本回合聯網查證結果（R56..R65，接續 §2'''' 之 R46..R55）
+  [R56] Itai–Zilber, "Notes on a model theory of quantum 2-torus T_q² for
+      generic q", arXiv:1503.06045：https://arxiv.org/html/1503.06045
+      §1 定義 O_q((F^×)^2) = A_q，生成元 U^{±1},V^{±1} 滿足 VU = q UV；
+      Γ_q = q^ℤ。§2.1 造兩個 Γ-bundle U_φ、V_φ 與 line bundle。
+      §2.2 配對函數 ⟨·‖·⟩ : (V_φ×U_φ)∪(U_φ×V_φ) → Γ；
+      Proposition 3 給精確公式
+        ⟨q^s v(q^m v,u) | q^r u(q^k u,v)⟩ = q^{r−s−km},
+        ⟨q^r u(q^k u,v) | q^s v(q^m v,u)⟩ = q^{km+s−r} = 前者之逆；
+      證明核心：么正不變性 ⟨U^rV^s u|U^rV^s v⟩=1 ⇒
+        ⟨u(q^r u,v)|v(q^s v,u)⟩ = q^{r s}。
+      → 直接成為 T-AJ4 與 E92/E93/E94 之可計算憑證。
+  [R57] Evans–Jones, "Quantum Symmetries of Noncommutative Tori",
+      Commun. Math. Phys. 406:167 (2025-06-04)：
+      https://link.springer.com/article/10.1007/s00220-025-05337-y
+      Theorem 3.7/3.8：Haagerup–Izumi 範疇與 Drinfeld center 作用於
+      非交換 2-torus A_{Θ_G}；rank-4 非交換環面與 |G| 階矩陣代數；
+      K₀ order unit 映至 ℤ+ℤφ。
+  [R58] W. Cheng, "KdV Equation for Theta Functions on Non-commutative
+      Tori", arXiv:2412.03929：https://arxiv.org/html/2412.03929
+      Definition 2.11：Jacobi variety J(K_g)=ℂ^g/Λ_g；
+      Definition 2.12：Abel–Jacobi 映射
+        Â_{Q₀}(P) = (∫_{Q₀}^{P}ω₁,…,∫_{Q₀}^{P}ω_g) mod Λ_g；
+      Abel 定理（主除子 AJ=0）、Pic⁰(Σ)≅J(Σ)；
+      §7 量子 theta 向量滿足 Hirota 雙線性關係。
+  [R59] Connes–Consani, "On the Jacobian of Spec Z", arXiv:2602.15941：
+      https://arxiv.org/pdf/2602.15941
+      Jac(Spec Z)=Pic(Spec Z)/R_+^*；延展算術 Abel–Jacobi 映射 Θ；
+      adelic 覆蓋沿 Θ 拉回；顯式公式 = 跡公式，AJ 值域落在閉點纖維。
+  [R60] Rieffel–Schwarz (1999) / Noncommutative torus classification：
+      https://grokipedia.com/page/noncommutative_torus 、
+      https://en.wikipedia.org/wiki/Noncommutative_torus 、
+      https://arxiv.org/html/hep-th/0104143
+      A_θ 由 UV=e^{2πiθ}VU 生成；SL₂(ℤ) 作用 θ↦(aθ+b)/(cθ+d)
+      給強 Morita 等價；K₀(A_θ)≅ℤ² 且 τ_*(K₀)=ℤ+θℤ；
+      Powers–Rieffel 投影 τ(P)=θ；常數曲率連絡與 gauge Morita。
+  [R61] Garoufalidis–Yu, "A quantum trace map for 3-manifolds",
+      Adv. Math. 486 (2026) 110735：
+      https://people.mpim-bonn.mpg.de/stavros/publications/printed/quantum_trace_map.pdf
+      quantum torus = Z[A^{±1}]⟨X_i | X_iX_j=A^{⟨ij⟩}X_jX_i⟩；
+      Bonahon–Wong 2d quantum trace map 之 3 維推廣；q=1 特殊化。
+  [R62] Panitch–Park, "3d quantum trace map", AGT 26 (2026) 2255–2314：
+      https://msp.org/agt/2026/26-6/agt-v26-n6-p09-s.pdf
+      triangle algebra（量子環面）之 A-交換變數、stated skein module 分裂、
+      T^{⊗2}–B^{⊗3} bimodule 同態。
+  [R63] Frohman–Gelca / Pith review of "Traces on the skein algebra of the
+      torus" (arXiv:math/0603343)：https://pith.science/paper/math/0603343
+      環面 skein algebra 交換子商 5 維、五個跡（Yang–Mills 測度 + 四 parity）。
+  [R64] Bonahon–Wong quantum trace / localized quantum torus,
+      Geometry & Topology 29 (2025)：
+      https://msp.org/gt/2025/29-1/gt-v29-n1-p08-s.pdf
+      localized quantum torus A_{n;b} 與 skein algebra 嵌入。
+  [R65] Weil pairing on A[N] / theta groups（標準有限模型）：
+      https://arxiv.org/pdf/2505.13727
+      A[N]≅(ℤ/N)^{2g}、Weil 配對雙線性／交錯／非退化、
+      theta group 交換子配對與 principal polarization。
+  查證方式：web_search（depth 2/3）+ fetch_page 原文（arXiv HTML、
+      Springer、Grokipedia、Pith、MSP PDF）；全部書目與要點寫入
+      algorithm.xlsx「前沿文獻」工作表（65 筆）與 docs/catalog.json。
+
+§3''''' 動手前詳盡規劃（本回合）
+  1. 量子環面：以 VU=qUV 之扭曲群代數為底層，單項 q^e U^a V^b，
+     2-上循環 ω((a,b),(c,d))=b·c；先 Python 驗證結合律、循環跡、
+     Leibniz 導數、Connes 循環 2-上循環、root-of-unity 中心、
+     Heisenberg 表示、Weil 配對與交換子互逆、SL₂(ℤ) Morita 作用。
+  2. Abel–Jacobi：以 C1-05 已建立之 F_q 橢圓曲線點數 N₁=q+1−a 為樞紐，
+     實做弦切群律、AJ(Σn_iP_i)、主除子之 Abel 定理、|Jac|=P(1)；
+     再落地 R56 之 Γ-bundle 配對與 q-商 AJ_q : F_p^*→F_p^*/⟨q⟩，
+     並用 E(F₇)[3]≅(ℤ/3)² 把 Weil 配對與 AJ 標號縫合。
+  3. 21×14 交織：把既有 verb_apply/verb_pattern_matrix 的 21 動詞與
+     14 手法，改以「量子環面上的線性算子表示」重新落地：
+     ρ(v) ∈ End(A_q)（21 個相異 9×9 矩陣）、Φ_p 由
+     deriv_invariant(p, deriv_base()) 實算值造 9 維狀態向量，
+     W[v][p]=τ(ρ(v)Φ_p)。再與自身交織：Gram WWᵀ/WᵀW、
+     Kronecker K⊗K、441 個 ρ(v)ρ(w) 之線性生成、
+     W 之形式脈絡在全局公理 G 下的伽羅瓦閉集格。
+  4. 橋接：Weil 配對 e_n=q^{ad−bc} 與量子交換子 q^{bc−ad} 互逆，
+     且 q^{e_n} ∈ ker(AJ_q)=⟨q⟩；使量子環面、Abel–Jacobi、
+     21×14 三者不是並排而是相互交織。
+  5. 每組先 Python 原型交叉驗證，再 MoonBit 局部 zz_probe 即寫即驗即刪；
+     最後更新 c1.mbt / build_catalog.py / build_readmes.py / Dev.txt，
+     重跑產生器、全域 check/build/prove/run、決定性檢查、commit。
+
+§4''''' 逐套件落地（本回合，全部修改既有檔案）
+  src/algebra/ore.mbt
+    QTMon / QTElem / QTRoot；qt_mono、qt_u/v/q、qt_mul（ω=b·c）、
+    qt_add/neg/sub/equal、qt_trace、qt_deriv(k=1,2)、qt_star、
+    qt_mon_inv、qt_commutator_mon、qt_root_reduce、qt_root_vec、
+    qt_root_mono_vec、qt_root_mul_vec、qt_root_left_matrix、
+    qt_root_identity_matrix、qt_root_deriv_matrix、qt_root_label_star、
+    qt_root_qshift_matrix、qt_root_trace_projection、qt_mat_add/sub/mul/smul、
+    qt_mat_equal、qt_root_apply、qt_root_weil_exp、qt_root_comm_exp；
+    定理 T-QT1..T-QT7 + theorem_quantum_torus（T-QT8）。
+  src/series/series.mbt
+    ECPoint / AJTerm / AJDivisor；ec_add/ec_neg/ec_mul/ec_all_points、
+    aj_sum/aj_div_add/aj_degree、aj_vertical_divisor/aj_line_divisor、
+    aj_gamma_vu/aj_gamma_uv/aj_gamma_core、aj_q_order/aj_q_coset、
+    aj_weil_label；定理 T-AJ1..T-AJ6 + theorem_abel_jacobi（T-AJ7）。
+  src/compose/compose.mbt
+    interwoven_root / interwoven_operators（21 動詞 → 21 個相異 9×9 算子）/
+    interwoven_state（14 範例 → 9 維狀態）/ interwoven_matrix（21×14 W）/
+    iw_rat、iw_mat_mul、iw_transpose、iw_trace、iw_symmetric、
+    iw_insert_unique、iw_flatten、interwoven_stats、r_n_dim；
+    定理 T-IW1..T-IW6 + theorem_interwoven_all（T-IW7）。
+  c1.mbt：report 由 56 行增至 60 行，接入 4 行新憑證。
+  tools/build_catalog.py：新增 D50..D59、22 定理、AL131..AL155、
+      E81..E100、R56..R65；ROUND="C1-06"、catalog.json round="C1-06"。
+  tools/build_readmes.py：根 README 新增「C1-06」章節、更新所有計數，
+      12 份資料夾 README 重新產生。
+
+§5''''' 完成項目（本回合）
+  [x] 量子二維環面 O_q((F^×)²)：定義關係、循環跡、Connes 循環 2-上循環、
+      qⁿ=1 中心、F₇(q=2,n=3) Heisenberg 表示、Weil 配對＝交換子之逆、
+      SL₂(ℤ) Morita 分式線性作用與群律，全部精確憑證（T-QT1..8）。
+  [x] Abel–Jacobi 映射：E/F_q 群律、AJ 同態、垂直／直線主除子 Abel 定理、
+      |Jac|=N₁=P(1) 與 C1-05 Weil zeta 交織、R56 Γ-bundle 配對、
+      q-商 AJ_q 之核／陪集數、E(F₇)[3]≅(ℤ/3)² 標號與 Weil 配對（T-AJ1..7）。
+  [x] 21 動詞 × 14 範例 × 量子環面 × 自身交織：
+      W 為 21×14、ℚ-秩 11、GF(7)-秩 3、非零項 185；
+      Gram S/T 秩皆 11、跡 2932；Kronecker rank(K⊗K)=rank(K)²=9；
+      441 個複合算子張成完整 End(A_q)（81 維），21 算子本身張成 14 維；
+      全局公理 G 之交織概念格物件／屬性閉集皆 240；
+      Weil 配對值 q^{e₃} 全數落於 AJ_q 之核 ⟨q⟩（T-IW1..7）。
+  [x] 局部「即寫、即驗、即刪」六份 zz_probe（exact/series/algebra/
+      galois/graphs/compose）全數 Total tests: 1, passed: 1；回合末無殘留。
+
+§6''''' C1-06 後仍待做（誠實保留）
+  [ ] 5,000,000 行、10,000 條中階以上演算法：目前 155/10,000 條、
+      13,443 行；集庫成群已落地，但庫規模仍遠未達最終目標。
+  [ ] Connes 譜 triple 之無限維解析極限／RH 一般證明、
+      Spec Z 之 archimedean adelic Abel–Jacobi 解析：
+      本回合為有限域曲線、有理餘項界與 q-商 F_p^*/⟨q⟩ 之有限精確憑證，
+      非 ℂ 上無限維週期積分。
+  [ ] 量子環面之 C*-範數完備化、無理 θ 之 Powers–Rieffel 投影解析構造、
+      q 非單位根之無限維 Γ-bundle（R56 之 uncountably categorical 結構）：
+      本回合為 qⁿ=1 之 n² 維有限 root algebra 與精確 q-指數配對。
+  [ ] 高階 K 理論、導出方案之 ∞-範疇極限、higher motives、
+      無限維複數域 PV 擴張、Kovacic II/III：沿用 §6'''' 之誠實標記。
+  [ ] docs/ 其餘設計文件：非首次開發需先獲准，本回合未建立新文檔。
+  [ ] git 無 remote：不得聲稱 push；需使用者提供 remote。
+
+§7''''' C1-06 量化記錄
+  MoonBit / .mbtp 總行數：11,800 → 13,443（cat 全部 .mbt/.mbtp 實測）
+  theorem_* 憑證函數：141 → 163（grep -h "^pub fn theorem_"）
+  登錄表：421 → 498 筆（6 公理／52 定義／8 命題／14 引理／
+      163 定理／155 演算法／100 等式），前沿文獻 55 → 65 筆
+  形式化驗證：17 goals proved（.mbtp 未改動，無 trusted assumption）
+  inspect 報表：56 行 → 60 行，全數 OK；catalog 498/OK
+  量子環面實測：VU=qUV、τ 循環、ω 2-上循環；
+      F₇ q=2 n=3：U³=V³=I、L_U L_V=q⁻¹L_V L_U、
+      Weil 配對 9×9 全數雙線性／交錯／非退化、
+      交換子指數與 e₃ 互逆；Morita 6 個 SL₂(ℤ) 元素之群律全過。
+  Abel–Jacobi 實測：E(F₇): y²=x³+2 有 9 點且全為 3-torsion，
+      E(F₇)≅(ℤ/3)²；q=5/7/11/13/17/19 之 |E(F_q)|=N₁=P(1)；
+      所有垂直主除子（含 y=0 分歧重數 2）與直線主除子 AJ=0；
+      AJ_q 於 (7,2,n=3)、(11,3,5)、(13,3,3)、(17,4,4) 之
+      陪集數 (p−1)/n 與核 ⟨q⟩ 全過。
+  21×14 交織實測：ℚ-秩 11／GF(7)-秩 3／非零項 185／
+      Gram 秩 11、跡 2932／Kronecker 秩 9／概念格 240/240／
+      21 算子張成 14 維、441 複合張成 81 維。
+  algorithm.xlsx sha256：
+      097133c69ccab03cd9056bff7c91b7518b42955b446f9d75efcbf2e1f485485f
+
+§8''''' C1-06 回合末驗證與 commit
+  環境：/tmp 工具鏈與 z3 於回合開始時再度消失，依 §1 重新安裝
+      curl -fsSL https://cli.moonbitlang.com/install/unix.sh ...
+      MOON_HOME=/tmp/moonhome bash /tmp/moonbit-install.sh
+      python3 -m pip install -q z3-solver (z3 5.3.3)
+      moon 0.1.20261104 / moonc v0.10.20+65efd5b93
+      .githooks/pre-commit 之執行位元重新 chmod +x（快照權限變動）。
+  局部：exact / series / algebra / galois / graphs / compose 六份 zz_probe
+      各 Total tests: 1, passed: 1, failed: 0，驗畢全數刪除。
+  全域：moon check --deny-warn（Finished, 16 tasks）／
+      moon build（wasm artifact）／moon prove --deny-warn（17 goals proved）／
+      moon run cmd/main（60 行全 OK，catalog 498/OK）。
+  產生器決定性：build_catalog.py / build_readmes.py 連跑兩次後
+      algorithm.xlsx、docs/catalog.json、src/catalog/catalog.mbt、README.md
+      之 sha256 完全相同（DETERMINISTIC OK）。
+  commit：待回合末 git commit 後補登 hash；
+      git status --short 為空、git remote -v 為空（未 push）。
+
+§9''''' C1-06 驗證過程與修正記錄
+  - 量子環面交換子公式初版把單項逆寫成 q^{−e−ab}U^{−a}V^{−b}，
+    正解為 q^{−e+ab}（因 (U^aV^b)⁻¹=V^{−b}U^{−a}=q^{ab}U^{−a}V^{−b}）。
+    Python 交叉核對 (1,1)×(1,0)、(2,1)×(1,2) 後修正，
+    交換子指數 bc−ad 與 Weil 形式 ad−bc 互逆全數成立。
+  - Heisenberg clock/shift 初版把 V 建成「向後」平移
+    （row i 在 column i+1 置 1 ⇒ V e_j=e_{j−1}），導致 VU=q⁻¹UV；
+    改為 row i 在 column i−1 置 1（V e_j=e_{j+1}）後
+    VU=qUV、U³=V³=I 全過。另 qt_mat_power 初版以 9×9 單位矩陣
+    乘 3×3 的 U/V → 維度不符；改為由輸入維度造單位矩陣。
+  - T-QT1 初版之上循環迴圈含未使用變數 a1 與「b3 != b3」恆真判斷
+    （違反「嚴禁恆真永綠假象」）→ 移除冗餘變數與恆真式，
+    只實算 b₁a₂+(b₁+b₂)a₃ = b₂a₃+b₁(a₂+a₃)。
+  - T-QT7 之 match 分支使用逗號分隔（MoonBit 需換行）→ 改多行 match。
+  - Abel 定理初版 aj_vertical_divisor 對 y=0 之 Weierstrass 分歧點
+    只計重數 1，造成 q=5:x=0、q=11:x=3 之 AJ≠0；
+    依 div(x−a) 在 y=0 之零階為 2 修正重數後四條曲線全過。
+  - composition 之 theorem_aj_quantum_quotient 初版把 cosets/kernel
+    宣告為 let mut（MoonBit 陣列為可變引用，--deny-warn 報 unused_mut）
+    → 移除 mut；interwoven_stats 之 r 未使用 → 移除；
+    r_n_dim 之 r 未使用 → 移除。
+  - 21 動詞算子初版有兩組重複（N=3 時 L_{U⁻¹}=L_{U²}、
+    L_{V⁻¹}=L_{V²}），且運算子只有 22 個 → 重構為 21 個兩兩相異算子
+    （加入 L_U±L_V、δ₁δ₂、L_{U²V}、L_{UV²}、τ+L_{UV} 等），
+    最終 21 個全相異、張成 14 維、441 複合張成 81 維。
+  - Kronecker 自交織初版誤建成 vec(K)·vec(K)ᵀ（秩 1）；
+    正確索引 KK[i·4+k][j·4+l]=K[i][j]K[k][l] 後
+    rank(K⊗K)=rank(K)²=9 成立。
+  - Gram 秩初版在 GF(7) 上計算會因等方向量掉秩（rank S=2≠rank W=3）；
+    改以 @exact.Mat 之 ℚ 有理秩計算，rank W=rank S=rank T=11、
+    tr S=tr T=2932 全過。
+  - build_catalog.py 之 C1-06 段落以 bash heredoc 寫入 /tmp 暫存檔再
+    由 Python 讀取插入，避免 r'''...''' 被段落內 §6''' 提前終止
+    （沿用 C1-05 之修正）；README 表格中 |Jac(E)| 之管線以 \\| 跳脫，
+    消除 Python SyntaxWarning。
+  - build_readmes.py 之 421/130/56/55 等舊數字全數更新為 498/155/60/65。

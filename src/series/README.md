@@ -1,6 +1,6 @@
 # src/series — 局部公理 L1/L2/L3：多項式、形式冪級數、洛朗、狄利克雷、商環、全純
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得公理
 
@@ -41,6 +41,13 @@
 - **T-W5** Weil 顯式公式 exp(Σ_{n≤N}NₙTⁿ/n)·Q≡P (mod T^{N+1})
 - **T-W6** 解析極限可計算憑證：4(qt)^{N+1}/((N+1)(1−qt)) 有理餘項界
 - **T-W7** 六條 F_q 橢圓曲線全套有限精確憑證
+- **T-AJ1** E(F_q) 弦切群律為交換群且 |E(F_q)|=N₁=q+1−a（Weil 交織）
+- **T-AJ2** AJ 為 Div⁰→Jac(E) 同態且 Abel 定理：主除子 div(x−a)、div(y−lx−m) 之 AJ=0
+- **T-AJ3** AJ 滿射、核含主除子、|Jac(E)|=N₁=P(1)（Weil zeta 分子）
+- **T-AJ4** Γ-bundle 配對反向互逆、核心雙線性 q^{k·m}、么正不變性指數 0
+- **T-AJ5** AJ_q 為滿同態、核=⟨q⟩、陪集數=(p−1)/ord(q)
+- **T-AJ6** E(F₇)[3]≅(ℤ/3)²：標號群律、AJ 相容、Weil 配對雙線性／交錯／非退化
+- **T-AJ7** Abel–Jacobi 六項憑證合取
 
 ## 已實作演算法列表
 
@@ -75,6 +82,13 @@
 - **AL119** weil_twist / weil_functional_equation（O(deg²)）
 - **AL120** weil_explicit_formula（fps_exp 之形式冪級數驗證）（O(N²)）
 - **AL121** weil_tail_bound / theorem_weil_explicit_tail（O(N)）
+- **AL138** ec_add / ec_neg / ec_mul（弦切群律）（O(log p)）
+- **AL139** ec_all_points（Legendre 快篩逐點列舉 E(F_q)）（O(q²)）
+- **AL140** aj_sum / aj_div_add / aj_degree（O(|D|·n)）
+- **AL141** aj_vertical_divisor / aj_line_divisor（主除子構造）（O(q²)）
+- **AL142** aj_gamma_vu / aj_gamma_uv / aj_gamma_core（O(1)）
+- **AL143** aj_q_order / aj_q_coset（q-商之正規代表）（O(ord(q))）
+- **AL144** aj_weil_label（E[N] 標號配對）（O(1)）
 
 ## 等式
 
@@ -102,6 +116,14 @@
 - **E75** Weil 顯式公式：`log Z(E,T)=Σ_{n≥1}NₙTⁿ/n；exp(L_N)·Q≡P (mod T^{N+1})`
 - **E76** 顯式公式餘項界：`|Σ_{n>N}Nₙtⁿ/n| ≤ 4(qt)^{N+1}/((N+1)(1−qt))，|qt|<1`
 - **E77** RH 代數式（有限域曲線）：`α+β=a, αβ=q, a²−4q≤0 ⇒ |α|²=|β|²=q`
+- **E89** Abel–Jacobi 映射：`AJ(Σ n_i[P_i]) = Σ n_i P_i ∈ Jac(E)=ℂ^g/Λ_g（有限域模型：E(F_q)）`
+- **E90** Abel 定理：`D ∈ PDiv(E) ⇒ AJ(D)=0；div(x−a)=Σ_{x(P)=a} m_P[P] − 2[O]`
+- **E91** Weil 分子與 Jacobian 階：`|Jac(E)(F_q)| = N₁ = q+1−a = P(1) = 1−a+q`
+- **E92** Γ-bundle 配對（R56 Prop.3）：`⟨q^s v(q^m v,u)|q^r u(q^k u,v)⟩ = q^{r−s−km}`
+- **E93** 配對反向互逆：`⟨q^r u(q^k u,v)|q^s v(q^m v,u)⟩ = q^{km+s−r} = (q^{r−s−km})⁻¹`
+- **E94** 核心雙線性：`⟨u(q^r u,v)|v(q^s v,u)⟩ = q^{r·s}（么正不變性）`
+- **E95** q-商 AJ：`AJ_q : F_p^* → F_p^*/⟨q⟩，ker=⟨q⟩，|coker|=(p−1)/ord(q)`
+- **E96** E[3] 標號 Weil 配對：`E(F₇)[3]≅(ℤ/3)²，e₃((a,b),(c,d))=2^{ad−bc} mod 7`
 
 ## 資料夾視角依賴關係圖
 
@@ -157,8 +179,15 @@
   weil_power_sum  weil_counts  weil_poly_p  weil_poly_q
   weil_log_derivative_identity  weil_functional_equation  weil_hasse  weil_rh_modulus
   weil_explicit_formula  weil_tail_bound  theorem_weil_explicit_tail  theorem_weil_curve
-  Poly  Fps  Laurent  Dirichlet
-  Quot  DivMod  ConvAlg  WeilCurve
+  ec_infinity  ec_pt  ec_equal  ec_neg
+  ec_add  ec_mul  ec_all_points  aj_divisor
+  aj_degree  aj_sum  aj_vertical_divisor  aj_line_divisor
+  aj_gamma_vu  aj_gamma_uv  aj_gamma_core  aj_q_order
+  aj_q_coset  aj_weil_label  theorem_aj_group_law  theorem_aj_abel
+  theorem_aj_pic0  theorem_aj_gamma_pairing  theorem_aj_quantum_quotient  theorem_aj_weil_torsion
+  theorem_abel_jacobi  Poly  Fps  Laurent
+  Dirichlet  Quot  DivMod  ConvAlg
+  WeilCurve  ECPoint  AJTerm  AJDivisor
 ```
 
 ## 驗證

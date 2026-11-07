@@ -1,8 +1,8 @@
-# C1 — 全局公理伽羅瓦對應（C1-01..C1-05 累積切片）
+# C1 — 全局公理伽羅瓦對應（C1-01..C1-06 累積切片）
 
 > 依 `工程內容03.md`／`工程約束.md`／`作業規範.md`／`組合範例.md` 建立之首次切片。
 > 全局公理 **G = 伽羅瓦對應（極性伴隨）**；局部公理 L1..L5 由本回合代理決定。
-> C1-01 為**首次開發**；C1-02..C1-05 逐回合補回前沿待辦。尚未達成 5,000,000 行／10,000 條演算法之最終目標；未完成部分不列為已完成。
+> C1-01 為**首次開發**；C1-02..C1-06 逐回合補回前沿待辦。尚未達成 5,000,000 行／10,000 條演算法之最終目標；未完成部分不列為已完成。
 
 ## 全局公理
 
@@ -40,7 +40,7 @@ src/exact    ──► src/axioms ──► src/galois ──► src/series ─�
 - `src/algebra`：歪多項式環（Ore）、Hilbert–Poincaré 級數、局部化、Ext¹、Morita
 - `src/graphs`：克內澤圖、Lovász/EKR、Ramsey、擬陣 Tutte、單純複形 Betti
 - `src/compose`：14 種組合手法（Kan、束、纖維積、單子、張量、纖維範疇、推出、交織、博弈管線等）
-- `src/catalog`：421 筆定理／演算法／等式登錄
+- `src/catalog`：498 筆定理／演算法／等式登錄
 - `algorithm.xlsx`：由 `docs/catalog.json` 單一來源產生之活頁簿
 - `Dev.txt`：流水式帳本；`AGENT.md` 與 `工程約束.md` 為同一份文件
 
@@ -65,8 +65,8 @@ moon run cmd/main
 | `moon check --deny-warn`（全域） | Finished，21 tasks |
 | `moon prove --deny-warn` | `1 of 1 packages proved, 17 goals proved` |
 | `moon build` | wasm artifact 生成 |
-| `moon run cmd/main` | 56 行真實 inspect 憑證，全數 OK |
-| 登錄表 | 6 公理／42 定義／8 命題／14 引理／141 定理／130 演算法／80 等式 = 421 筆；前沿文獻 55 筆 |
+| `moon run cmd/main` | 60 行真實 inspect 憑證，全數 OK |
+| 登錄表 | 6 公理／52 定義／8 命題／14 引理／163 定理／155 演算法／100 等式 = 498 筆；前沿文獻 65 筆 |
 | CI | `.github/workflows/c1-ci.yml` 推送全域編譯與形式化驗證 |
 
 ## C1-02：前沿查證與 §6 待辦補回
@@ -178,17 +178,40 @@ Kovacic HAL hal-04117227v1）。完整書目見 `algorithm.xlsx`「前沿文獻�
 | 非交換動機／導出方案連續 K 理論 | F_p[t,u]/(t^k,u^l) 之 Newton–Hensel 冪等元提升（K₀ 冪零不變）、塔 R_k→R_{k−1} 之連續性、u↦0 之 KH A¹-同倫不變、關係矩陣回代求 `U_add` 之泛性質 | T-NCM1..NCM5 |
 | 一般 Picard–Vessiot／δ-Galois | 任意二階 δ-模 ∇=δ−A(t) 之解空間維度、基本解矩陣與 Abel 恆等式、gauge 群精確階數 480/20/16/480、Kovacic 第一型「Riccati 根數＝不變直線數＝dim V」有限 Galois 對應、C1-04 `G_a(F₅)` 嵌入 | T-PV1..PV4 |
 
+## C1-06：量子二維環面 O_q(T²)／Abel–Jacobi／21 動詞 × 14 範例相互交織
+
+依《作業規範》「不時聯網搜查及查證最前沿論文」，本回合查證 R56..R65 共 10 組
+（arXiv:1503.06045 之 Γ-bundle 配對 Proposition 3、Evans–Jones CMP 406 (2025)
+量子對稱、arXiv:2412.03929 之 Jacobi variety 與 Abel–Jacobi 定義、Connes–Consani
+`Jac(Spec Z)=Pic/R_+^*`、Rieffel–Schwarz SL₂(ℤ) Morita 與 `K₀=ℤ+θℤ`、
+2026 年 Garoufalidis–Yu／Panitch–Park 之 quantum trace map、Bonahon–Wong
+localized quantum torus、Weil pairing/theta group）。完整書目見
+`algorithm.xlsx`「前沿文獻」與 `docs/catalog.json`。本回合僅修改既有檔案，未新增文檔。
+
+| 落地結構 | 內容 | 憑證 |
+| --- | --- | --- |
+| 量子二維環面 `O_q((F^×)²)` | `VU=qUV`、2-上循環 `ω=b·c`、正則循環跡 τ、導數 δ₁/δ₂ 與 Connes 循環 2-上循環、qⁿ=1 之中心、F₇ 上 q=2 之 Heisenberg clock/shift 表示、Weil 配對與交換子互逆、SL₂(ℤ) Morita 分式線性作用 | T-QT1..QT8 |
+| Abel–Jacobi 映射 | E/F_q 弦切群律、AJ(`Σn_i[P_i]`) 同態、垂直／直線主除子之 Abel 定理、`\|Jac(E)\|=N₁=P(1)` 與 Weil zeta 交織、Γ-bundle 配對 `q^{r−s−km}`、`AJ_q : F_p^*→F_p^*/⟨q⟩`、E(F₇)[3]≅(ℤ/3)² 標號與 Weil 配對 | T-AJ1..AJ7 |
+| 21 動詞 × 14 範例 × 數學結構 × 自身交織 | 21 動詞表示為 End(A_q) 之線性算子 ρ(v)、14 範例以 `deriv_invariant` 實算值造狀態 Φ_p、`W[v][p]=τ(ρ(v)Φ_p)`；與自身交織得 Gram `WWᵀ/WᵀW`（秩 11、跡 2932）、Kronecker `rank(K⊗K)=rank(K)²=9`、441 個複合算子張成完整 `End(A_q)`（維度 81）、全局公理 G 之概念格（物件／屬性閉集皆 240）、Weil 配對 = 交換子互逆且落於 `AJ_q` 之核 | T-IW1..IW7 |
+
+實測：21×14 交織矩陣 ℚ-秩 11／GF(7)-秩 3／非零項 185／概念數 240／
+21 算子張成 14 維／441 複合張成 81 維；`moon run cmd/main` 之 inspect 報表
+60 行全數 OK。
+
 ## 未完成（誠實標記）
 
-- 5,000,000 行程式碼、10,000 條中階以上演算法：目前 **130 / 10,000** 條演算法、
-  約 1.2 萬行，仍為早期切片；「集庫成群」已建立聚類演算法與憑證，但庫規模本身未達最終目標。
+- 5,000,000 行程式碼、10,000 條中階以上演算法：目前 **155 / 10,000** 條演算法、
+  約 1.4 萬行，仍為早期切片；「集庫成群」已建立聚類演算法與憑證，但庫規模本身未達最終目標。
 - Connes 譜 triple 之**無限維解析極限／RH 一般等價證明**、Spec Z 之 archimedean
-  adelic Abel–Jacobi 解析：本回合補上的是逐條有限域曲線與有理餘項界的**有限精確憑證**，
-  並非無限維解析極限或 RH 一般證明。
-- 高階 K 理論、導出方案之 ∞-範疇極限、higher motives（Matsukawa 2026 之
-  (∞,n)-category 層級）：本回合只落地 K₀ 層級、有限維冪零增厚之憑證。
-- 無限維複數域 PV 擴張、代數閉包上之完整 δ-Galois 群與解析單值群：
-  本回合為 F_p[t]/(t^p) 上任意二階 δ-模之有限精確模型。
+  adelic Abel–Jacobi 解析：已有逐條有限域曲線與有理餘項界的有限精確憑證，
+  以及 q-商 `F_p^*/⟨q⟩` 之有限 Abel–Jacobi；皆非 ℂ 上無限維週期積分或一般解析極限。
+- 高階 K 理論、導出方案之 ∞-範疇極限、higher motives（(∞,n)-category 層級）：
+  目前只到 K₀ 有限層。
+- 無限維複數域 PV 擴張、代數閉包上完整 δ-Galois 群、解析單值群、Kovacic II/III：
+  目前為 F_p[t]/(t^p) 上任意二階 δ-模之有限精確模型。
+- 量子環面之 C*-範數完備化、無理 θ 之 Powers–Rieffel 投影解析構造、
+  q 非單位根之無限維 Γ-bundle（R56 之 uncountably categorical 結構）：
+  目前為 qⁿ=1 之 n² 維有限 root algebra 與精確 q-指數配對。
 - `docs/` 其餘設計文件：依《工程約束》「非首次開發、創建新文檔前需先獲准」，
   本回合不另建新文檔，改以既有 `Dev.txt`、`README.md` 與各資料夾 README 記錄。
 - git 仍無 remote：CI workflow 與 commit 僅本機落地，**未 push**。

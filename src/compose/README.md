@@ -1,6 +1,6 @@
 # src/compose — 14 種組合手法：Kan、束、纖維積、單子、張量、纖維範疇、推出、交織、博弈
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得定理列表
 
@@ -36,6 +36,13 @@
 - **T-NCM3** KH 之 A¹-同倫不變性（有限層）：u↦0 不改變冪等元秩
 - **T-NCM4** U_add 泛性質：關係矩陣秩 5、核一維、Waldhausen 可加與 Morita 穩定
 - **T-NCM5** 非交換動機有限層四項憑證合取
+- **T-IW1** 21×14 交織矩陣非平凡：ℚ-秩 11、GF(7)-秩 3、非零項 185
+- **T-IW2** Gram S=WWᵀ、T=WᵀW 對稱且秩皆為 11、tr S=tr T=ΣW²=2932
+- **T-IW3** Kronecker 自交織 rank(K⊗K)=rank(K)²=9（K 為 4×4 子矩陣）
+- **T-IW4** 全局公理 G：交織脈絡之物件／屬性閉集數皆 240 且極性伴隨成立
+- **T-IW5** 21 動詞算子代數非交換、滿足 q-Heisenberg、441 複合生成完整 End(A_q) 維度 81
+- **T-IW6** 量子環面↔AJ 橋接：Weil 配對與交換子互逆、q^{e₃} 落於 AJ_q 之核 ⟨q⟩
+- **T-IW7** 21×14 交織六項憑證與既有 21 動詞相容矩陣之合取
 
 ## 已實作演算法列表
 
@@ -57,6 +64,15 @@
 - **AL123** idempotent_lift（Newton–Hensel 冪等元提升）（O(n³·log(kl))）
 - **AL124** k0_rref / k0_kernel（關係矩陣回代求 U_add）（O(n³)）
 - **AL125** nm_block_sum（Waldhausen 分裂直和）/ idempotent_rank（O(n²)）
+- **AL145** interwoven_operators（21 動詞 → End(A_q) 算子）（O(21·n⁴)）
+- **AL146** interwoven_state（14 範例 → A_q 狀態向量）（O(14·n²)）
+- **AL147** interwoven_matrix（21×14 交織矩陣 W）（O(21·14·n⁴)）
+- **AL148** iw_rat / iw_mat_mul / iw_transpose / iw_trace（O(n³)）
+- **AL149** theorem_interwoven_kronecker（K⊗K 秩計算）（O(k⁶)）
+- **AL150** theorem_interwoven_galois（2^14 極性閉集枚舉）（O(2^14·21·14)）
+- **AL151** iw_flatten / theorem_interwoven_operator_algebra（441 複合秩）（O(21²·n⁶)）
+- **AL152** theorem_interwoven_aj_bridge（Weil/AJ 橋接穷舉）（O(n⁴·n²)）
+- **AL153** interwoven_stats（秩/非零/概念/張成 inspect）（O(2^14·21)）
 
 ## 等式
 
@@ -70,6 +86,10 @@
 - **E61** Ran / codensity：`(Ran_K F)(q)=⋀_{q≤Kp}F(p)；(Ran_K K)(q)=min{Kp|q≤Kp}`
 - **E78** Newton–Hensel 冪等元提升：`E ← E + (1−2E)(E²−E)，(E²−E)∈I^{2^s} ⇒ K₀(R)≅K₀(R/I)`
 - **E79** Waldhausen 可加性 / U_add：`[B]=[A]+[C]；K₀=ℤ·[R]，U([R^i])=i；rank(E⊕F)=rank E+rank F`
+- **E97** 21×14 交織矩陣：`W[v][p]=τ(ρ(v)Φ_p)，Φ_p 由 deriv_invariant(p,·) 實算；rank_ℚ W=11`
+- **E98** Gram 自交織：`S=WWᵀ, T=WᵀW 對稱；rank S=rank T=rank W；tr S=tr T=ΣW²=2932`
+- **E99** Kronecker 自交織：`rank(K⊗K)=rank(K)²=9；441 個 ρ(v)ρ(w) 張成 End(A_q)，dim=81`
+- **E100** 全局公理 G 於交織脈絡：`R(v,p)⇔W[v][p]≠0 ⇒ |Fix(F∘H)|=|Fix(H∘F)|=240；AJ_q(q^{e_n})=1`
 
 ## 資料夾視角依賴關係圖
 
@@ -115,6 +135,9 @@
   library_clustering  theorem_library_clustering  library_cluster_stats  idempotent_lift
   idempotent_is_exact  idempotent_rank  theorem_nilinvariance  theorem_k0_continuity
   theorem_kh_homotopy  k0_relation_matrix  theorem_universal_additive_invariant  theorem_noncomm_motives
+  interwoven_root  interwoven_operators  interwoven_state  interwoven_matrix
+  theorem_interwoven_structure  theorem_interwoven_gram  theorem_interwoven_kronecker  theorem_interwoven_galois
+  theorem_interwoven_operator_algebra  theorem_interwoven_aj_bridge  interwoven_stats  theorem_interwoven_all
   PosetLattice  UnionFind  Fibered  WeaveElem
   DerivData  FiniteMap  PosetKan  LibraryClustering
   NilRing

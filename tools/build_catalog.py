@@ -643,6 +643,119 @@ REFS = REFS + [
     ("R55", "Kovacic algorithm / Picard–Vessiot lecture notes (HAL hal-04117227v1)", "1986/2023", "https://hal.science/hal-04117227v1/document", "Theorem 2.5：Liouvillian solutions ⟺ Riccati 有次數 1/2/{4,6,12} 代數解；Kovacic cases I/II/III 與 SL₂(C) 子群分類"),
 ]
 
+# ── C1-06：量子二維環面 O_q(T²) / Abel–Jacobi / 21×14 動詞交織 ──────────
+ROUND = "C1-06"
+
+new_defs6 = [
+    ("D50", "O_q(T²)：VU=qUV 之量子二維環面，單項 q^e U^a V^b", "src/algebra"),
+    ("D51", "2-上循環 ω((a,b),(c,d))=b·c 與正則跡 τ、導數 δ₁/δ₂", "src/algebra"),
+    ("D52", "QTRoot：qⁿ=1 時 n² 維 root algebra 與 qp∈F_p", "src/algebra"),
+    ("D53", "Weil 配對 e_n(x,y)=q^{ad−bc} 與 Heisenberg theta 群交換子", "src/algebra"),
+    ("D54", "Rieffel–Schwarz SL₂(ℤ) Morita 作用 θ↦(aθ+b)/(cθ+d)", "src/algebra"),
+    ("D55", "ECPoint / AJDivisor：E/F_q 之點與零次除子", "src/series"),
+    ("D56", "Abel–Jacobi 映射 AJ : Div⁰(E) → Jac(E)≅E(F_q)", "src/series"),
+    ("D57", "Γ-bundle 配對函數 ⟨q^s v(q^m v,u)|q^r u(q^k u,v)⟩=q^{r−s−km}", "src/series"),
+    ("D58", "q-商 Abel–Jacobi AJ_q : F_p^* → F_p^*/⟨q⟩", "src/series"),
+    ("D59", "Interwoven：21 動詞算子 ρ(v) 與 14 範例狀態 Φ_p 之 W[v][p]=τ(ρ(v)Φ_p)", "src/compose"),
+]
+for id_, stmt, pkg in new_defs6:
+    add("定義", id_, stmt, pkg, "", "moon check --deny-warn + 即寫即驗即刪")
+
+new_theorems6 = [
+    ("T-QT1", "定義關係 VU=qUV、U/V 可逆、乘法結合（2-上循環 ω=b·c）", "src/algebra"),
+    ("T-QT2", "正則跡 τ 為循環跡 τ(xy)=τ(yx)", "src/algebra"),
+    ("T-QT3", "δ₁,δ₂ 滿足 Leibniz／交換／τ∘δᵢ=0；Connes 循環 2-上循環循環不變且非恆零", "src/algebra"),
+    ("T-QT4", "qⁿ=1 時中心由 Uⁿ,Vⁿ 生成：U^aV^b 與 U,V 同時交換 ⟺ n|a 且 n|b", "src/algebra"),
+    ("T-QT5", "Heisenberg clock/shift 表示 VU=qUV、U³=V³=I、L_U L_V=q⁻¹L_V L_U", "src/algebra"),
+    ("T-QT6", "Weil 配對雙線性／交錯／非退化；[g_x,g_y]=q^{bc−ad}=e_n(x,y)⁻¹", "src/algebra"),
+    ("T-QT7", "SL₂(ℤ) Morita 作用：么模基底變換、ℤ+θℤ 保持、(gh)·θ=g·(h·θ)", "src/algebra"),
+    ("T-QT8", "量子二維環面七項憑證合取", "src/algebra"),
+    ("T-AJ1", "E(F_q) 弦切群律為交換群且 |E(F_q)|=N₁=q+1−a（Weil 交織）", "src/series"),
+    ("T-AJ2", "AJ 為 Div⁰→Jac(E) 同態且 Abel 定理：主除子 div(x−a)、div(y−lx−m) 之 AJ=0", "src/series"),
+    ("T-AJ3", "AJ 滿射、核含主除子、|Jac(E)|=N₁=P(1)（Weil zeta 分子）", "src/series"),
+    ("T-AJ4", "Γ-bundle 配對反向互逆、核心雙線性 q^{k·m}、么正不變性指數 0", "src/series"),
+    ("T-AJ5", "AJ_q 為滿同態、核=⟨q⟩、陪集數=(p−1)/ord(q)", "src/series"),
+    ("T-AJ6", "E(F₇)[3]≅(ℤ/3)²：標號群律、AJ 相容、Weil 配對雙線性／交錯／非退化", "src/series"),
+    ("T-AJ7", "Abel–Jacobi 六項憑證合取", "src/series"),
+    ("T-IW1", "21×14 交織矩陣非平凡：ℚ-秩 11、GF(7)-秩 3、非零項 185", "src/compose"),
+    ("T-IW2", "Gram S=WWᵀ、T=WᵀW 對稱且秩皆為 11、tr S=tr T=ΣW²=2932", "src/compose"),
+    ("T-IW3", "Kronecker 自交織 rank(K⊗K)=rank(K)²=9（K 為 4×4 子矩陣）", "src/compose"),
+    ("T-IW4", "全局公理 G：交織脈絡之物件／屬性閉集數皆 240 且極性伴隨成立", "src/compose"),
+    ("T-IW5", "21 動詞算子代數非交換、滿足 q-Heisenberg、441 複合生成完整 End(A_q) 維度 81", "src/compose"),
+    ("T-IW6", "量子環面↔AJ 橋接：Weil 配對與交換子互逆、q^{e₃} 落於 AJ_q 之核 ⟨q⟩", "src/compose"),
+    ("T-IW7", "21×14 交織六項憑證與既有 21 動詞相容矩陣之合取", "src/compose"),
+]
+for id_, stmt, pkg in new_theorems6:
+    add("定理", id_, stmt, pkg, "", "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證")
+
+new_algos6 = [
+    ("AL131", "qt_mul / qt_add / qt_norm（2-上循環 ω=b·c）", "src/algebra", "O(|x|·|y|)"),
+    ("AL132", "qt_trace / qt_deriv / qt_star / qt_commutator_mon", "src/algebra", "O(|x|²)"),
+    ("AL133", "qt_root_vec / qt_root_mul_vec（n² 維 F_p 代數）", "src/algebra", "O(n⁴)"),
+    ("AL134", "qt_root_left_matrix / qt_root_deriv_matrix / qt_root_label_star", "src/algebra", "O(n⁴)"),
+    ("AL135", "qt_mat_add / qt_mat_sub / qt_mat_mul / qt_mat_smul", "src/algebra", "O(n⁶)"),
+    ("AL136", "qt_root_weil_exp / qt_root_comm_exp", "src/algebra", "O(1)"),
+    ("AL137", "theorem_qt_morita_sl2（SL₂(ℤ) 有理分式作用與群律）", "src/algebra", "O(|G|²)"),
+    ("AL138", "ec_add / ec_neg / ec_mul（弦切群律）", "src/series", "O(log p)"),
+    ("AL139", "ec_all_points（Legendre 快篩逐點列舉 E(F_q)）", "src/series", "O(q²)"),
+    ("AL140", "aj_sum / aj_div_add / aj_degree", "src/series", "O(|D|·n)"),
+    ("AL141", "aj_vertical_divisor / aj_line_divisor（主除子構造）", "src/series", "O(q²)"),
+    ("AL142", "aj_gamma_vu / aj_gamma_uv / aj_gamma_core", "src/series", "O(1)"),
+    ("AL143", "aj_q_order / aj_q_coset（q-商之正規代表）", "src/series", "O(ord(q))"),
+    ("AL144", "aj_weil_label（E[N] 標號配對）", "src/series", "O(1)"),
+    ("AL145", "interwoven_operators（21 動詞 → End(A_q) 算子）", "src/compose", "O(21·n⁴)"),
+    ("AL146", "interwoven_state（14 範例 → A_q 狀態向量）", "src/compose", "O(14·n²)"),
+    ("AL147", "interwoven_matrix（21×14 交織矩陣 W）", "src/compose", "O(21·14·n⁴)"),
+    ("AL148", "iw_rat / iw_mat_mul / iw_transpose / iw_trace", "src/compose", "O(n³)"),
+    ("AL149", "theorem_interwoven_kronecker（K⊗K 秩計算）", "src/compose", "O(k⁶)"),
+    ("AL150", "theorem_interwoven_galois（2^14 極性閉集枚舉）", "src/compose", "O(2^14·21·14)"),
+    ("AL151", "iw_flatten / theorem_interwoven_operator_algebra（441 複合秩）", "src/compose", "O(21²·n⁶)"),
+    ("AL152", "theorem_interwoven_aj_bridge（Weil/AJ 橋接穷舉）", "src/compose", "O(n⁴·n²)"),
+    ("AL153", "interwoven_stats（秩/非零/概念/張成 inspect）", "src/compose", "O(2^14·21)"),
+    ("AL154", "theorem_quantum_torus / theorem_abel_jacobi 合取憑證", "src/algebra,src/series", "O(1)"),
+    ("AL155", "qt_root_qshift_matrix / qt_root_trace_projection", "src/algebra", "O(n⁴)"),
+]
+for id_, stmt, pkg, cx in new_algos6:
+    add("演算法", id_, stmt, pkg, cx, "困難度 P；局部 moon test --deny-warn + inspect")
+
+new_eqs6 = [
+    ("E81", "量子環面定義關係", "VU = q UV；ω((a,b),(c,d)) = b·c", "src/algebra"),
+    ("E82", "單項乘法", "(q^{e₁}U^{a₁}V^{b₁})(q^{e₂}U^{a₂}V^{b₂}) = q^{e₁+e₂+b₁a₂}U^{a₁+a₂}V^{b₁+b₂}", "src/algebra"),
+    ("E83", "正則跡", "τ(Σ c_{a,b}U^aV^b) = c_{0,0}；τ(xy)=τ(yx)", "src/algebra"),
+    ("E84", "Connes 循環 2-上循環", "φ(x⁰,x¹,x²)=τ(x⁰δ₁x¹δ₂x²−x⁰δ₂x¹δ₁x²)，φ 循環不變", "src/algebra"),
+    ("E85", "root of unity 中心", "qⁿ=1 ⇒ Z(A_q)=F[Uⁿ,Vⁿ]；[U^aV^b,U]=0∧[U^aV^b,V]=0 ⟺ n|a,n|b", "src/algebra"),
+    ("E86", "Weil pairing", "e_n((a,b),(c,d))=q^{ad−bc}；[g_x,g_y]=q^{bc−ad}=e_n(x,y)⁻¹", "src/algebra"),
+    ("E87", "Heisenberg 表示", "U=diag(q^{−i}), V e_i=e_{i+1} ⇒ VU=qUV, Uⁿ=Vⁿ=I", "src/algebra"),
+    ("E88", "SL₂(ℤ) Morita", "θ↦(aθ+b)/(cθ+d)；ℤ+θℤ ≅ (cθ+d)⁻¹(ℤ+θℤ)；K₀(A_θ)≅ℤ+θℤ", "src/algebra"),
+    ("E89", "Abel–Jacobi 映射", "AJ(Σ n_i[P_i]) = Σ n_i P_i ∈ Jac(E)=ℂ^g/Λ_g（有限域模型：E(F_q)）", "src/series"),
+    ("E90", "Abel 定理", "D ∈ PDiv(E) ⇒ AJ(D)=0；div(x−a)=Σ_{x(P)=a} m_P[P] − 2[O]", "src/series"),
+    ("E91", "Weil 分子與 Jacobian 階", "|Jac(E)(F_q)| = N₁ = q+1−a = P(1) = 1−a+q", "src/series"),
+    ("E92", "Γ-bundle 配對（R56 Prop.3）", "⟨q^s v(q^m v,u)|q^r u(q^k u,v)⟩ = q^{r−s−km}", "src/series"),
+    ("E93", "配對反向互逆", "⟨q^r u(q^k u,v)|q^s v(q^m v,u)⟩ = q^{km+s−r} = (q^{r−s−km})⁻¹", "src/series"),
+    ("E94", "核心雙線性", "⟨u(q^r u,v)|v(q^s v,u)⟩ = q^{r·s}（么正不變性）", "src/series"),
+    ("E95", "q-商 AJ", "AJ_q : F_p^* → F_p^*/⟨q⟩，ker=⟨q⟩，|coker|=(p−1)/ord(q)", "src/series"),
+    ("E96", "E[3] 標號 Weil 配對", "E(F₇)[3]≅(ℤ/3)²，e₃((a,b),(c,d))=2^{ad−bc} mod 7", "src/series"),
+    ("E97", "21×14 交織矩陣", "W[v][p]=τ(ρ(v)Φ_p)，Φ_p 由 deriv_invariant(p,·) 實算；rank_ℚ W=11", "src/compose"),
+    ("E98", "Gram 自交織", "S=WWᵀ, T=WᵀW 對稱；rank S=rank T=rank W；tr S=tr T=ΣW²=2932", "src/compose"),
+    ("E99", "Kronecker 自交織", "rank(K⊗K)=rank(K)²=9；441 個 ρ(v)ρ(w) 張成 End(A_q)，dim=81", "src/compose"),
+    ("E100", "全局公理 G 於交織脈絡", "R(v,p)⇔W[v][p]≠0 ⇒ |Fix(F∘H)|=|Fix(H∘F)|=240；AJ_q(q^{e_n})=1", "src/compose"),
+]
+for id_, name, formula, pkg in new_eqs6:
+    add("等式", id_, name, pkg, formula, "由對應定理憑證驗證")
+
+REFS = REFS + [
+    ("R56", "Itai–Zilber, Notes on a model theory of quantum 2-torus T_q² for generic q, arXiv:1503.06045", "2015", "https://arxiv.org/html/1503.06045", "O_q((F^×)²) 定義 VU=qUV；Γ=q^ℤ 與 Γ-bundle／line-bundle；§2.2 配對函數 Proposition 3：⟨q^s v(q^m v,u)|q^r u(q^k u,v)⟩=q^{r−s−km}、反向互逆 q^{km+s−r}；么正不變性與核心 q^{rs}"),
+    ("R57", "Evans–Jones, Quantum Symmetries of Noncommutative Tori, Commun. Math. Phys. 406:167 (2025)", "2025", "https://link.springer.com/article/10.1007/s00220-025-05337-y", "Theorem 3.7/3.8：Haagerup–Izumi 範疇作用於非交換 2-torus；rank-4 非交換環面與 |G| 階矩陣代數；K₀ order unit 映至 ℤ+ℤφ"),
+    ("R58", "Cheng, KdV Equation for Theta Functions on Non-commutative Tori, arXiv:2412.03929", "2024", "https://arxiv.org/html/2412.03929", "Definition 2.11 Jacobi variety J(K_g)=ℂ^g/Λ_g；Definition 2.12 Abel–Jacobi map Â_{Q₀}(P)=(∫ω₁,…,∫ω_g) mod Λ_g；Abel 定理與 Pic⁰≅J；量子 theta 向量之 Hirota 雙線性關係"),
+    ("R59", "Connes–Consani, On the Jacobian of Spec Z, arXiv:2602.15941", "2026", "https://arxiv.org/pdf/2602.15941", "Jac(Spec Z)=Pic(Spec Z)/R_+^*；算術 Abel–Jacobi 映射 Θ 與 adelic 覆蓋拉回；顯式公式 = 跡公式，AJ 值域落在閉點纖維"),
+    ("R60", "Rieffel–Schwarz, Morita equivalence of multidimensional noncommutative tori / Noncommutative torus (K₀=ℤ+θℤ)", "1999/2026", "https://grokipedia.com/page/noncommutative_torus", "A_θ 由 UV=e^{2πiθ}VU 生成；SL₂(ℤ) 分式線性作用 θ↦(aθ+b)/(cθ+d)；K₀(A_θ)≅ℤ² 且 τ_*(K₀)=ℤ+θℤ；Powers–Rieffel 投影"),
+    ("R61", "Garoufalidis–Yu, A quantum trace map for 3-manifolds, Adv. Math. 486 (2026) 110735", "2026", "https://people.mpim-bonn.mpg.de/stavros/publications/printed/quantum_trace_map.pdf", "Bonahon–Wong 2d quantum trace map 之 3 維推廣；quantum torus 為 q-交換變數代數 Z[A^{±1}]⟨X_i | X_iX_j=A^{⟨ij⟩}X_jX_i⟩；q=1 特殊化與 character variety"),
+    ("R62", "Panitch–Park, 3d quantum trace map, Algebr. Geom. Topol. 26 (2026) 2255–2314", "2026", "https://msp.org/agt/2026/26-6/agt-v26-n6-p09-s.pdf", "triangle algebra（量子環面）之 A-交換變數；stated skein module 分裂映射；T^{⊗2}–B^{⊗3} bimodule 同態；3d quantum gluing module"),
+    ("R63", "Frohman–Gelca / skein algebra of the torus traces (Pith review of arXiv:math/0603343)", "2006/2026", "https://pith.science/paper/math/0603343", "環面 skein algebra 之交換子商 5 維、五個跡（Yang–Mills 測度與四個 parity traces）；product-to-sum 公式"),
+    ("R64", "Bonahon–Wong quantum trace / localized quantum torus (Geometry & Topology 29 (2025) 1)", "2025", "https://msp.org/gt/2025/29-1/gt-v29-n1-p08-s.pdf", "量子環面定義 Z[A^{±1}]⟨X_i|i∈I⟩/(X_iX_j=A^{⟨ij⟩}X_jX_i)；localized quantum torus 與 skein algebra 嵌入；quantum Teichmüller space"),
+    ("R65", "Silverman / Weil pairing on E[N] and theta groups (standard finite model)", "1986/2009", "https://arxiv.org/pdf/2505.13727", "A[N]≅(ℤ/N)^{2g}、Weil 配對雙線性／交錯／非退化；theta group 交換子配對；principal polarization 與 isogeny 核之 isotropic 子群"),
+]
+
 def mb_escape(s: str) -> str:
     return s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ")
 
@@ -720,7 +833,7 @@ def generate_xlsx():
     # 索引
     ws = wb.active
     ws.title = "索引"
-    ws.append(["C1 algorithm.xlsx", "全局公理：伽羅瓦對應", "回合 C1-05", "2026-11-08"])
+    ws.append(["C1 algorithm.xlsx", "全局公理：伽羅瓦對應", "回合 C1-06", "2026-11-08"])
     ws.append([])
     ws.append(["類別", "筆數", "來源", "驗證"])
     for c in ws[3]:
@@ -731,7 +844,7 @@ def generate_xlsx():
         n = sum(1 for e in A if e["kind"] == k)
         ws.append([k, n, "docs/catalog.json / src/catalog", "moon check + moon prove + 即時驗題"])
     ws.append(["合計", len(A), "", ""])
-    ws.append(["前沿文獻", len(REFS), "docs/catalog.json / Dev.txt §2", "聯網查證（C1-01 R1..R12 + C1-02 R13..R25 + C1-03 R26..R36 + C1-04 R37..R45 + C1-05 R46..R55）"])
+    ws.append(["前沿文獻", len(REFS), "docs/catalog.json / Dev.txt §2", "聯網查證（C1-01 R1..R12 + C1-02 R13..R25 + C1-03 R26..R36 + C1-04 R37..R45 + C1-05 R46..R55 + C1-06 R56..R65）"])
     ws.column_dimensions["A"].width = 22
     ws.column_dimensions["B"].width = 10
     ws.column_dimensions["C"].width = 36
@@ -801,7 +914,7 @@ def generate_xlsx():
 def main():
     os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
     with open(os.path.join(ROOT, "docs/catalog.json"), "w", encoding="utf-8") as f:
-        json.dump({"round": "C1-05", "global_axiom": "伽羅瓦對應",
+        json.dump({"round": "C1-06", "global_axiom": "伽羅瓦對應",
                    "entries": A, "references": REFS}, f, ensure_ascii=False, indent=2)
     generate_mbt()
     p = generate_xlsx()

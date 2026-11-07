@@ -1,5 +1,5 @@
 {
-  "round": "C1-05",
+  "round": "C1-06",
   "global_axiom": "伽羅瓦對應",
   "entries": [
     {
@@ -3790,6 +3790,699 @@
       "formula": "δ(det Y)=tr(A)det Y；G=⋂Z_{GL₂}(A_k)；δu+u²+a₁u+a₀=0",
       "verification": "由對應定理憑證驗證",
       "round": "C1-05"
+    },
+    {
+      "kind": "定義",
+      "id": "D50",
+      "statement": "O_q(T²)：VU=qUV 之量子二維環面，單項 q^e U^a V^b",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定義",
+      "id": "D51",
+      "statement": "2-上循環 ω((a,b),(c,d))=b·c 與正則跡 τ、導數 δ₁/δ₂",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定義",
+      "id": "D52",
+      "statement": "QTRoot：qⁿ=1 時 n² 維 root algebra 與 qp∈F_p",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定義",
+      "id": "D53",
+      "statement": "Weil 配對 e_n(x,y)=q^{ad−bc} 與 Heisenberg theta 群交換子",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定義",
+      "id": "D54",
+      "statement": "Rieffel–Schwarz SL₂(ℤ) Morita 作用 θ↦(aθ+b)/(cθ+d)",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定義",
+      "id": "D55",
+      "statement": "ECPoint / AJDivisor：E/F_q 之點與零次除子",
+      "package": "src/series",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定義",
+      "id": "D56",
+      "statement": "Abel–Jacobi 映射 AJ : Div⁰(E) → Jac(E)≅E(F_q)",
+      "package": "src/series",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定義",
+      "id": "D57",
+      "statement": "Γ-bundle 配對函數 ⟨q^s v(q^m v,u)|q^r u(q^k u,v)⟩=q^{r−s−km}",
+      "package": "src/series",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定義",
+      "id": "D58",
+      "statement": "q-商 Abel–Jacobi AJ_q : F_p^* → F_p^*/⟨q⟩",
+      "package": "src/series",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定義",
+      "id": "D59",
+      "statement": "Interwoven：21 動詞算子 ρ(v) 與 14 範例狀態 Φ_p 之 W[v][p]=τ(ρ(v)Φ_p)",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-QT1",
+      "statement": "定義關係 VU=qUV、U/V 可逆、乘法結合（2-上循環 ω=b·c）",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-QT2",
+      "statement": "正則跡 τ 為循環跡 τ(xy)=τ(yx)",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-QT3",
+      "statement": "δ₁,δ₂ 滿足 Leibniz／交換／τ∘δᵢ=0；Connes 循環 2-上循環循環不變且非恆零",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-QT4",
+      "statement": "qⁿ=1 時中心由 Uⁿ,Vⁿ 生成：U^aV^b 與 U,V 同時交換 ⟺ n|a 且 n|b",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-QT5",
+      "statement": "Heisenberg clock/shift 表示 VU=qUV、U³=V³=I、L_U L_V=q⁻¹L_V L_U",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-QT6",
+      "statement": "Weil 配對雙線性／交錯／非退化；[g_x,g_y]=q^{bc−ad}=e_n(x,y)⁻¹",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-QT7",
+      "statement": "SL₂(ℤ) Morita 作用：么模基底變換、ℤ+θℤ 保持、(gh)·θ=g·(h·θ)",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-QT8",
+      "statement": "量子二維環面七項憑證合取",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-AJ1",
+      "statement": "E(F_q) 弦切群律為交換群且 |E(F_q)|=N₁=q+1−a（Weil 交織）",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-AJ2",
+      "statement": "AJ 為 Div⁰→Jac(E) 同態且 Abel 定理：主除子 div(x−a)、div(y−lx−m) 之 AJ=0",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-AJ3",
+      "statement": "AJ 滿射、核含主除子、|Jac(E)|=N₁=P(1)（Weil zeta 分子）",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-AJ4",
+      "statement": "Γ-bundle 配對反向互逆、核心雙線性 q^{k·m}、么正不變性指數 0",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-AJ5",
+      "statement": "AJ_q 為滿同態、核=⟨q⟩、陪集數=(p−1)/ord(q)",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-AJ6",
+      "statement": "E(F₇)[3]≅(ℤ/3)²：標號群律、AJ 相容、Weil 配對雙線性／交錯／非退化",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-AJ7",
+      "statement": "Abel–Jacobi 六項憑證合取",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-IW1",
+      "statement": "21×14 交織矩陣非平凡：ℚ-秩 11、GF(7)-秩 3、非零項 185",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-IW2",
+      "statement": "Gram S=WWᵀ、T=WᵀW 對稱且秩皆為 11、tr S=tr T=ΣW²=2932",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-IW3",
+      "statement": "Kronecker 自交織 rank(K⊗K)=rank(K)²=9（K 為 4×4 子矩陣）",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-IW4",
+      "statement": "全局公理 G：交織脈絡之物件／屬性閉集數皆 240 且極性伴隨成立",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-IW5",
+      "statement": "21 動詞算子代數非交換、滿足 q-Heisenberg、441 複合生成完整 End(A_q) 維度 81",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-IW6",
+      "statement": "量子環面↔AJ 橋接：Weil 配對與交換子互逆、q^{e₃} 落於 AJ_q 之核 ⟨q⟩",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "定理",
+      "id": "T-IW7",
+      "statement": "21×14 交織六項憑證與既有 21 動詞相容矩陣之合取",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL131",
+      "statement": "qt_mul / qt_add / qt_norm（2-上循環 ω=b·c）",
+      "package": "src/algebra",
+      "formula": "O(|x|·|y|)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL132",
+      "statement": "qt_trace / qt_deriv / qt_star / qt_commutator_mon",
+      "package": "src/algebra",
+      "formula": "O(|x|²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL133",
+      "statement": "qt_root_vec / qt_root_mul_vec（n² 維 F_p 代數）",
+      "package": "src/algebra",
+      "formula": "O(n⁴)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL134",
+      "statement": "qt_root_left_matrix / qt_root_deriv_matrix / qt_root_label_star",
+      "package": "src/algebra",
+      "formula": "O(n⁴)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL135",
+      "statement": "qt_mat_add / qt_mat_sub / qt_mat_mul / qt_mat_smul",
+      "package": "src/algebra",
+      "formula": "O(n⁶)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL136",
+      "statement": "qt_root_weil_exp / qt_root_comm_exp",
+      "package": "src/algebra",
+      "formula": "O(1)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL137",
+      "statement": "theorem_qt_morita_sl2（SL₂(ℤ) 有理分式作用與群律）",
+      "package": "src/algebra",
+      "formula": "O(|G|²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL138",
+      "statement": "ec_add / ec_neg / ec_mul（弦切群律）",
+      "package": "src/series",
+      "formula": "O(log p)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL139",
+      "statement": "ec_all_points（Legendre 快篩逐點列舉 E(F_q)）",
+      "package": "src/series",
+      "formula": "O(q²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL140",
+      "statement": "aj_sum / aj_div_add / aj_degree",
+      "package": "src/series",
+      "formula": "O(|D|·n)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL141",
+      "statement": "aj_vertical_divisor / aj_line_divisor（主除子構造）",
+      "package": "src/series",
+      "formula": "O(q²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL142",
+      "statement": "aj_gamma_vu / aj_gamma_uv / aj_gamma_core",
+      "package": "src/series",
+      "formula": "O(1)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL143",
+      "statement": "aj_q_order / aj_q_coset（q-商之正規代表）",
+      "package": "src/series",
+      "formula": "O(ord(q))",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL144",
+      "statement": "aj_weil_label（E[N] 標號配對）",
+      "package": "src/series",
+      "formula": "O(1)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL145",
+      "statement": "interwoven_operators（21 動詞 → End(A_q) 算子）",
+      "package": "src/compose",
+      "formula": "O(21·n⁴)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL146",
+      "statement": "interwoven_state（14 範例 → A_q 狀態向量）",
+      "package": "src/compose",
+      "formula": "O(14·n²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL147",
+      "statement": "interwoven_matrix（21×14 交織矩陣 W）",
+      "package": "src/compose",
+      "formula": "O(21·14·n⁴)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL148",
+      "statement": "iw_rat / iw_mat_mul / iw_transpose / iw_trace",
+      "package": "src/compose",
+      "formula": "O(n³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL149",
+      "statement": "theorem_interwoven_kronecker（K⊗K 秩計算）",
+      "package": "src/compose",
+      "formula": "O(k⁶)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL150",
+      "statement": "theorem_interwoven_galois（2^14 極性閉集枚舉）",
+      "package": "src/compose",
+      "formula": "O(2^14·21·14)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL151",
+      "statement": "iw_flatten / theorem_interwoven_operator_algebra（441 複合秩）",
+      "package": "src/compose",
+      "formula": "O(21²·n⁶)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL152",
+      "statement": "theorem_interwoven_aj_bridge（Weil/AJ 橋接穷舉）",
+      "package": "src/compose",
+      "formula": "O(n⁴·n²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL153",
+      "statement": "interwoven_stats（秩/非零/概念/張成 inspect）",
+      "package": "src/compose",
+      "formula": "O(2^14·21)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL154",
+      "statement": "theorem_quantum_torus / theorem_abel_jacobi 合取憑證",
+      "package": "src/algebra,src/series",
+      "formula": "O(1)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL155",
+      "statement": "qt_root_qshift_matrix / qt_root_trace_projection",
+      "package": "src/algebra",
+      "formula": "O(n⁴)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E81",
+      "statement": "量子環面定義關係",
+      "package": "src/algebra",
+      "formula": "VU = q UV；ω((a,b),(c,d)) = b·c",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E82",
+      "statement": "單項乘法",
+      "package": "src/algebra",
+      "formula": "(q^{e₁}U^{a₁}V^{b₁})(q^{e₂}U^{a₂}V^{b₂}) = q^{e₁+e₂+b₁a₂}U^{a₁+a₂}V^{b₁+b₂}",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E83",
+      "statement": "正則跡",
+      "package": "src/algebra",
+      "formula": "τ(Σ c_{a,b}U^aV^b) = c_{0,0}；τ(xy)=τ(yx)",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E84",
+      "statement": "Connes 循環 2-上循環",
+      "package": "src/algebra",
+      "formula": "φ(x⁰,x¹,x²)=τ(x⁰δ₁x¹δ₂x²−x⁰δ₂x¹δ₁x²)，φ 循環不變",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E85",
+      "statement": "root of unity 中心",
+      "package": "src/algebra",
+      "formula": "qⁿ=1 ⇒ Z(A_q)=F[Uⁿ,Vⁿ]；[U^aV^b,U]=0∧[U^aV^b,V]=0 ⟺ n|a,n|b",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E86",
+      "statement": "Weil pairing",
+      "package": "src/algebra",
+      "formula": "e_n((a,b),(c,d))=q^{ad−bc}；[g_x,g_y]=q^{bc−ad}=e_n(x,y)⁻¹",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E87",
+      "statement": "Heisenberg 表示",
+      "package": "src/algebra",
+      "formula": "U=diag(q^{−i}), V e_i=e_{i+1} ⇒ VU=qUV, Uⁿ=Vⁿ=I",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E88",
+      "statement": "SL₂(ℤ) Morita",
+      "package": "src/algebra",
+      "formula": "θ↦(aθ+b)/(cθ+d)；ℤ+θℤ ≅ (cθ+d)⁻¹(ℤ+θℤ)；K₀(A_θ)≅ℤ+θℤ",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E89",
+      "statement": "Abel–Jacobi 映射",
+      "package": "src/series",
+      "formula": "AJ(Σ n_i[P_i]) = Σ n_i P_i ∈ Jac(E)=ℂ^g/Λ_g（有限域模型：E(F_q)）",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E90",
+      "statement": "Abel 定理",
+      "package": "src/series",
+      "formula": "D ∈ PDiv(E) ⇒ AJ(D)=0；div(x−a)=Σ_{x(P)=a} m_P[P] − 2[O]",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E91",
+      "statement": "Weil 分子與 Jacobian 階",
+      "package": "src/series",
+      "formula": "|Jac(E)(F_q)| = N₁ = q+1−a = P(1) = 1−a+q",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E92",
+      "statement": "Γ-bundle 配對（R56 Prop.3）",
+      "package": "src/series",
+      "formula": "⟨q^s v(q^m v,u)|q^r u(q^k u,v)⟩ = q^{r−s−km}",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E93",
+      "statement": "配對反向互逆",
+      "package": "src/series",
+      "formula": "⟨q^r u(q^k u,v)|q^s v(q^m v,u)⟩ = q^{km+s−r} = (q^{r−s−km})⁻¹",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E94",
+      "statement": "核心雙線性",
+      "package": "src/series",
+      "formula": "⟨u(q^r u,v)|v(q^s v,u)⟩ = q^{r·s}（么正不變性）",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E95",
+      "statement": "q-商 AJ",
+      "package": "src/series",
+      "formula": "AJ_q : F_p^* → F_p^*/⟨q⟩，ker=⟨q⟩，|coker|=(p−1)/ord(q)",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E96",
+      "statement": "E[3] 標號 Weil 配對",
+      "package": "src/series",
+      "formula": "E(F₇)[3]≅(ℤ/3)²，e₃((a,b),(c,d))=2^{ad−bc} mod 7",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E97",
+      "statement": "21×14 交織矩陣",
+      "package": "src/compose",
+      "formula": "W[v][p]=τ(ρ(v)Φ_p)，Φ_p 由 deriv_invariant(p,·) 實算；rank_ℚ W=11",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E98",
+      "statement": "Gram 自交織",
+      "package": "src/compose",
+      "formula": "S=WWᵀ, T=WᵀW 對稱；rank S=rank T=rank W；tr S=tr T=ΣW²=2932",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E99",
+      "statement": "Kronecker 自交織",
+      "package": "src/compose",
+      "formula": "rank(K⊗K)=rank(K)²=9；441 個 ρ(v)ρ(w) 張成 End(A_q)，dim=81",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
+    },
+    {
+      "kind": "等式",
+      "id": "E100",
+      "statement": "全局公理 G 於交織脈絡",
+      "package": "src/compose",
+      "formula": "R(v,p)⇔W[v][p]≠0 ⇒ |Fix(F∘H)|=|Fix(H∘F)|=240；AJ_q(q^{e_n})=1",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-06"
     }
   ],
   "references": [
@@ -4177,6 +4870,76 @@
       "1986/2023",
       "https://hal.science/hal-04117227v1/document",
       "Theorem 2.5：Liouvillian solutions ⟺ Riccati 有次數 1/2/{4,6,12} 代數解；Kovacic cases I/II/III 與 SL₂(C) 子群分類"
+    ],
+    [
+      "R56",
+      "Itai–Zilber, Notes on a model theory of quantum 2-torus T_q² for generic q, arXiv:1503.06045",
+      "2015",
+      "https://arxiv.org/html/1503.06045",
+      "O_q((F^×)²) 定義 VU=qUV；Γ=q^ℤ 與 Γ-bundle／line-bundle；§2.2 配對函數 Proposition 3：⟨q^s v(q^m v,u)|q^r u(q^k u,v)⟩=q^{r−s−km}、反向互逆 q^{km+s−r}；么正不變性與核心 q^{rs}"
+    ],
+    [
+      "R57",
+      "Evans–Jones, Quantum Symmetries of Noncommutative Tori, Commun. Math. Phys. 406:167 (2025)",
+      "2025",
+      "https://link.springer.com/article/10.1007/s00220-025-05337-y",
+      "Theorem 3.7/3.8：Haagerup–Izumi 範疇作用於非交換 2-torus；rank-4 非交換環面與 |G| 階矩陣代數；K₀ order unit 映至 ℤ+ℤφ"
+    ],
+    [
+      "R58",
+      "Cheng, KdV Equation for Theta Functions on Non-commutative Tori, arXiv:2412.03929",
+      "2024",
+      "https://arxiv.org/html/2412.03929",
+      "Definition 2.11 Jacobi variety J(K_g)=ℂ^g/Λ_g；Definition 2.12 Abel–Jacobi map Â_{Q₀}(P)=(∫ω₁,…,∫ω_g) mod Λ_g；Abel 定理與 Pic⁰≅J；量子 theta 向量之 Hirota 雙線性關係"
+    ],
+    [
+      "R59",
+      "Connes–Consani, On the Jacobian of Spec Z, arXiv:2602.15941",
+      "2026",
+      "https://arxiv.org/pdf/2602.15941",
+      "Jac(Spec Z)=Pic(Spec Z)/R_+^*；算術 Abel–Jacobi 映射 Θ 與 adelic 覆蓋拉回；顯式公式 = 跡公式，AJ 值域落在閉點纖維"
+    ],
+    [
+      "R60",
+      "Rieffel–Schwarz, Morita equivalence of multidimensional noncommutative tori / Noncommutative torus (K₀=ℤ+θℤ)",
+      "1999/2026",
+      "https://grokipedia.com/page/noncommutative_torus",
+      "A_θ 由 UV=e^{2πiθ}VU 生成；SL₂(ℤ) 分式線性作用 θ↦(aθ+b)/(cθ+d)；K₀(A_θ)≅ℤ² 且 τ_*(K₀)=ℤ+θℤ；Powers–Rieffel 投影"
+    ],
+    [
+      "R61",
+      "Garoufalidis–Yu, A quantum trace map for 3-manifolds, Adv. Math. 486 (2026) 110735",
+      "2026",
+      "https://people.mpim-bonn.mpg.de/stavros/publications/printed/quantum_trace_map.pdf",
+      "Bonahon–Wong 2d quantum trace map 之 3 維推廣；quantum torus 為 q-交換變數代數 Z[A^{±1}]⟨X_i | X_iX_j=A^{⟨ij⟩}X_jX_i⟩；q=1 特殊化與 character variety"
+    ],
+    [
+      "R62",
+      "Panitch–Park, 3d quantum trace map, Algebr. Geom. Topol. 26 (2026) 2255–2314",
+      "2026",
+      "https://msp.org/agt/2026/26-6/agt-v26-n6-p09-s.pdf",
+      "triangle algebra（量子環面）之 A-交換變數；stated skein module 分裂映射；T^{⊗2}–B^{⊗3} bimodule 同態；3d quantum gluing module"
+    ],
+    [
+      "R63",
+      "Frohman–Gelca / skein algebra of the torus traces (Pith review of arXiv:math/0603343)",
+      "2006/2026",
+      "https://pith.science/paper/math/0603343",
+      "環面 skein algebra 之交換子商 5 維、五個跡（Yang–Mills 測度與四個 parity traces）；product-to-sum 公式"
+    ],
+    [
+      "R64",
+      "Bonahon–Wong quantum trace / localized quantum torus (Geometry & Topology 29 (2025) 1)",
+      "2025",
+      "https://msp.org/gt/2025/29-1/gt-v29-n1-p08-s.pdf",
+      "量子環面定義 Z[A^{±1}]⟨X_i|i∈I⟩/(X_iX_j=A^{⟨ij⟩}X_jX_i)；localized quantum torus 與 skein algebra 嵌入；quantum Teichmüller space"
+    ],
+    [
+      "R65",
+      "Silverman / Weil pairing on E[N] and theta groups (standard finite model)",
+      "1986/2009",
+      "https://arxiv.org/pdf/2505.13727",
+      "A[N]≅(ℤ/N)^{2g}、Weil 配對雙線性／交錯／非退化；theta group 交換子配對；principal polarization 與 isogeny 核之 isotropic 子群"
     ]
   ]
 }
