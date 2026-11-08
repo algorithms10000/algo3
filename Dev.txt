@@ -1834,8 +1834,13 @@ C1 開發流水帳本 (Dev.txt) — 流水式，每回合追加，直到工程�
   產生器決定性：build_catalog.py / build_readmes.py 連跑兩次後
       algorithm.xlsx、docs/catalog.json、src/catalog/catalog.mbt、README.md
       之 sha256 完全相同（DETERMINISTIC OK）。
-  commit：待回合末 git commit 後補登 hash；
+  commit：92f25fa「C1-08: 六項無限維結構之有限精確憑證 / 三回合 21×14
+      交織 / 全代碼健檢延續」，23 檔變更、2,249 插入 / 66 刪除；
+      pre-commit 之 moon check／moon prove（17 goals proved）通過；
+      本筆補登為 92f25fa 之後的第二筆。
       git status --short 為空、git remote -v 為空（未 push）。
+  補記：.git/config 於本回合末因快照排除敏感路徑消失，已重建
+      user.name/user.email/core.hooksPath=.githooks 後方能 commit。
 
 §9''''''' C1-08 健檢／除錯記錄
   - audit_repository 初版把暫存 zz_probe.mbt 也計入引用，
