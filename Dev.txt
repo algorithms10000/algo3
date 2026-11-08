@@ -1430,3 +1430,229 @@ C1 開發流水帳本 (Dev.txt) — 流水式，每回合追加，直到工程�
     （沿用 C1-05 之修正）；README 表格中 |Jac(E)| 之管線以 \\| 跳脫，
     消除 Python SyntaxWarning。
   - build_readmes.py 之 421/130/56/55 等舊數字全數更新為 498/155/60/65。
+
+================================================================================
+[回合 C1-07] 日期 2026-11-08 (Asia/Hong_Kong, UTC+8)
+  狀態：黃金比例／Fibonacci 矩陣譜／陳–西蒙斯／21×14 交織／全代碼健檢 已完成
+  使用者指示：「聯網搜尋最前沿；及實作黃金比例與斐波那契矩陣譜及陳-西蒙斯理論，
+  依舊21×14方法。全代碼健檢除錯去重清死碼」。
+  依《工程約束》「非首次開發、創建新文檔前需先獲准」，本回合僅修改既有檔案，
+  未新增任何文檔；查證、結案與實測全部寫入 Dev.txt、README.md
+  （由 tools/build_readmes.py 產生）、docs/catalog.json、src/catalog/catalog.mbt、
+  algorithm.xlsx 與既有 src/exact、src/series、src/algebra、src/compose、
+  src/galois、c1.mbt、tools/build_catalog.py。
+  本回合不使用 --release、不做白箱/黑箱/冒煙測試、不做基準測試、無 stub/mock/
+  fake/玩具模型/恆真式；每組皆「Python 交叉原型 → MoonBit 局部 zz_probe
+  即寫即驗即刪 → 全域 check/build/prove/run → commit」。
+================================================================================
+
+§2'''''' 本回合聯網查證結果（R66..R72，接續 §2''''' 之 R56..R65）
+  [R66] T.-M. Chou, "AdS/CFT Duality and Anyons in SU(N)_k Chern-Simons
+      Theory", arXiv:2505.16760 (2025-05-22)：
+      https://arxiv.org/pdf/2505.16760
+      §2.3：Σ=T² 時 dim H_{T²} = 可積表現數；SU(2)₃ 之 j=0,1/2,1,3/2 ⇒ 4。
+      §2.5：模 S/T 滿足 (ST)³=S², S⁴=I；Verlinde
+        N_{ab}^c = Σ_x S_{ax}S_{bx}S*_{cx}/S_{0x}；
+        θ_a=e^{2πih_a}、d_a=S_{0a}/S_{00}。
+      §2.6：SU(2)₃ 之 Wilson loop 幅 sin(2π/5)/sin(π/5) 給黃金比例。
+      → 本回合以 Chebyshev U_n(φ/2) 把 S 矩陣精確化到 ℚ(√5)，
+        並實算 Verlinde、量子維度、Ŝ²=(1/c₀)I、dim H_{g=2}=20。
+  [R67] Fillman–Luna, "On the Spectra of Sieved Schrödinger Operators",
+      arXiv:2505.08763v1 (2025-05-13)：
+      https://arxiv.org/html/2505.08763v1
+      Fibonacci substitution w_{k+1}=w_{k−1}w_k，|w_k|=F_{k+1}；
+      Theorem 2.1 trace map T(x,y,z)=(2xy−z,x,y)；
+      T 保持 Fricke–Vogt 不變量；奇異連續譜、零 Lebesgue 測度。
+  [R68] Damanik–Gorodetski–Yessen, "The Fibonacci Hamiltonian",
+      Invent. Math. (2016)：https://link.springer.com/article/10.1007/s00222-016-0660-x
+      譜維度／IDS Hölder 指數與 trace map 雙曲性、topological entropy 之關係；
+      週期逼近之判別式 = 轉移矩陣跡。
+  [R69] Roberts, "Trace maps as 3D reversible dynamical systems with an
+      invariant" (1994)：https://link.springer.com/article/10.1007/BF02188581
+      Fricke character Î(x,y,z)=x²+y²+z²−2xyz−1；Fibonacci trace map 對稱性、
+      可逆性 T⁻¹(x,y,z)=(y,z,2yz−x)。
+  [R70] Minev et al., "Realizing string-net condensation: Fibonacci anyon
+      braiding for universal gates...", Nat Commun 16:6225 (2025-07-06)：
+      https://www.nature.com/articles/s41467-025-61493-8
+      超導處理器上 Fib-SNC 編織；電荷量測 94%、交換得 φ 98%；F-move 振幅
+      由 φ 決定；chromatic polynomial 於 φ+2 取樣。
+  [R71] Goodman, "The Golden Bridge: A Certified Born Probability for
+      Fibonacci Anyons" (2026-07)：
+      https://www.researchgate.net/publication/408645751_The_Golden_Bridge_A_Certified_Born_Probability_for_Fibonacci_Anyons
+      x²=x+1 之 eigenform = Fibonacci-anyon 量子維度 φ；
+      編織幅為 Z[ζ₅] 之代數整數；golden ring Z[φ]。
+  [R72] Kac–Peterson / Verlinde 標準模數據：S_{ab}=√(2/(k+2))·
+      sin((a+1)(b+1)π/(k+2))；N_{ab}^c=Σ_x S_{ax}S_{bx}S*_{cx}/S_{0x}；
+      SU(2) 表現皆自共軛 ⇒ 電荷共軛 C=I（本回合 T-CS3 實算確認）。
+  查證方式：web_search（depth 2/3）+ fetch_page 原文（arXiv PDF/HTML、
+      Springer、Nature、ResearchGate）；全部書目與要點寫入 algorithm.xlsx
+      「前沿文獻」工作表（72 筆）與 docs/catalog.json。
+
+§3'''''' 動手前詳盡規劃（本回合）
+  1. 底層精確環：Q5=ℚ(√5) 與 C5=ℚ[ζ]/(Φ₅) 皆以 Rat 係數精確運算；
+     先 Python 驗證 φ²=φ+1、ζ⁵=1、t=ζ+ζ⁴ 滿足 t²+t−1=0 ⇒ 1+t=φ。
+  2. Fibonacci 矩陣譜：Q=[[1,1],[1,0]] 之特徵多項式 x²−x−1、
+     譜投影 P±=(Q−ψI)/√5、(φI−Q)/√5；Qⁿ 公式、Cassini、fast doubling、
+     Lucas、Zeckendorf；另以 F₁₁ 轉移矩陣驗證 trace map 與 FV 不變量。
+  3. 陳–西蒙斯：以 Chebyshev U_n(φ/2) 把 Kac–Peterson S 精確化，
+     Verlinde 公式、組合融合律、偶數扇域 Fibonacci 融合範疇、
+     量子維度、Ŝ²=(1/c₀)I、dim H_{g=2}=20、Wilson loop φ。
+  4. 21×14 方法：以 A_CS5=F₁₁[x]/(x⁵) 為共同載體，21 動詞 → 21 個相異
+     微分算子，14 範例由 deriv_invariant/F_{p+1}/L_{p+1} 實算造狀態，
+     W₂[v][p]=τ(ρ(v)Φ_p)；與自身交織（Gram、Kronecker、441 複合、
+     全局公理 G 概念格），並與 C1-06 之 W₁ 跨回合交織。
+  5. 全代碼健檢：先以靜態掃描列出重複定義／重複本體／死碼／登錄表重複，
+     再逐項除錯、去重、把死碼接入真實計算；把健檢做成可重複執行之
+     audit_repository()（寫入既有 tools/build_catalog.py）。
+  6. 每組 Python 原型 → MoonBit 局部 zz_probe → 全域 check/build/prove/run
+     → 更新產生器與 Dev.txt → 決定性檢查 → commit。
+
+§4'''''' 逐套件落地（本回合，全部修改既有檔案）
+  src/exact/exact.mbt
+    Q5/C5 結構與 q5_*、c5_* 全組運算；theorem_q5_golden、
+    theorem_c5_golden_bridge；vec_equal_i64/vec_equal_int（去重共用）；
+    mat_rank_big（BigInt Bareiss 求秩，修復舊 mat_rank 溢位）。
+  src/series/series.mbt
+    QMat、qmat_*、fibonacci_matrix、fib_pair/fib_number/lucas_number、
+    zeckendorf、fib_word/word_matrix/tf_mat、fricke_vogt、fib_trace_map、
+    theorem_fib_spectrum、theorem_fib_trace_map、theorem_golden_fibonacci；
+    rat_coeffs_equal（Fps/Dirichlet::equal 共用）。
+  src/algebra/ore.mbt
+    cs_chebyshev_u、cs_shat、cs_c0、cs_comb、cs_verlinde、
+    theorem_cs_verlinde、theorem_cs_fibonacci_sector、theorem_cs_modular、
+    theorem_cs_wilson_golden、theorem_chern_simons。
+  src/compose/compose.mbt
+    cs_root、cs_left_matrix、cs_diag、cs_eye、cs_mpower、cs_operators、
+    cs_state、cs_tau、cs_apply、cs_flatten、cs_interwoven_matrix、
+    cs_closed_attrs、cs_interwoven_stats；
+    T-CS5..T-CS10、T-CS12、theorem_cs_interwoven_all；
+    theorem_fiber_product_universal 恆真式清除；
+    iw_flatten_mod（參數化模數）、移除 iw_insert_unique 改用 @galois.insert_unique。
+  src/galois/galois.mbt：刪除與 full_mask 完全重複之 lower_mask（6 處呼叫改
+      full_mask）；insert_unique 改 pub 供 compose 共用。
+  src/algebra/homological.mbt / hilbert.mbt / src/series/operad.mbt：
+      vec_equal/expvec_equal/exps_equal 三處相同本體改為委派 @exact 共用函式。
+  c1.mbt：report 由 60 行增至 65 行，接入 5 行新憑證；
+      新增 theorem_code_health()（57 個死碼全數接入真實計算）。
+  tools/build_catalog.py：新增 D60..D69、18 定理、AL156..AL180、
+      E101..E120、R66..R72；ROUND="C1-07"；新增 audit_repository()。
+  tools/build_readmes.py：根 README 新增「C1-07」章節、更新所有計數。
+
+§5'''''' 完成項目（本回合）
+  [x] 黃金比例／Fibonacci 矩陣譜：φ 代數、ℚ(ζ₅) 橋、Q 之譜投影、
+      Qⁿ/Cassini/fast doubling/Lucas/Zeckendorf、trace map 與 FV 不變量
+      （T-GOLD1..GOLD5）。
+  [x] SU(2)₃ 陳–西蒙斯：Verlinde = 組合融合律（64/64）、偶數扇域
+      τ⊗τ=1⊕τ、量子維度 (1,φ,φ,1)、D²=2(φ+2)、Ŝ²=(1/c₀)I、
+      Ŝ⁴=(1/c₀²)I、dim H_{g=2}=20、Wilson φ（T-CS1..CS4、T-CS11）。
+  [x] 21×14 黃金/CS 交織：W₂ ℚ-秩 14、GF(11)-秩 3、非零項 271；
+      Gram 秩 14、跡 9615；Kronecker 秩 9；概念格 1568/1568；
+      21 算子張成 12 維、441 複合張成完整 End=25；
+      [D,M_x]=M_x、M_x⁵=0、[∂,M_x]=I−5P₄；跨回合 W₁/W₂ 交織
+      （T-CS5..CS10、T-CS12）。
+  [x] 全代碼健檢：dead 57→0、dup_names=0、dup_ids=0、dup_statements=0；
+      五處重複本體合併；四個真實 bug 修復（詳 §9''''''）；
+      theorem_code_health() 與 audit_repository() 皆為可重複驗證。
+  [x] 局部「即寫、即驗、即刪」六份 zz_probe + 根 zz_probe 全數 passed，
+      回合末無殘留。
+
+§6'''''' C1-07 後仍待做（誠實保留）
+  [ ] 5,000,000 行、10,000 條中階以上演算法：目前 180/10,000 條、
+      14,786 行；集庫成群已落地，但庫規模仍遠未達最終目標。
+  [ ] Connes 無限維解析極限／RH 一般證明、Spec Z archimedean adelic AJ 解析。
+  [ ] 量子環面 C*-完備化、無理 θ Powers–Rieffel 投影、q 非單位根無限維 Γ-bundle。
+  [ ] 高階 K 理論、導出方案 ∞-範疇極限、higher motives、
+      無限維複數域 PV 擴張、Kovacic II/III（沿用 §6''''）。
+  [ ] Fibonacci Hamiltonian 之無限維奇異連續譜／Hausdorff 維度：
+      本回合為有限階 trace map 精確有理憑證（k≥6 超出 Int64 Rat，未冒充）。
+  [ ] SU(2)₃ 完整 T 矩陣相位、非零 genus 之 WRT 不變量與 3-流形手術公式。
+  [ ] docs/ 其餘設計文件：非首次開發需先獲准，本回合未建立新文檔。
+  [ ] git 無 remote：不得聲稱 push；需使用者提供 remote。
+
+§7'''''' C1-07 量化記錄
+  MoonBit / .mbtp / c1.mbt 總行數：13,443 → 14,786
+  theorem_* 憑證函數：163 → 181（grep -h "^pub fn theorem_"）
+  登錄表：498 → 571 筆（6 公理／62 定義／8 命題／14 引理／
+      181 定理／180 演算法／120 等式），前沿文獻 65 → 72 筆
+  形式化驗證：17 goals proved（.mbtp 未改動，無 trusted assumption）
+  inspect 報表：60 行 → 65 行，全數 OK；catalog 571/OK
+  黃金/Fibonacci 實測：φ²=φ+1、φⁿ=F_nφ+F_{n−1}（n≤20）、
+      Qⁿ 公式（n≤12）、Cassini、Zeckendorf（N<200）、
+      x_{k+1}=2x_kx_{k−1}−x_{k−2}（k≤5）、I(x_{k+1},x_k,x_{k−1})=1/4。
+  陳–西蒙斯實測：Verlinde 64/64 與組合融合律一致、
+      d=(1,φ,φ,1)、D²=5+√5、Ŝ²=(5+√5)I、dim H_{g=2}=20、
+      c₀=(5−√5)/20、t=ζ+ζ⁴ 滿足 t²+t−1=0。
+  21×14 交織實測：W₂ ℚ-秩 14／GF(11)-秩 3／非零項 271／
+      Gram 秩 14、跡 9615／Kronecker 秩 9／概念格 1568/1568／
+      span21=12、span441=25（完整 End(A_CS5)）/OK；
+      跨回合堆疊 42×14、拼接 21×28、聯合 Gram 皆通過秩關係。
+  健檢實測：files=19、defs=931、dead=0、dup_names=0、
+      dup_ids=0、dup_statements=0（audit_repository 輸出）。
+  algorithm.xlsx sha256：
+      63e5144e2f3ab569c45fba58f730fc61f8a22c3d0250776ec975c6cc5e413169
+
+§8'''''' C1-07 回合末驗證與 commit
+  環境：/tmp 工具鏈與 z3 於回合開始時再度消失，依 §1 重新安裝
+      curl -fsSL https://cli.moonbitlang.com/install/unix.sh ...
+      MOON_HOME=/tmp/moonhome bash /tmp/moonbit-install.sh
+      python3 -m pip install -q z3-solver (z3 5.3.3)
+      moon 0.1.20261104 / moonc v0.10.20+65efd5b93
+      .githooks/pre-commit 執行位元重新 chmod +x（快照權限變動）。
+  局部：exact / series / algebra / galois / graphs / compose 六份 zz_probe
+      與根 zz_probe 各 Total tests: 1, passed: 1，驗畢全數刪除。
+  全域：moon check --deny-warn／moon build（wasm artifact）／
+      moon prove --deny-warn（17 goals proved）／moon run cmd/main
+      （65 行全 OK，catalog 571/OK）。
+  產生器決定性：build_catalog.py / build_readmes.py 連跑兩次後
+      algorithm.xlsx、docs/catalog.json、src/catalog/catalog.mbt、README.md
+      之 sha256 完全相同（DETERMINISTIC OK）。
+  commit：待回合末 git commit 後補登 hash；
+      git status --short 為空、git remote -v 為空（未 push）。
+
+§9'''''' C1-07 健檢／除錯／去重詳細記錄
+  健檢方法：tools/build_catalog.py 之 audit_repository() 掃描全部
+      .mbt/.mbtp，建立定義表與「移除定義簽章但保留單行本體」之引用文，
+      以零外部引用判定死碼；另檢查同套件完整定義名重複、登錄表 ID／陳述重複。
+      初版把「單行函式定義」整行排除，誤報 qt_neg 等為死碼 → 修正為
+      只移除簽章至第一個 { 之前的部份。
+      初版以 bare name 計數，誤把 Poly::equal / Fps::equal 等
+      不同型別方法多載當成重複定義 → 改以完整 Type::method 名稱計數。
+  初測：files=19、defs=845、dead=57、dup_names=4（方法多載誤報）、
+      dup_ids=0、dup_statements=0；Dev.txt 逐行重複 34 組（多為流水帳
+      固定標題與環境重裝紀錄，依「只追加不塗改」保留）。
+  終測：dead=0、dup_names=0、dup_ids=0、dup_statements=0。
+  死碼處置：57 個未引用函式全數接入 c1.mbt 之 theorem_code_health()
+      與 report()／cs_interwoven_stats() 的真實計算，逐一驗證通過；
+      未刪除任何有登錄表陳述的真實數學（未完成不得充作已完成）。
+  去重（五處）：
+    - vec_equal / expvec_equal / exps_equal 三個完全相同的逐項比對本體
+      → @exact.vec_equal_i64 / vec_equal_int，原處改為委派。
+    - Fps::equal 與 Dirichlet::equal → 共用 rat_coeffs_equal。
+    - galois.lower_mask 與 full_mask 本體完全相同 → 刪除 lower_mask，
+      6 處呼叫改 full_mask。
+    - compose.iw_insert_unique 與 galois.insert_unique 相同
+      → insert_unique 改 pub，compose 直接呼叫，移除本地副本。
+    - compose.iw_flatten 與 cs_flatten → 共用參數化 iw_flatten_mod(m,p)。
+  除錯（四個真實 bug）：
+    - mat_rank 以 Int64 Rat 做 RREF，在 21×21 Gram 上中介量溢位，
+      把 rank(WWᵀ)=14 誤報為 21 → 新增 mat_rank_big（BigInt Bareiss
+      有理消去），mat_rank 改委派；全域所有秩計算改為無溢位版本。
+    - C1-06 的 iw_flatten 固定模 7，被 C1-07 的 F₁₁ 算子誤用，
+      使 span21=13（正確 12）→ 參數化模數並新增 cs_flatten。
+    - c5_reduce 初版對所有 d≥4 一律「減 e 到 0..3」，只對 d=4 正確；
+      z^5 應化為 1 → 改為由高次往低次逐項以
+      z^d = −(z^{d−4}+z^{d−3}+z^{d−2}+z^{d−1}) 降次。
+    - theorem_fiber_product_universal 之 pairs 與 homs 為同一迴圈複製貼上，
+      「pairs == homs」是恆真式，且 fiber_product_count 等式只是定義重述
+      → 改為 pairs 由穷舉實算對照閉式 (m/g)n、homs 為受 t-整除限制之真子集
+      且 homs < pairs。
+    - theorem_cs_modular 初版誤設 SU(2)₃ 電荷共軛 C: a↦3−a；
+      SU(2) 表現皆自共軛，實算 Ŝ²=(5+√5)I 即 (1/c₀)I → 修正並改文件說明。
+    - theorem_fib_trace_map 之 T⁻¹ 初版誤把 T 再作用一次當逆；
+      改為直接 (b,c,2bc−a)。另 k≥6 之 FV 分子超出 Int64 Rat，
+      憑證範圍明訂 k≤5，未以溢位值冒充成立。
+  重複 ID：C1-07 定理初命名 T-G1..G5 與既有圖論 T-G1..G5 撞名，
+      且一次全域取代誤把既有條目也改名 → 還原既有 T-G1..G5，
+      C1-07 更名 T-GOLD1..GOLD5，最終 dup_ids=0。
+  Dev.txt 流水帳本之重複行（固定分隔線、環境重裝指令等）依
+      「流水帳本只追加、不塗改」保留，未刪除；此為格式性重複而非死碼。

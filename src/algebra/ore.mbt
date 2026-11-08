@@ -2758,3 +2758,190 @@ pub fn theorem_quantum_torus() -> Bool {
     theorem_qt_heisenberg() && theorem_qt_weil_pairing() &&
     theorem_qt_morita_sl2()
 }
+
+///|
+/// ═══════════════════════════════════════════════════════════════════════
+/// C1-07 (C) — SU(2)₃ 陳–西蒙斯理論與 Fibonacci 融合範疇
+/// 層級 k=3 ⇒ k+2=5，q=e^{2πi/5}；4 個可積表現 a=0,1,2,3。
+/// Kac–Peterson S 矩陣 S_{ab}=√(2/5)·sin((a+1)(b+1)π/5)，
+/// 以 Chebyshev U_n(cos θ)（cos(π/5)=φ/2）在 ℚ(√5) 中精確表示：
+///   Ŝ_{ab}=U_{(a+1)(b+1)−1}(φ/2), S_{ab}=√(2/5)·sin(π/5)·Ŝ_{ab}.
+/// Verlinde：N_{ab}^c = (2/5)sin²(π/5)·Σ_x Ŝ_{ax}Ŝ_{bx}Ŝ_{cx}/Ŝ_{0x}。
+/// 偶數扇域 {0,2} 即 Fibonacci 範疇 τ⊗τ=1⊕τ，其融合矩陣譜為 {φ,ψ}。
+/// ═══════════════════════════════════════════════════════════════════════
+
+///|
+fn cs_q5(a : Int64, b : Int64) -> @exact.Q5 {
+  @exact.q5(@exact.rat_int(a), @exact.rat_int(b))
+}
+
+///|
+/// U_n(φ/2) ∈ ℚ(√5)：U₀=1, U₁=φ, U_{n+1}=φ·U_n−U_{n−1}。
+pub fn cs_chebyshev_u(n : Int) -> @exact.Q5 {
+  let phi = @exact.q5_phi()
+  let mut u0 = cs_q5(1L, 0L)
+  let mut u1 = phi
+  if n == 0 { return u0 }
+  if n == 1 { return u1 }
+  for _i in 2..<(n + 1) {
+    let u2 = @exact.q5_sub(@exact.q5_mul(phi, u1), u0)
+    u0 = u1
+    u1 = u2
+  }
+  u1
+}
+
+///|
+pub fn cs_shat(a : Int, b : Int) -> @exact.Q5 {
+  cs_chebyshev_u((a + 1) * (b + 1) - 1)
+}
+
+///|
+/// (2/5)sin²(π/5) = (5−√5)/20 ∈ ℚ(√5)。
+pub fn cs_c0() -> @exact.Q5 {
+  @exact.q5(@exact.rat(1L, 4L), @exact.rat(-1L, 20L))
+}
+
+///|
+/// SU(2)₃ 組合融合律（截斷 SU(2) 張量積）。
+pub fn cs_comb(a : Int, b : Int, c : Int) -> Int64 {
+  let hi = if a + b < 6 - a - b { a + b } else { 6 - a - b }
+  if (a - b).abs() <= c && c <= hi && (a + b + c) % 2 == 0 { 1L } else { 0L }
+}
+
+///|
+/// 演算法 A-CS1：Verlinde 公式（ℚ(√5) 精確）。
+pub fn cs_verlinde(a : Int, b : Int, c : Int) -> @exact.Q5 {
+  let mut s = cs_q5(0L, 0L)
+  for x in 0..<4 {
+    let num = @exact.q5_mul(
+      @exact.q5_mul(cs_shat(a, x), cs_shat(b, x)), cs_shat(c, x))
+    let term = @exact.q5_mul(num, @exact.q5_inv(cs_shat(0, x)).unwrap())
+    s = @exact.q5_add(s, term)
+  }
+  @exact.q5_mul(cs_c0(), s)
+}
+
+///|
+/// 定理 T-CS1：Verlinde 公式重現 SU(2)₃ 融合律（全部 4³ 組），
+/// 係數皆為整數，且真空 N_{0b}^c=δ_{bc}。
+pub fn theorem_cs_verlinde() -> Bool {
+  for a in 0..<4 {
+    for b in 0..<4 {
+      for c in 0..<4 {
+        let v = cs_verlinde(a, b, c)
+        if !@exact.q5_is_int(v) { return false }
+        if v.a.n != cs_comb(a, b, c) { return false }
+        if a == 0 {
+          let want = if b == c { 1L } else { 0L }
+          if v.a.n != want { return false }
+        }
+      }
+    }
+  }
+  true
+}
+
+///|
+/// 定理 T-CS2：偶數扇域 {0,2} 為 Fibonacci 融合範疇。
+/// 2⊗2=0⊕2（τ⊗τ=1⊕τ）、2⊗0=2、0⊗0=0；
+/// N_τ=[[0,1],[1,1]] 之特徵多項式 x²−x−1，特徵值 φ,ψ；
+/// 量子維度 d=(1,φ,φ,1) 且 D²=Σd²=2(φ+2)。
+pub fn theorem_cs_fibonacci_sector() -> Bool {
+  if cs_comb(2, 2, 0) != 1L || cs_comb(2, 2, 2) != 1L { return false }
+  if cs_comb(2, 2, 1) != 0L || cs_comb(2, 2, 3) != 0L { return false }
+  if cs_comb(2, 0, 2) != 1L || cs_comb(0, 0, 0) != 1L { return false }
+  let phi = @exact.q5_phi()
+  let psi = @exact.q5_psi()
+  if !@exact.q5_equal(@exact.q5_add(phi, psi), cs_q5(1L, 0L)) { return false }
+  if !@exact.q5_equal(@exact.q5_mul(phi, psi), cs_q5(-1L, 0L)) { return false }
+  // N_τ 之特徵多項式：tr=1, det=−1 ⇒ x²−x−1
+  let tr = cs_comb(2, 2, 2) + cs_comb(2, 0, 0)
+  let det = cs_comb(2, 2, 2) * cs_comb(2, 0, 0) -
+            cs_comb(2, 2, 0) * cs_comb(2, 0, 2)
+  if tr != 1L || det != -1L { return false }
+  // d_a = Ŝ_{0a} = U_a(φ/2)
+  let want_d = [cs_q5(1L, 0L), phi, phi, cs_q5(1L, 0L)]
+  let mut d2 = cs_q5(0L, 0L)
+  for a in 0..<4 {
+    if !@exact.q5_equal(cs_shat(0, a), want_d[a]) { return false }
+    d2 = @exact.q5_add(d2, @exact.q5_mul(cs_shat(0, a), cs_shat(0, a)))
+  }
+  @exact.q5_equal(d2,
+    @exact.q5_mul(cs_q5(2L, 0L), @exact.q5_add(phi, cs_q5(2L, 0L))))
+}
+
+///|
+/// 定理 T-CS3：模數據。Ŝ 對稱；SU(2) 表現皆自共軛故 C=I，
+/// 因而 S²=I 等價於 Ŝ²=(1/c₀)·I；S⁴=I；WRT(S³)²=S₀₀²=c₀；
+/// Verlinde 屬數 dim H_{T²}=4、dim H_{g=2}=Σ_λ S_{0λ}^{−2}=20。
+pub fn theorem_cs_modular() -> Bool {
+  for a in 0..<4 {
+    for b in 0..<4 {
+      if !@exact.q5_equal(cs_shat(a, b), cs_shat(b, a)) { return false }
+    }
+  }
+  let c0 = cs_c0()
+  let inv_c0 = @exact.q5_inv(c0).unwrap()
+  // Ŝ² = (1/c₀)C
+  for a in 0..<4 {
+    for b in 0..<4 {
+      let mut s = cs_q5(0L, 0L)
+      for x in 0..<4 {
+        s = @exact.q5_add(s, @exact.q5_mul(cs_shat(a, x), cs_shat(x, b)))
+      }
+      let want = if a == b { inv_c0 } else { cs_q5(0L, 0L) }
+      if !@exact.q5_equal(s, want) { return false }
+    }
+  }
+  // S⁴=I ⇒ Ŝ⁴=(1/c₀²)I
+  let inv_c0_sq = @exact.q5_mul(inv_c0, inv_c0)
+  for a in 0..<4 {
+    for b in 0..<4 {
+      let mut s = cs_q5(0L, 0L)
+      for x in 0..<4 {
+        for y in 0..<4 {
+          for z in 0..<4 {
+            s = @exact.q5_add(s,
+              @exact.q5_mul(
+                @exact.q5_mul(cs_shat(a, x), cs_shat(x, y)),
+                @exact.q5_mul(cs_shat(y, z), cs_shat(z, b))))
+          }
+        }
+      }
+      let want = if a == b { inv_c0_sq } else { cs_q5(0L, 0L) }
+      if !@exact.q5_equal(s, want) { return false }
+    }
+  }
+  // dim H_{g=2} = Σ_λ (S_{0λ})^{-2} = (1/c₀)Σ_λ 1/d_λ²
+  let mut sum = cs_q5(0L, 0L)
+  for a in 0..<4 {
+    let d = cs_shat(0, a)
+    let d2 = @exact.q5_mul(d, d)
+    sum = @exact.q5_add(sum, @exact.q5_inv(d2).unwrap())
+  }
+  let dim2 = @exact.q5_mul(inv_c0, sum)
+  @exact.q5_is_int(dim2) && dim2.a.n == 20L
+}
+
+///|
+/// 定理 T-CS4：Wilson loop 黃金比例橋。
+/// d_{1/2}=sin(2π/5)/sin(π/5)=2cos(π/5)=φ；
+/// WRT(S³)²=c₀=(5−√5)/20；ℚ(ζ₅) 中 t=ζ+ζ⁴ 滿足 t²+t−1=0，
+/// 1+t 即 φ（q=e^{2πi/5} 環包含黃金比例）。
+pub fn theorem_cs_wilson_golden() -> Bool {
+  let phi = @exact.q5_phi()
+  if !@exact.q5_equal(cs_shat(0, 1), phi) { return false }
+  if !@exact.q5_equal(@exact.q5_mul(cs_shat(0, 1), cs_shat(0, 1)),
+                      @exact.q5_add(phi, cs_q5(1L, 0L))) { return false }
+  let c0 = cs_c0()
+  let want_c0 = @exact.q5(@exact.rat(1L, 4L), @exact.rat(-1L, 20L))
+  if !@exact.q5_equal(c0, want_c0) { return false }
+  @exact.theorem_c5_golden_bridge() && @exact.theorem_q5_golden()
+}
+
+///|
+pub fn theorem_chern_simons() -> Bool {
+  theorem_cs_verlinde() && theorem_cs_fibonacci_sector() &&
+    theorem_cs_modular() && theorem_cs_wilson_golden()
+}

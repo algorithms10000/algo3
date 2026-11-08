@@ -1,6 +1,6 @@
 # src/galois — 全局公理 G：有限冪集伽羅瓦對應、NextClosure、楚對偶、完備格表示
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織／C1-07 黃金比例、陳–西蒙斯與全代碼健檢。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得公理
 
@@ -43,6 +43,7 @@
 - **AL059** parallel_intent_partition 無通訊 worker 不交劃分（ embarrassingly parallel）
 - **AL101** fcbo_run / cbo_closure_count（O(|concepts|·n²)）
 - **AL102** pfcbo_workers 層級 L 之 round-robin 分發（O(w·|queue|)）
+- **AL174** full_mask 取代重複之 lower_mask（O(n)）
 
 ## 等式
 
@@ -74,9 +75,9 @@ Context(列遮罩) → polar → closure → 閉集格 → NextClosure → Chu d
 實際公開符號（擷取自本資料夾 .mbt）：
 
 ```text
-  context  full_mask  lower_mask  entry
-  subset  polar_obj  polar_attr  closure_obj
-  closure_attr  adjoint_pair  total_masks  closed_objects
+  context  full_mask  entry  subset
+  polar_obj  polar_attr  closure_obj  closure_attr
+  adjoint_pair  total_masks  insert_unique  closed_objects
   closed_attributes  next_closure_intents  concept_covers  chu_dual
   relation_compose  galois_certificate  theorem_closed_lattice_antiiso  theorem_next_closure_complete
   theorem_chu_dual  ideal_variety_context  theorem_ideal_variety  closure_system_representation

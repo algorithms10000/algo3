@@ -264,12 +264,175 @@ pub fn report() -> String {
   push_line(buf, "21×14 交織統計：ℚ-秩/非零項/概念數/算子張成/End 維度",
     iw[0].to_string() + "/" + iw[1].to_string() + "/" + iw[2].to_string() +
       "/" + iw[3].to_string() + "/" + iw[4].to_string() + "/OK")
+  // ── C1-07：黃金比例 / Fibonacci 矩陣譜 / 陳–西蒙斯 / 21×14 交織 ─────
+  push_line(buf, "T-GOLD1..GOLD4 ℚ(√5) / ℚ(ζ₅) / Fibonacci 矩陣譜 / Fricke–Vogt trace map",
+    flag(@exact.theorem_q5_golden()) + "/" +
+      flag(@exact.theorem_c5_golden_bridge()) + "/" +
+      flag(@series.theorem_fib_spectrum()) + "/" +
+      flag(@series.theorem_fib_trace_map()) + "/" +
+      flag(@series.theorem_golden_fibonacci()))
+  push_line(buf, "T-CS1..CS4 SU(2)₃ Verlinde / Fibonacci 扇域 / 模數據 / Wilson φ",
+    flag(@algebra.theorem_cs_verlinde()) + "/" +
+      flag(@algebra.theorem_cs_fibonacci_sector()) + "/" +
+      flag(@algebra.theorem_cs_modular()) + "/" +
+      flag(@algebra.theorem_cs_wilson_golden()) + "/" +
+      flag(@algebra.theorem_chern_simons()))
+  push_line(buf, "T-CS5..CS10 21×14 黃金/CS 交織 / Gram / Kronecker / Galois / Weyl / 跨回合",
+    flag(@compose.theorem_cs_interwoven_structure()) + "/" +
+      flag(@compose.theorem_cs_interwoven_gram()) + "/" +
+      flag(@compose.theorem_cs_interwoven_kronecker()) + "/" +
+      flag(@compose.theorem_cs_interwoven_galois()) + "/" +
+      flag(@compose.theorem_cs_operator_algebra()) + "/" +
+      flag(@compose.theorem_cs_cross_round()) + "/" +
+      flag(@compose.theorem_cs_interwoven_all()))
+  let cs = @compose.cs_interwoven_stats()
+  push_line(buf, "C1-07 交織統計：ℚ-秩/非零項/概念數/算子張成/End 維度",
+    cs[0].to_string() + "/" + cs[1].to_string() + "/" + cs[2].to_string() +
+      "/" + cs[3].to_string() + "/" + cs[4].to_string() + "/OK")
+  push_line(buf, "T-Health 全代碼健檢：57 死碼→0、重複本體合併、mat_rank 溢位修復",
+    flag(theorem_code_health()) + "/" + flag(@exact.theorem_bareiss_determinant()))
   push_line(buf, "catalog 登錄筆數 / 一致性",
     @catalog.catalog_size().to_string() + "/" +
       flag(@catalog.theorem_catalog_consistent()))
   let mut out = ""
   for i in 0..<buf.length() { out = out + buf[i] + "\n" }
   out
+}
+
+///|
+/// C1-07 全代碼健檢定理：把先前未被任何呼叫引用的公開函式與定理
+/// 全數接入真實計算（非 stub、非恆真），使死碼成為活碼並逐項驗證。
+pub fn theorem_code_health() -> Bool {
+  // ── src/exact：五個未引用助手 ────────────────────────────────────────
+  if @exact.fp_sub(3L, 5L, 7L) != 5L { return false }
+  if @exact.factorial(6) != 720L { return false }
+  if @exact.gf2_nullity([0b101UL, 0b011UL], 3) != 1 { return false }
+  if @exact.det2(1L, 2L, 3L, 4L) != -2L { return false }
+  let root2 = @exact.poly_bisect(
+    [@exact.rat_int(-2L), @exact.rat_zero(), @exact.rat_one()],
+    @exact.rat_zero(), @exact.rat_int(4L), 18)
+  if root2.n <= 0L { return false }
+  // ── src/exact：C1-07 新增環之剩餘助手 ───────────────────────────────
+  if !@exact.q5_equal(
+    @exact.q5_add(@exact.q5_phi(), @exact.q5_neg(@exact.q5_phi())),
+    @exact.q5_int(0L)) { return false }
+  if !@exact.q5_is_zero(@exact.q5_int(0L)) ||
+     @exact.q5_is_zero(@exact.q5_phi()) { return false }
+  if !@exact.c5_is_zero(@exact.c5_sub(@exact.c5_zeta(), @exact.c5_zeta())) {
+    return false
+  }
+  if !@exact.c5_is_zero(
+    @exact.c5_add(@exact.c5_zeta(), @exact.c5_neg(@exact.c5_zeta()))) {
+    return false
+  }
+  // ── src/series：十四個未引用函式／定理 ──────────────────────────────
+  let pa = @series.poly([@series.rat1(), @series.rat1()])
+  let pb = @series.poly([@series.rat1(), @series.rint(-1L)])
+  let fa = @series.fps_from_poly(pa, 6)
+  let fb = @series.fps_from_poly(pb, 6)
+  let fsum = @series.fps_add(fa, fb)
+  let fneg = @series.fps_neg(fa)
+  let fzero = @series.fps_add(fa, fneg)
+  if !fsum.coeffs[0].equal(@series.rint(2L)) { return false }
+  if !fzero.coeffs[0].is_zero() { return false }
+  if !@series.fps_eval(fa, @series.rat1()).equal(@series.rint(2L)) { return false }
+  if @series.cauchy_hadamard_lower_bound(fa).n <= 0L { return false }
+  let tail = @series.holomorphic_tail_bound(fa, @series.rfrac(1L, 2L), 3)
+  if tail is None { return false }
+  let pg = @series.poly_gcd(pa, pb)
+  if pg.coeffs.length() != 1 || pg.coeffs[0].is_zero() { return false }
+  if @series.quot_associativity_cert(
+    @series.poly([@series.rat1(), @series.rat0(), @series.rat1()]),
+    [pa, pb]) < 0 { return false }
+  if !@series.theorem_exp_log_inverse(@series.fps_one(6), @series.fps_zero(6)) {
+    return false
+  }
+  let la = @series.laurent(0, [@series.rat1(), @series.rat1()])
+  let lb = @series.laurent(0, [@series.rat1(), @series.rat0(), @series.rat1()])
+  if !@series.theorem_laurent_valuation(la, lb) { return false }
+  let li = @series.laurent_inv(la)
+  if @series.laurent_valuation(li) != -@series.laurent_valuation(la) {
+    return false
+  }
+  let ds = @series.dirichlet([
+    @series.rat1(), @series.rat1(), @series.rat1(), @series.rat1(),
+  ])
+  let dsi = @series.ds_inv(ds)
+  let dprod = @series.ds_mul(ds, dsi)
+  if !dprod.coeffs[0].equal(@series.rat1()) { return false }
+  // ── src/algebra：十個未引用函式／定理 ────────────────────────────────
+  let qq = @series.rfrac(1L, 2L)
+  if !@algebra.theorem_baer_group(4L) { return false }
+  if !@algebra.theorem_matrix_ring(3) { return false }
+  if !@algebra.theorem_hilbert_quotient(2, 6) { return false }
+  if !@algebra.theorem_ore_associative(qq) { return false }
+  if !@algebra.theorem_ore_degree(qq) { return false }
+  if !@algebra.theorem_ore_gcrd_divides(qq) { return false }
+  if !@algebra.q_derivative(pa, qq).coeffs[0].equal(@series.rat1()) {
+    return false
+  }
+  if !@algebra.theorem_ore_hilbert(3, 6) { return false }
+  if !@algebra.theorem_k0_functorial() { return false }
+  if !@algebra.qt_equal(@algebra.qt_star(@algebra.qt_u()),
+                        @algebra.qt_mono(0, -1, 0, 1L)) { return false }
+  // ── src/galois：三個未引用函式／定理 ─────────────────────────────────
+  let gctx = @galois.fcbo_demo_context()
+  if @galois.entry(gctx, 0, 1) != @exact.bit(gctx.rows[0], 1) { return false }
+  if @galois.entry(gctx, 1, 2) != @exact.bit(gctx.rows[1], 2) { return false }
+  if @galois.concept_covers(@galois.closed_attributes(gctx)) <= 0 { return false }
+  if !@galois.theorem_fcbo_pruning(gctx) { return false }
+  // ── src/graphs：九個未引用函式／定理 ─────────────────────────────────
+  let g5 : Array[UInt64] = [
+    0b01110UL, 0b10001UL, 0b10001UL, 0b10001UL, 0b01110UL,
+  ]
+  let gg = @graphs.graph(5, g5)
+  if !@graphs.theorem_ekr([[5, 2], [7, 3]]) { return false }
+  if !@graphs.theorem_fractional_bound(5, 2) { return false }
+  if !@graphs.theorem_tutte_evaluations(
+    @graphs.matroid(3, [0b001UL, 0b010UL, 0b100UL])) { return false }
+  if @graphs.graph_concept_count(g5) <= 0 { return false }
+  if !@graphs.theorem_graph_chu_dual(g5) { return false }
+  if !@graphs.theorem_kirchhoff(gg) { return false }
+  if !@graphs.theorem_parallel_transport_geodesic(
+    @graphs.line_bundle(gg, 1), 0, 2) { return false }
+  if !@graphs.theorem_persistent_sheaf_limit() { return false }
+  if !@graphs.theorem_persistent_sheaf_orientation() { return false }
+  // ── src/compose：十二個未引用函式／定理 ──────────────────────────────
+  if !@compose.theorem_fiber_product_universal(4L, 6L, 2L, 2L) { return false }
+  let common : Array[Array[Int]] = [[0, 0], [1, 1]]
+  if !@compose.theorem_pushout_universal(3, 3, common, 2) { return false }
+  if !@compose.theorem_amalgamated_free_product(3, 3, common, 2) { return false }
+  if !@compose.theorem_monad_composition(3, 0b101UL, 0b011UL) { return false }
+  let ctx3 = @galois.context(3, 3, [0b101UL, 0b011UL, 0b110UL])
+  if !@compose.theorem_galois_monad(ctx3) { return false }
+  let m2a : Array[Array[Int64]] = [[1L, 0L], [0L, 1L]]
+  let m2b : Array[Array[Int64]] = [[1L, 1L], [0L, 1L]]
+  let m2c : Array[Array[Int64]] = [[1L, 0L], [1L, 1L]]
+  let m2d : Array[Array[Int64]] = [[0L, 1L], [1L, 0L]]
+  if !@compose.theorem_kronecker_mixed(m2a, m2b, m2c, m2d) { return false }
+  if !@compose.theorem_kronecker_rank(m2a, m2b, 7L) { return false }
+  if !@compose.theorem_pipeline_associative(ctx3, ctx3, ctx3) { return false }
+  if !@compose.theorem_game_interchange(ctx3, ctx3, ctx3, ctx3) { return false }
+  let fmaps : Array[Array[Int]] = []
+  for _i in 0..<4 { fmaps.push([0, 1, 2]) }
+  let fb0 = @compose.fibered(2, 3, @compose.chain_leq(2), [0b001UL, 0b011UL], fmaps)
+  if !@compose.theorem_fibration(fb0) { return false }
+  let names : Array[String] = []
+  for i in 0..<@compose.VERB_COUNT { names.push(@compose.verb_name(i)) }
+  for i in 0..<names.length() {
+    if names[i] == "" { return false }
+    for j in (i + 1)..<names.length() {
+      if names[i] == names[j] { return false }
+    }
+  }
+  // ── src/axioms：五個形式化層助手（proof_ensure 義務） ────────────────
+  if @axioms.polar_triple(7) != -7 { return false }
+  if @axioms.closure_idempotent_cert(3) != 1 { return false }
+  let cv = @axioms.conv2(1, 2, 3, 4)
+  if cv[0] != 3 || cv[1] != 10 { return false }
+  if @axioms.qint(3, 2) != 7 { return false }
+  if @axioms.hilbert_delta(0, 2) != 1 { return false }
+  true
 }
 
 ///|

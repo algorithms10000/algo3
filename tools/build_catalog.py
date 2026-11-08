@@ -756,6 +756,112 @@ REFS = REFS + [
     ("R65", "Silverman / Weil pairing on E[N] and theta groups (standard finite model)", "1986/2009", "https://arxiv.org/pdf/2505.13727", "A[N]≅(ℤ/N)^{2g}、Weil 配對雙線性／交錯／非退化；theta group 交換子配對；principal polarization 與 isogeny 核之 isotropic 子群"),
 ]
 
+# ── C1-07：黃金比例 / Fibonacci 矩陣譜 / 陳–西蒙斯 / 21×14 交織 / 全代碼健檢 ──
+ROUND = "C1-07"
+
+new_defs7 = [
+    ("D60", "Q5=ℚ(√5)：a+b√5 精確二次環，φ=(1+√5)/2", "src/exact"),
+    ("D61", "C5=ℚ[ζ]/(Φ₅)：SU(2)₃ 陳–西蒙斯 q=e^{2πi/5} 之分圓環", "src/exact"),
+    ("D62", "Fibonacci 矩陣 Q=[[1,1],[1,0]] 與譜投影 P±∈M₂(ℚ(√5))", "src/series"),
+    ("D63", "Fricke–Vogt 不變量 I=x²+y²+z²−2xyz−1 與 trace map T(x,y,z)=(2xy−z,x,y)", "src/series"),
+    ("D64", "SU(2)₃ 可積表現 a=0..3 與 Kac–Peterson S_{ab}=√(2/5)sin((a+1)(b+1)π/5)", "src/algebra"),
+    ("D65", "Chebyshev Ŝ_{ab}=U_{(a+1)(b+1)−1}(φ/2) 與 Verlinde 公式", "src/algebra"),
+    ("D66", "Fibonacci 融合範疇 τ⊗τ=1⊕τ（SU(2)₃ 偶數扇域）與量子維度 d=(1,φ,φ,1)", "src/algebra"),
+    ("D67", "A_CS5=F₁₁[x]/(x⁵)：q⁵=1 之 5 維截斷微分算子代數", "src/compose"),
+    ("D68", "W₂[v][p]=τ(ρ(v)Φ_p)：21 動詞 × 14 範例 × 黃金/CS 結構之 21×14 交織矩陣", "src/compose"),
+    ("D69", "CodeHealth：死碼／重複本體／登錄表重複之可重複靜態健檢", "tools/build_catalog.py"),
+]
+for id_, stmt, pkg in new_defs7:
+    add("定義", id_, stmt, pkg, "", "moon check --deny-warn + 即寫即驗即刪 + audit_repository()")
+
+new_theorems7 = [
+    ("T-GOLD1", "ℚ(√5)：φ²=φ+1、φ⁻¹=φ−1、φ+ψ=1、φψ=−1、φⁿ=F_nφ+F_{n−1}、L_n=φⁿ+ψⁿ∈ℤ", "src/exact"),
+    ("T-GOLD2", "ℚ(ζ₅)：ζ⁵=1、Φ₅(ζ)=0；t=ζ+ζ⁴ 滿足 t²+t−1=0 ⇒ 1+t=φ", "src/exact"),
+    ("T-GOLD3", "Fibonacci 矩陣譜：x²−x−1、譜投影冪等／正交／完備、Qⁿ=[[F_{n+1},F_n],[F_n,F_{n−1}]]、Cassini、fast doubling、Lucas、Zeckendorf", "src/series"),
+    ("T-GOLD4", "Fibonacci trace map 保持 Fricke–Vogt 不變量且可逆；字長=F_{k+1}；轉移矩陣滿足 x_{k+1}=2x_kx_{k−1}−x_{k−2}", "src/series"),
+    ("T-GOLD5", "黃金比例／Fibonacci 矩陣譜四項憑證合取", "src/series"),
+    ("T-CS1", "Verlinde 公式於全部 4³ 組重現 SU(2)₃ 融合律且係數為整數、真空為 δ", "src/algebra"),
+    ("T-CS2", "偶數扇域 {0,2} 為 Fibonacci 融合範疇；N_τ 特徵多項式 x²−x−1；D²=2(φ+2)", "src/algebra"),
+    ("T-CS3", "SU(2)₃ 模數據：Ŝ 對稱、Ŝ²=(1/c₀)I、Ŝ⁴=(1/c₀²)I、dim H_{g=2}=20", "src/algebra"),
+    ("T-CS4", "Wilson loop d=sin(2π/5)/sin(π/5)=φ；WRT(S³)²=c₀=(5−√5)/20", "src/algebra"),
+    ("T-CS11", "陳–西蒙斯四項憑證合取", "src/algebra"),
+    ("T-CS5", "21×14 W₂ 非平凡：ℚ-秩 14、GF(11)-秩 3、非零項 271", "src/compose"),
+    ("T-CS6", "W₂ Gram S/T 對稱、秩 14、tr S=tr T=ΣW₂²=9615", "src/compose"),
+    ("T-CS7", "W₂ 之 Kronecker 自交織 rank(K⊗K)=rank(K)²=9", "src/compose"),
+    ("T-CS8", "全局公理 G 於 W₂ 脈絡：物件／屬性閉集數皆 1568、極性伴隨成立", "src/compose"),
+    ("T-CS9", "21 算子相異；[D,M_x]=M_x、M_x⁵=0、[∂,M_x]=I−5P₄；21 算子張成 12 維、441 複合張成完整 End(A_CS5)=25", "src/compose"),
+    ("T-CS10", "跨回合交織：W₁（量子環面）與 W₂（黃金/CS）之堆疊／拼接／聯合 Gram 與兩概念格交集", "src/compose"),
+    ("T-CS12", "21×14 黃金/CS 交織六項憑證合取", "src/compose"),
+    ("T-Health", "全代碼健檢：57 個未引用函式全數接入真實計算、重複本體合併、mat_rank 溢位修復、恆真式清除", "c1.mbt"),
+]
+for id_, stmt, pkg in new_theorems7:
+    add("定理", id_, stmt, pkg, "", "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證")
+
+new_algos7 = [
+    ("AL156", "q5_add/sub/mul/neg/inv/pow/is_int（ℚ(√5) 精確算術）", "src/exact", "O(n)"),
+    ("AL157", "c5_reduce/c5_mul/c5_pow（Φ₅ 分圓環降次）", "src/exact", "O(n²)"),
+    ("AL158", "mat_rank_big（BigInt Bareiss 有理消去求秩，無溢位）", "src/exact", "O(n³ log‖·‖)"),
+    ("AL159", "qmat_mul/add/sub/smul/pow（M₂(ℚ(√5))）", "src/series", "O(n)"),
+    ("AL160", "fib_pair 快速倍增 / fib_number / lucas_number", "src/series", "O(log n)"),
+    ("AL161", "zeckendorf 貪心不相鄰分解", "src/series", "O(log N)"),
+    ("AL162", "fib_word / word_matrix（Fibonacci 字轉移矩陣）", "src/series", "O(F_k)"),
+    ("AL163", "fricke_vogt / fib_trace_map", "src/series", "O(1)"),
+    ("AL164", "cs_chebyshev_u / cs_shat（Kac–Peterson S 之 ℚ(√5) 精確化）", "src/algebra", "O(n)"),
+    ("AL165", "cs_verlinde / cs_comb / cs_c0", "src/algebra", "O(k³)"),
+    ("AL166", "cs_operators（21 動詞 → A_CS5 微分算子）", "src/compose", "O(21·n³)"),
+    ("AL167", "cs_state / cs_interwoven_matrix（14 範例 × F_{p+1} × L_{p+1}）", "src/compose", "O(21·14·n²)"),
+    ("AL168", "cs_closed_attrs / theorem_cs_cross_round", "src/compose", "O(2^14·21·14)"),
+    ("AL169", "cs_flatten / iw_flatten_mod（參數化模數，修復跨回合硬編）", "src/compose", "O(n²)"),
+    ("AL170", "theorem_code_health（57 死碼實接與驗證）", "c1.mbt", "O(1)"),
+    ("AL171", "audit_repository（重複定義／重複本體／死碼／登錄表重複健檢）", "tools/build_catalog.py", "O(|src|²)"),
+    ("AL172", "vec_equal_i64 / vec_equal_int（三處重複本體合併）", "src/exact", "O(n)"),
+    ("AL173", "rat_coeffs_equal（Fps/Dirichlet::equal 共用）", "src/series", "O(n)"),
+    ("AL174", "full_mask 取代重複之 lower_mask", "src/galois", "O(n)"),
+    ("AL175", "pub galois.insert_unique 取代 compose.iw_insert_unique", "src/compose", "O(n)"),
+    ("AL176", "theorem_fiber_product_universal 恆真式清除", "src/compose", "O(m·n)"),
+    ("AL177", "theorem_golden_fibonacci / theorem_chern_simons 合取", "src/series,src/algebra", "O(1)"),
+    ("AL178", "cs_interwoven_stats（秩/非零/概念/張成 inspect）", "src/compose", "O(2^14·21)"),
+    ("AL179", "Q5/C5 與 Fibonacci/CS 之跨套件型別橋接", "src/exact,src/series,src/algebra", "O(1)"),
+    ("AL180", "C1-06 W₁ 與 C1-07 W₂ 之堆疊／拼接／聯合 Gram 秩計算", "src/compose", "O(21³)"),
+]
+for id_, stmt, pkg, cx in new_algos7:
+    add("演算法", id_, stmt, pkg, cx, "困難度 P；局部 moon test --deny-warn + inspect + audit")
+
+new_eqs7 = [
+    ("E101", "黃金比例", "φ=(1+√5)/2, φ²=φ+1, φ⁻¹=φ−1, ψ=(1−√5)/2, φψ=−1", "src/exact"),
+    ("E102", "φⁿ 與 Lucas", "φⁿ=F_nφ+F_{n−1}；L_n=φⁿ+ψⁿ∈ℤ", "src/exact"),
+    ("E103", "Φ₅ 分圓環", "Φ₅(z)=1+z+z²+z³+z⁴=0；z⁵=1", "src/exact"),
+    ("E104", "分圓黃金橋", "t=ζ+ζ⁴ ⇒ t²+t−1=0；1+t=φ", "src/exact"),
+    ("E105", "Fibonacci 特徵多項式", "χ_Q(λ)=λ²−λ−1；特徵值 φ, ψ=−φ⁻¹", "src/series"),
+    ("E106", "譜投影", "P₊=(Q−ψI)/√5, P₋=(φI−Q)/√5；P₊²=P₊, P₊P₋=0, P₊+P₋=I", "src/series"),
+    ("E107", "Qⁿ 與 Cassini", "Qⁿ=[[F_{n+1},F_n],[F_n,F_{n−1}]]；F_{n+1}F_{n−1}−F_n²=(−1)ⁿ", "src/series"),
+    ("E108", "快速倍增", "F_{2n}=F_n(2F_{n+1}−F_n), F_{2n+1}=F_{n+1}²+F_n²", "src/series"),
+    ("E109", "Fricke–Vogt", "I(x,y,z)=x²+y²+z²−2xyz−1，T(x,y,z)=(2xy−z,x,y)，I∘T=I", "src/series"),
+    ("E110", "Fibonacci 跡遞推", "x_{k+1}=2x_kx_{k−1}−x_{k−2}，|w_k|=F_{k+1}", "src/series"),
+    ("E111", "Kac–Peterson S", "S_{ab}=√(2/5)sin((a+1)(b+1)π/5)；Ŝ_{ab}=U_{(a+1)(b+1)−1}(φ/2)", "src/algebra"),
+    ("E112", "Verlinde", "N_{ab}^c=(2/5)sin²(π/5)·Σ_x Ŝ_{ax}Ŝ_{bx}Ŝ_{cx}/Ŝ_{0x}", "src/algebra"),
+    ("E113", "SU(2)₃ 融合", "N_{ab}^c=1 ⟺ |a−b|≤c≤min(a+b,6−a−b) 且 a+b+c 偶", "src/algebra"),
+    ("E114", "量子維度", "d_a=S_{0a}/S_{00}=U_a(φ/2)=(1,φ,φ,1)；D²=Σd²=2(φ+2)", "src/algebra"),
+    ("E115", "Fibonacci 融合", "τ⊗τ=1⊕τ；N_τ=[[0,1],[1,1]]，χ=x²−x−1", "src/algebra"),
+    ("E116", "模關係", "Ŝ²=(1/c₀)I, Ŝ⁴=(1/c₀²)I, (ST)³=S², S⁴=I", "src/algebra"),
+    ("E117", "WRT 與 Wilson", "WRT(S³)²=S₀₀²=c₀=(5−√5)/20；sin(2π/5)/sin(π/5)=φ", "src/algebra"),
+    ("E118", "A_CS5 微分算子", "[D,M_x]=M_x, M_x⁵=0, [∂,M_x]=I−5P₄；dim End=25", "src/compose"),
+    ("E119", "21×14 黃金/CS 交織", "W₂[v][p]=τ(ρ(v)Φ_p)；rank_ℚ=14, ΣW₂²=9615, 概念數 1568, rank(K⊗K)=9", "src/compose"),
+    ("E120", "健檢不變量", "dead=0, dup_names=0, dup_ids=0, dup_statements=0；rank(WWᵀ)=rank(W)=14", "tools/build_catalog.py"),
+]
+for id_, name, formula, pkg in new_eqs7:
+    add("等式", id_, name, pkg, formula, "由對應定理憑證驗證")
+
+REFS = REFS + [
+    ("R66", "Chou, AdS/CFT Duality and Anyons in SU(N)_k Chern-Simons Theory, arXiv:2505.16760", "2025", "https://arxiv.org/pdf/2505.16760", "SU(2)₃ 之 j=0,1/2,1,3/2 四個可積表現、dim H_{T²}=4；Verlinde dim=Σ_λ(S_{0λ})^{2−2g}；S/T 滿足 (ST)³=S², S⁴=I；N_{ab}^c=Σ_x S_{ax}S_{bx}S*_{cx}/S_{0x}；d_a=S_{0a}/S_{00}；Wilson 幅 sin(4π/5)/sin(π/5) 與黃金比例"),
+    ("R67", "Fillman–Luna, On the Spectra of Sieved Schrödinger Operators, arXiv:2505.08763v1", "2025", "https://arxiv.org/html/2505.08763v1", "Fibonacci Hamiltonian；trace map T(x,y,z)=(2xy−z,x,y)；T 保持 Fricke–Vogt 不變量；字長 F_k；奇異連續譜與零 Lebesgue 測度"),
+    ("R68", "Damanik–Gorodetski–Yessen, The Fibonacci Hamiltonian, Invent. Math. (2016)", "2016", "https://link.springer.com/article/10.1007/s00222-016-0660-x", "譜維度／IDS Hölder 指數與 Fibonacci trace map 雙曲性、topological entropy 之關係；判別式 = 轉移矩陣跡"),
+    ("R69", "Roberts, Trace maps as 3D reversible dynamical systems with an invariant", "1994", "https://link.springer.com/article/10.1007/BF02188581", "Fricke character Î(x,y,z)=x²+y²+z²−2xyz−1；Fibonacci trace map 之對稱性、可逆性與 Nielsen 變換"),
+    ("R70", "Minev et al., Realizing string-net condensation: Fibonacci anyon braiding, Nat Commun 16:6225 (2025)", "2025", "https://www.nature.com/articles/s41467-025-61493-8", "超導處理器上 Fib-SNC 之 Fibonacci anyon 編織；電荷量測 94%、交換得黃金比例 φ 98%；F-move 振幅由 φ 決定；chromatic polynomial 於 φ+2 取樣"),
+    ("R71", "Goodman, The Golden Bridge: A Certified Born Probability for Fibonacci Anyons", "2026", "https://www.researchgate.net/publication/408645751_The_Golden_Bridge_A_Certified_Born_Probability_for_Fibonacci_Anyons", "x²=x+1 之 eigenform 即 Fibonacci-anyon 量子維度 φ；編織幅為 Z[ζ₅] 之代數整數；golden ring Z[φ]；Yang–Lee 模型"),
+    ("R72", "Kac–Peterson / Verlinde formula and SU(2)_k modular data (standard)", "1984/1988", "https://arxiv.org/pdf/2505.16760", "S_{ab}=√(2/(k+2))sin((a+1)(b+1)π/(k+2))；N_{ab}^c=Σ_x S_{ax}S_{bx}S*_{cx}/S_{0x}；charge conjugation 對 SU(2) 為平凡"),
+]
+
 def mb_escape(s: str) -> str:
     return s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ")
 
@@ -833,7 +939,7 @@ def generate_xlsx():
     # 索引
     ws = wb.active
     ws.title = "索引"
-    ws.append(["C1 algorithm.xlsx", "全局公理：伽羅瓦對應", "回合 C1-06", "2026-11-08"])
+    ws.append(["C1 algorithm.xlsx", "全局公理：伽羅瓦對應", "回合 C1-07", "2026-11-08"])
     ws.append([])
     ws.append(["類別", "筆數", "來源", "驗證"])
     for c in ws[3]:
@@ -844,7 +950,7 @@ def generate_xlsx():
         n = sum(1 for e in A if e["kind"] == k)
         ws.append([k, n, "docs/catalog.json / src/catalog", "moon check + moon prove + 即時驗題"])
     ws.append(["合計", len(A), "", ""])
-    ws.append(["前沿文獻", len(REFS), "docs/catalog.json / Dev.txt §2", "聯網查證（C1-01 R1..R12 + C1-02 R13..R25 + C1-03 R26..R36 + C1-04 R37..R45 + C1-05 R46..R55 + C1-06 R56..R65）"])
+    ws.append(["前沿文獻", len(REFS), "docs/catalog.json / Dev.txt §2", "聯網查證（C1-01 R1..R12 + C1-02 R13..R25 + C1-03 R26..R36 + C1-04 R37..R45 + C1-05 R46..R55 + C1-06 R56..R65 + C1-07 R66..R72）"])
     ws.column_dimensions["A"].width = 22
     ws.column_dimensions["B"].width = 10
     ws.column_dimensions["C"].width = 36
@@ -911,10 +1017,65 @@ def generate_xlsx():
     return path
 
 
+def audit_repository():
+    """C1-07 全代碼健檢：重複定義／重複本體／死碼／登錄表重複，皆可重複執行。"""
+    import glob
+    import re
+    import collections
+
+    files = [p for p in glob.glob(os.path.join(ROOT, "**", "*.mbt"), recursive=True)
+             + glob.glob(os.path.join(ROOT, "**", "*.mbtp"), recursive=True)
+             if "_build" not in p and os.path.isfile(p)]
+    text = {p: open(p, encoding="utf-8").read() for p in files}
+    pat = re.compile(
+        r"^(pub fn|fn|pub\(all\) fn)\s+([A-Za-z0-9_]+(?:::[A-Za-z0-9_]+)?)\s*\(", re.M)
+    defs = []
+    for path, src in text.items():
+        for m in pat.finditer(src):
+            defs.append((path, m.group(2), m.group(2).split("::")[-1],
+                         src[:m.start()].count("\n")))
+    # 定義行只移除簽章，保留單行函式本體（避免誤判為死碼）
+    defline = collections.defaultdict(set)
+    for path, _full, _bare, ln in defs:
+        defline[path].add(ln)
+    parts = []
+    for path, src in text.items():
+        for i, line in enumerate(src.split("\n")):
+            if i in defline[path]:
+                j = line.find("{")
+                line = line[j + 1:] if j >= 0 else ""
+            parts.append(line)
+    ref = "\n".join(parts)
+    dead = []
+    for path, full, bare, _ln in defs:
+        if "::" in full:
+            n = len(re.findall(r"\." + re.escape(bare) + r"\s*\(", ref))
+            n += len(re.findall(r"(?<![\w:])" + re.escape(bare) + r"\s*\(", ref))
+        else:
+            n = len(re.findall(r"(?<![\w:])" + re.escape(bare) + r"\s*\(", ref))
+        if n == 0:
+            dead.append((os.path.relpath(path, ROOT), full))
+    # 以完整名稱（含 Type::method）計數；同名方法在不同型別上為合法多載。
+    dup_names = [(os.path.relpath(k[0], ROOT), k[1], v) for k, v in
+                 collections.Counter((p, f) for p, f, _b, _l in defs).items() if v > 1]
+    dup_ids = [k for k, v in collections.Counter(e["id"] for e in A).items() if v > 1]
+    dup_stmt = [k for k, v in collections.Counter(e["statement"] for e in A).items() if v > 1]
+    print("health: files={} defs={} dead={} dup_names={} dup_ids={} dup_statements={}".format(
+        len(files), len(defs), len(dead), len(dup_names), len(dup_ids), len(dup_stmt)))
+    for d in dead:
+        print("  DEAD", d[0], d[1])
+    if dup_ids or dup_stmt:
+        raise SystemExit("health: duplicate catalog entries detected")
+    return {"files": len(files), "defs": len(defs), "dead": len(dead),
+            "dup_names": len(dup_names), "dup_ids": len(dup_ids),
+            "dup_statements": len(dup_stmt)}
+
+
 def main():
+    audit_repository()
     os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
     with open(os.path.join(ROOT, "docs/catalog.json"), "w", encoding="utf-8") as f:
-        json.dump({"round": "C1-06", "global_axiom": "伽羅瓦對應",
+        json.dump({"round": "C1-07", "global_axiom": "伽羅瓦對應",
                    "entries": A, "references": REFS}, f, ensure_ascii=False, indent=2)
     generate_mbt()
     p = generate_xlsx()

@@ -1,6 +1,6 @@
 # src/compose — 14 種組合手法：Kan、束、纖維積、單子、張量、纖維範疇、推出、交織、博弈
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織／C1-07 黃金比例、陳–西蒙斯與全代碼健檢。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得定理列表
 
@@ -43,6 +43,13 @@
 - **T-IW5** 21 動詞算子代數非交換、滿足 q-Heisenberg、441 複合生成完整 End(A_q) 維度 81
 - **T-IW6** 量子環面↔AJ 橋接：Weil 配對與交換子互逆、q^{e₃} 落於 AJ_q 之核 ⟨q⟩
 - **T-IW7** 21×14 交織六項憑證與既有 21 動詞相容矩陣之合取
+- **T-CS5** 21×14 W₂ 非平凡：ℚ-秩 14、GF(11)-秩 3、非零項 271
+- **T-CS6** W₂ Gram S/T 對稱、秩 14、tr S=tr T=ΣW₂²=9615
+- **T-CS7** W₂ 之 Kronecker 自交織 rank(K⊗K)=rank(K)²=9
+- **T-CS8** 全局公理 G 於 W₂ 脈絡：物件／屬性閉集數皆 1568、極性伴隨成立
+- **T-CS9** 21 算子相異；[D,M_x]=M_x、M_x⁵=0、[∂,M_x]=I−5P₄；21 算子張成 12 維、441 複合張成完整 End(A_CS5)=25
+- **T-CS10** 跨回合交織：W₁（量子環面）與 W₂（黃金/CS）之堆疊／拼接／聯合 Gram 與兩概念格交集
+- **T-CS12** 21×14 黃金/CS 交織六項憑證合取
 
 ## 已實作演算法列表
 
@@ -73,6 +80,14 @@
 - **AL151** iw_flatten / theorem_interwoven_operator_algebra（441 複合秩）（O(21²·n⁶)）
 - **AL152** theorem_interwoven_aj_bridge（Weil/AJ 橋接穷舉）（O(n⁴·n²)）
 - **AL153** interwoven_stats（秩/非零/概念/張成 inspect）（O(2^14·21)）
+- **AL166** cs_operators（21 動詞 → A_CS5 微分算子）（O(21·n³)）
+- **AL167** cs_state / cs_interwoven_matrix（14 範例 × F_{p+1} × L_{p+1}）（O(21·14·n²)）
+- **AL168** cs_closed_attrs / theorem_cs_cross_round（O(2^14·21·14)）
+- **AL169** cs_flatten / iw_flatten_mod（參數化模數，修復跨回合硬編）（O(n²)）
+- **AL175** pub galois.insert_unique 取代 compose.iw_insert_unique（O(n)）
+- **AL176** theorem_fiber_product_universal 恆真式清除（O(m·n)）
+- **AL178** cs_interwoven_stats（秩/非零/概念/張成 inspect）（O(2^14·21)）
+- **AL180** C1-06 W₁ 與 C1-07 W₂ 之堆疊／拼接／聯合 Gram 秩計算（O(21³)）
 
 ## 等式
 
@@ -90,6 +105,8 @@
 - **E98** Gram 自交織：`S=WWᵀ, T=WᵀW 對稱；rank S=rank T=rank W；tr S=tr T=ΣW²=2932`
 - **E99** Kronecker 自交織：`rank(K⊗K)=rank(K)²=9；441 個 ρ(v)ρ(w) 張成 End(A_q)，dim=81`
 - **E100** 全局公理 G 於交織脈絡：`R(v,p)⇔W[v][p]≠0 ⇒ |Fix(F∘H)|=|Fix(H∘F)|=240；AJ_q(q^{e_n})=1`
+- **E118** A_CS5 微分算子：`[D,M_x]=M_x, M_x⁵=0, [∂,M_x]=I−5P₄；dim End=25`
+- **E119** 21×14 黃金/CS 交織：`W₂[v][p]=τ(ρ(v)Φ_p)；rank_ℚ=14, ΣW₂²=9615, 概念數 1568, rank(K⊗K)=9`
 
 ## 資料夾視角依賴關係圖
 
@@ -138,6 +155,9 @@
   interwoven_root  interwoven_operators  interwoven_state  interwoven_matrix
   theorem_interwoven_structure  theorem_interwoven_gram  theorem_interwoven_kronecker  theorem_interwoven_galois
   theorem_interwoven_operator_algebra  theorem_interwoven_aj_bridge  interwoven_stats  theorem_interwoven_all
+  cs_root  cs_operators  cs_state  cs_interwoven_matrix
+  theorem_cs_interwoven_structure  theorem_cs_interwoven_gram  theorem_cs_interwoven_kronecker  theorem_cs_interwoven_galois
+  theorem_cs_operator_algebra  theorem_cs_cross_round  theorem_cs_interwoven_all  cs_interwoven_stats
   PosetLattice  UnionFind  Fibered  WeaveElem
   DerivData  FiniteMap  PosetKan  LibraryClustering
   NilRing

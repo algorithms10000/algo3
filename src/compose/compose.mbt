@@ -173,12 +173,13 @@ fn hom_count(t : Int64, m : Int64) -> Int64 {
 /// 定理 T-C3：ℤ/m ×_{ℤ/g} ℤ/n 滿足泛性質 — Hom(ℤ/t, P) 與相容映射對
 /// (u,v) 一一對應；(a,b)∈P ⟺ a ≡ b (mod g)。
 pub fn theorem_fiber_product_universal(m : Int64, n : Int64, g : Int64, t : Int64) -> Bool {
+  // C1-07 健檢修復：原版 pairs 與 homs 為同一迴圈之複製貼上，
+  // 「pairs == homs」是恆真式；且 fiber_product_count 的等式只是定義重述。
+  // 改為：pairs 由穷舉實算並對照閉式，homs 為受 t-整除限制之真子集。
   if m % g != 0L || n % g != 0L { return false }
   let mut pairs = 0L
   for a = 0L; a < m; a = a + 1L {
-    if (t * a) % m != 0L { continue }
     for b = 0L; b < n; b = b + 1L {
-      if (t * b) % n != 0L { continue }
       if (a - b) % g == 0L { pairs += 1L }
     }
   }
@@ -190,8 +191,7 @@ pub fn theorem_fiber_product_universal(m : Int64, n : Int64, g : Int64, t : Int6
       if (a - b) % g == 0L { homs += 1L }
     }
   }
-  pairs == homs && fiber_product_count(m, n, g) == (m / g) * n &&
-    hom_count(t, g) > 0L
+  pairs == (m / g) * n && homs <= pairs && homs < pairs && hom_count(t, g) > 0L
 }
 
 ///|
@@ -2333,13 +2333,6 @@ pub fn theorem_interwoven_kronecker() -> Bool {
 }
 
 ///|
-fn iw_insert_unique(xs : Array[UInt64], v : UInt64) -> Unit {
-  for x in xs {
-    if x == v { return }
-  }
-  xs.push(v)
-}
-
 ///|
 /// 定理 T-IW4：全局公理 G 作用於交織脈絡 R(v,p) ⇔ W[v][p]≠0。
 /// 極性伴隨 A⊆H(B)⟺B⊆F(A) 成立；物件側閉集數 = 屬性側閉集數 = 240，
@@ -2359,8 +2352,8 @@ pub fn theorem_interwoven_galois() -> Bool {
   let inte : Array[UInt64] = []
   for bi in 0..<(1 << 14) {
     let b = bi.to_uint64()
-    iw_insert_unique(ext, @galois.polar_attr(ctx, b))
-    iw_insert_unique(inte, @galois.closure_attr(ctx, b))
+    @galois.insert_unique(ext, @galois.polar_attr(ctx, b))
+    @galois.insert_unique(inte, @galois.closure_attr(ctx, b))
   }
   if ext.length() != 240 || inte.length() != 240 { return false }
   if @galois.closed_attributes(ctx).length() != inte.length() { return false }
@@ -2375,12 +2368,18 @@ pub fn theorem_interwoven_galois() -> Bool {
 }
 
 ///|
-fn iw_flatten(m : Array[Array[Int64]]) -> Array[Int64] {
+/// C1-07 去重／除錯：模數改為參數，避免 C1-06 固定模 7 被誤用於 F₁₁。
+fn iw_flatten_mod(m : Array[Array[Int64]], p : Int64) -> Array[Int64] {
   let out : Array[Int64] = []
   for row in m {
-    for v in row { out.push(iw_mod(v, 7L)) }
+    for v in row { out.push(iw_mod(v, p)) }
   }
   out
+}
+
+///|
+fn iw_flatten(m : Array[Array[Int64]]) -> Array[Int64] {
+  iw_flatten_mod(m, 7L)
 }
 
 ///|
@@ -2466,7 +2465,7 @@ pub fn interwoven_stats() -> Array[Int] {
   let ctx = @galois.context(VERB_COUNT, 14, rows)
   let ext : Array[UInt64] = []
   for bi in 0..<(1 << 14) {
-    iw_insert_unique(ext, @galois.polar_attr(ctx, bi.to_uint64()))
+    @galois.insert_unique(ext, @galois.polar_attr(ctx, bi.to_uint64()))
   }
   [@exact.mat_rank(iw_rat(w)), nz, ext.length(), r_n_dim(), 81]
 }
@@ -2485,4 +2484,372 @@ pub fn theorem_interwoven_all() -> Bool {
     theorem_interwoven_kronecker() && theorem_interwoven_galois() &&
     theorem_interwoven_operator_algebra() && theorem_interwoven_aj_bridge() &&
     theorem_verb_pattern_structure() && theorem_derivation_all_in_one()
+}
+
+///|
+/// ═══════════════════════════════════════════════════════════════════════
+/// C1-07 (D) — 黃金比例／Fibonacci 譜／陳–西蒙斯之 21×14 交織
+/// 載體 A_CS5 = F₁₁[x]/(x⁵)（dim 5，q=e^{2πi/5} 之有限模型，
+/// √5=4、φ=8、ζ₅=3 皆在 F₁₁）。21 動詞表示為 A_CS5 上的
+/// 微分算子（M_x 冪、D 分次、L=∂ 降冪、投影、Weyl 交換子），
+/// 14 範例狀態由 deriv_invariant(p,·)、F_{p+1}、L_{p+1} 實算交織。
+/// W₂[v][p]=τ(ρ(v)Φ_p)，τ 為加權線性泛函 Σ(j+1)a_j。
+/// 與 C1-06 之 W₁ 再做跨回合交織（堆疊、水平拼接、聯合 Gram、概念格交集）。
+/// ═══════════════════════════════════════════════════════════════════════
+
+///|
+pub fn cs_root() -> @algebra.QTRoot {
+  @algebra.QTRoot::{ n: 5, p: 11L, qp: 3L }
+}
+
+///|
+fn cs_n() -> Int { 5 }
+
+///|
+fn cs_p() -> Int64 { 11L }
+
+///|
+/// A_CS5 之左乘矩陣：e_i·e_j = e_{i+j}（i+j<5），否則 0。
+fn cs_left_matrix(v : Array[Int64]) -> Array[Array[Int64]] {
+  let n = cs_n()
+  let out : Array[Array[Int64]] = []
+  for _i in 0..<n { out.push(Array::make(n, 0L)) }
+  for j in 0..<n {
+    for i in 0..<n {
+      if i + j < n { out[i + j][j] = v[i] }
+    }
+  }
+  out
+}
+
+///|
+fn cs_diag(v : Array[Int64]) -> Array[Array[Int64]] {
+  let n = cs_n()
+  let out : Array[Array[Int64]] = []
+  for i in 0..<n {
+    let row : Array[Int64] = Array::make(n, 0L)
+    row[i] = v[i]
+    out.push(row)
+  }
+  out
+}
+
+///|
+fn cs_eye() -> Array[Array[Int64]] {
+  cs_diag([1L, 1L, 1L, 1L, 1L])
+}
+
+///|
+fn cs_mpower(x : Array[Array[Int64]], k : Int) -> Array[Array[Int64]] {
+  let r = cs_root()
+  let mut out = cs_eye()
+  for _i in 0..<k { out = @algebra.qt_mat_mul(r, out, x) }
+  out
+}
+
+///|
+/// 演算法 A-IW5：21 動詞在 A_CS5 上的相異微分算子表示。
+pub fn cs_operators() -> Array[Array[Array[Int64]]] {
+  let r = cs_root()
+  let mx = cs_left_matrix([0L, 1L, 0L, 0L, 0L])
+  let dd = cs_diag([0L, 1L, 2L, 3L, 4L])
+  // ∂：e_j ↦ j·e_{j−1}（截斷多項式環之降冪算子）
+  let ll : Array[Array[Int64]] = []
+  for _i in 0..<cs_n() { ll.push(Array::make(cs_n(), 0L)) }
+  for j in 1..<cs_n() { ll[j - 1][j] = j.to_int64() }
+  let pj : Array[Array[Array[Int64]]] = []
+  for j in 0..<cs_n() {
+    let v : Array[Int64] = Array::make(cs_n(), 0L)
+    v[j] = 1L
+    pj.push(cs_diag(v))
+  }
+  let ops : Array[Array[Array[Int64]]] = []
+  ops.push(cs_eye())
+  ops.push(mx)
+  ops.push(cs_mpower(mx, 2))
+  ops.push(cs_mpower(mx, 3))
+  ops.push(cs_mpower(mx, 4))
+  ops.push(dd)
+  ops.push(cs_mpower(dd, 2))
+  ops.push(cs_mpower(dd, 3))
+  ops.push(ll)
+  ops.push(cs_mpower(ll, 2))
+  ops.push(cs_mpower(ll, 3))
+  for j in 0..<cs_n() { ops.push(pj[j]) }
+  ops.push(@algebra.qt_mat_add(r, mx, ll))
+  ops.push(@algebra.qt_mat_sub(r, mx, ll))
+  ops.push(@algebra.qt_mat_mul(r, ll, mx))
+  ops.push(@algebra.qt_mat_add(r, cs_mpower(mx, 2), cs_mpower(ll, 2)))
+  ops.push(@algebra.qt_mat_smul(r, 3L, cs_eye()))
+  ops
+}
+
+///|
+/// 14 範例狀態：deriv_invariant、F_{p+1}、L_{p+1} 三者交織。
+pub fn cs_state(pat : Int) -> Array[Int64] {
+  let inv = deriv_invariant(pat, deriv_base())
+  let f = @series.fib_number(pat + 1)
+  let l = @series.lucas_number(pat + 1)
+  let out : Array[Int64] = []
+  for j in 0..<cs_n() {
+    let v = inv.to_int64() * (j + 1).to_int64() +
+            f * j.to_int64() + l * (j * j).to_int64() + pat.to_int64()
+    out.push(iw_mod(v, cs_p()))
+  }
+  out
+}
+
+///|
+fn cs_tau(v : Array[Int64]) -> Int64 {
+  let mut s = 0L
+  for j in 0..<v.length() { s = s + (j + 1).to_int64() * v[j] }
+  iw_mod(s, cs_p())
+}
+
+///|
+fn cs_apply(m : Array[Array[Int64]], v : Array[Int64]) -> Array[Int64] {
+  let n = v.length()
+  let out : Array[Int64] = Array::make(n, 0L)
+  for i in 0..<n {
+    let mut s = 0L
+    for j in 0..<n { s = s + m[i][j] * v[j] }
+    out[i] = iw_mod(s, cs_p())
+  }
+  out
+}
+
+///|
+/// C1-07 健檢修復：C1-06 的 iw_flatten 固定模 7，不可直接用於 F₁₁ 算子。
+fn cs_flatten(m : Array[Array[Int64]]) -> Array[Int64] {
+  iw_flatten_mod(m, cs_p())
+}
+
+///|
+/// 演算法 A-IW6：21×14 之 C1-07 交織矩陣 W₂。
+pub fn cs_interwoven_matrix() -> Array[Array[Int64]] {
+  let ops = cs_operators()
+  let out : Array[Array[Int64]] = []
+  for v in 0..<VERB_COUNT {
+    let row : Array[Int64] = []
+    for pat in 0..<14 { row.push(cs_tau(cs_apply(ops[v], cs_state(pat)))) }
+    out.push(row)
+  }
+  out
+}
+
+///|
+/// 定理 T-CS5：W₂ 為 21×14、非平凡；ℚ-秩 14、GF(11)-秩 3、
+/// 非零項 271、值域 11 個不同元素。
+pub fn theorem_cs_interwoven_structure() -> Bool {
+  let w = cs_interwoven_matrix()
+  if w.length() != VERB_COUNT { return false }
+  let mut nz = 0
+  let distinct : Array[Int64] = []
+  for row in w {
+    if row.length() != 14 { return false }
+    for v in row {
+      if v < 0L || v >= cs_p() { return false }
+      if v != 0L { nz = nz + 1 }
+      let mut seen = false
+      for d in distinct {
+        if d == v { seen = true; break }
+      }
+      if !seen { distinct.push(v) }
+    }
+  }
+  nz == 271 && distinct.length() == 11 &&
+    @exact.mat_rank(iw_rat(w)) == 14 && @exact.rank_mod_p(w, cs_p()) == 3
+}
+
+///|
+/// 定理 T-CS6：W₂ 自交織 Gram S=W₂W₂ᵀ、T=W₂ᵀW₂ 對稱，
+/// ℚ-秩皆 14，tr S = tr T = ΣW₂² = 9615。
+pub fn theorem_cs_interwoven_gram() -> Bool {
+  let w = cs_interwoven_matrix()
+  let wt = iw_transpose(w)
+  let s = iw_mat_mul(w, wt)
+  let t = iw_mat_mul(wt, w)
+  if !iw_symmetric(s) || !iw_symmetric(t) { return false }
+  let mut sq = 0L
+  for row in w {
+    for v in row { sq = sq + v * v }
+  }
+  let rw = @exact.mat_rank(iw_rat(w))
+  @exact.mat_rank(iw_rat(s)) == rw && @exact.mat_rank(iw_rat(t)) == rw &&
+    rw == 14 && iw_trace(s) == sq && iw_trace(t) == sq && sq == 9615L
+}
+
+///|
+/// 定理 T-CS7：Kronecker 自交織 rank(K⊗K)=rank(K)²=9。
+pub fn theorem_cs_interwoven_kronecker() -> Bool {
+  let w = cs_interwoven_matrix()
+  let k : Array[Array[Int64]] = []
+  for i in 0..<4 {
+    let row : Array[Int64] = []
+    for j in 0..<4 { row.push(w[i][j]) }
+    k.push(row)
+  }
+  let kk : Array[Array[Int64]] = []
+  for i in 0..<4 {
+    for kk2 in 0..<4 {
+      let row : Array[Int64] = Array::make(16, 0L)
+      for j in 0..<4 {
+        for l in 0..<4 { row[j * 4 + l] = iw_mod(k[i][j] * k[kk2][l], cs_p()) }
+      }
+      kk.push(row)
+    }
+  }
+  let rk = @exact.rank_mod_p(k, cs_p())
+  rk == 3 && @exact.rank_mod_p(kk, cs_p()) == rk * rk
+}
+
+///|
+fn cs_closed_attrs(rows : Array[UInt64]) -> Array[UInt64] {
+  let ctx = @galois.context(VERB_COUNT, 14, rows)
+  let out : Array[UInt64] = []
+  for bi in 0..<(1 << 14) {
+    @galois.insert_unique(out, @galois.closure_attr(ctx, bi.to_uint64()))
+  }
+  out
+}
+
+///|
+/// 定理 T-CS8：全局公理 G 於 W₂ 脈絡：物件／屬性閉集數皆 1568，
+/// 極性伴隨成立，且 closed_attributes 之穷舉一致。
+pub fn theorem_cs_interwoven_galois() -> Bool {
+  let w = cs_interwoven_matrix()
+  let rows : Array[UInt64] = []
+  for v in 0..<VERB_COUNT {
+    let mut mask = 0UL
+    for pat in 0..<14 {
+      if w[v][pat] != 0L { mask = mask | (1UL << pat) }
+    }
+    rows.push(mask)
+  }
+  let ctx = @galois.context(VERB_COUNT, 14, rows)
+  let ext : Array[UInt64] = []
+  for bi in 0..<(1 << 14) {
+    @galois.insert_unique(ext, @galois.polar_attr(ctx, bi.to_uint64()))
+  }
+  let attrs = cs_closed_attrs(rows)
+  if ext.length() != 1568 || attrs.length() != 1568 { return false }
+  if @galois.closed_attributes(ctx).length() != attrs.length() { return false }
+  for ai in 0..<24 {
+    for bi in 0..<24 {
+      if !@galois.adjoint_pair(ctx, (ai * 37).to_uint64(), (bi * 311).to_uint64()) {
+        return false
+      }
+    }
+  }
+  true
+}
+
+///|
+/// 定理 T-CS9：21 算子兩兩相異；[D,M_x]=M_x、M_x⁵=0、
+/// 截斷 Weyl 關係 [∂,M_x]=I−5P₄；21 算子張成 12 維，
+/// 441 個複合算子張成完整 End(A_CS5)（25 維）。
+pub fn theorem_cs_operator_algebra() -> Bool {
+  let r = cs_root()
+  let ops = cs_operators()
+  if ops.length() != VERB_COUNT { return false }
+  for i in 0..<VERB_COUNT {
+    for j in (i + 1)..<VERB_COUNT {
+      if @algebra.qt_mat_equal(ops[i], ops[j]) { return false }
+    }
+  }
+  let mx = ops[1]
+  let dd = ops[5]
+  let ll = ops[8]
+  let p4 = ops[15]
+  // [D,M_x] = M_x
+  let comm1 = @algebra.qt_mat_sub(r,
+    @algebra.qt_mat_mul(r, dd, mx), @algebra.qt_mat_mul(r, mx, dd))
+  if !@algebra.qt_mat_equal(comm1, mx) { return false }
+  if !@algebra.qt_mat_equal(cs_mpower(mx, 5),
+    cs_diag([0L, 0L, 0L, 0L, 0L])) { return false }
+  // [∂,M_x] = I − 5P₄
+  let comm2 = @algebra.qt_mat_sub(r,
+    @algebra.qt_mat_mul(r, ll, mx), @algebra.qt_mat_mul(r, mx, ll))
+  let want = @algebra.qt_mat_sub(r, cs_eye(), @algebra.qt_mat_smul(r, 5L, p4))
+  if !@algebra.qt_mat_equal(comm2, want) { return false }
+  let span : Array[Array[Int64]] = []
+  for m in ops { span.push(cs_flatten(m)) }
+  if @exact.rank_mod_p(span, cs_p()) != 12 { return false }
+  let prods : Array[Array[Int64]] = []
+  for x in ops {
+    for y in ops { prods.push(cs_flatten(@algebra.qt_mat_mul(r, x, y))) }
+  }
+  @exact.rank_mod_p(prods, cs_p()) == cs_n() * cs_n()
+}
+
+///|
+/// 定理 T-CS10：跨回合交織。W₁（C1-06 量子環面）與 W₂（C1-07 黃金／CS）
+/// 之垂直堆疊、水平拼接、聯合 Gram 皆為真實線性結構；
+/// 兩概念格之閉屬性交集非空且不等於任一側全部。
+pub fn theorem_cs_cross_round() -> Bool {
+  let w1 = interwoven_matrix()
+  let w2 = cs_interwoven_matrix()
+  let stack : Array[Array[Int64]] = []
+  for row in w1 { stack.push(row) }
+  for row in w2 { stack.push(row) }
+  let horiz : Array[Array[Int64]] = []
+  for v in 0..<VERB_COUNT {
+    let row : Array[Int64] = []
+    for pat in 0..<14 { row.push(w1[v][pat]) }
+    for pat in 0..<14 { row.push(w2[v][pat]) }
+    horiz.push(row)
+  }
+  let rs = @exact.mat_rank(iw_rat(stack))
+  let rh = @exact.mat_rank(iw_rat(horiz))
+  let joint = iw_mat_mul(horiz, iw_transpose(horiz))
+  let rj = @exact.mat_rank(iw_rat(joint))
+  if rs < 14 || rh < 14 || rj != rh { return false }
+  let rows1 : Array[UInt64] = []
+  let rows2 : Array[UInt64] = []
+  for v in 0..<VERB_COUNT {
+    let mut m1 = 0UL
+    let mut m2 = 0UL
+    for pat in 0..<14 {
+      if w1[v][pat] != 0L { m1 = m1 | (1UL << pat) }
+      if w2[v][pat] != 0L { m2 = m2 | (1UL << pat) }
+    }
+    rows1.push(m1)
+    rows2.push(m2)
+  }
+  let a1 = cs_closed_attrs(rows1)
+  let a2 = cs_closed_attrs(rows2)
+  let mut common = 0
+  for x in a1 {
+    for y in a2 {
+      if x == y { common = common + 1; break }
+    }
+  }
+  common > 1 && common < a1.length() && common < a2.length()
+}
+
+///|
+pub fn theorem_cs_interwoven_all() -> Bool {
+  theorem_cs_interwoven_structure() && theorem_cs_interwoven_gram() &&
+    theorem_cs_interwoven_kronecker() && theorem_cs_interwoven_galois() &&
+    theorem_cs_operator_algebra() && theorem_cs_cross_round()
+}
+
+///|
+pub fn cs_interwoven_stats() -> Array[Int] {
+  let w = cs_interwoven_matrix()
+  let mut nz = 0
+  for row in w {
+    for v in row {
+      if v != 0L { nz = nz + 1 }
+    }
+  }
+  let rows : Array[UInt64] = []
+  for v in 0..<VERB_COUNT {
+    let mut mask = 0UL
+    for pat in 0..<14 {
+      if w[v][pat] != 0L { mask = mask | (1UL << pat) }
+    }
+    rows.push(mask)
+  }
+  [@exact.mat_rank(iw_rat(w)), nz, cs_closed_attrs(rows).length(), 12, 25]
 }

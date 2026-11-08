@@ -1,5 +1,5 @@
 {
-  "round": "C1-06",
+  "round": "C1-07",
   "global_axiom": "伽羅瓦對應",
   "entries": [
     {
@@ -4483,6 +4483,663 @@
       "formula": "R(v,p)⇔W[v][p]≠0 ⇒ |Fix(F∘H)|=|Fix(H∘F)|=240；AJ_q(q^{e_n})=1",
       "verification": "由對應定理憑證驗證",
       "round": "C1-06"
+    },
+    {
+      "kind": "定義",
+      "id": "D60",
+      "statement": "Q5=ℚ(√5)：a+b√5 精確二次環，φ=(1+√5)/2",
+      "package": "src/exact",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定義",
+      "id": "D61",
+      "statement": "C5=ℚ[ζ]/(Φ₅)：SU(2)₃ 陳–西蒙斯 q=e^{2πi/5} 之分圓環",
+      "package": "src/exact",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定義",
+      "id": "D62",
+      "statement": "Fibonacci 矩陣 Q=[[1,1],[1,0]] 與譜投影 P±∈M₂(ℚ(√5))",
+      "package": "src/series",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定義",
+      "id": "D63",
+      "statement": "Fricke–Vogt 不變量 I=x²+y²+z²−2xyz−1 與 trace map T(x,y,z)=(2xy−z,x,y)",
+      "package": "src/series",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定義",
+      "id": "D64",
+      "statement": "SU(2)₃ 可積表現 a=0..3 與 Kac–Peterson S_{ab}=√(2/5)sin((a+1)(b+1)π/5)",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定義",
+      "id": "D65",
+      "statement": "Chebyshev Ŝ_{ab}=U_{(a+1)(b+1)−1}(φ/2) 與 Verlinde 公式",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定義",
+      "id": "D66",
+      "statement": "Fibonacci 融合範疇 τ⊗τ=1⊕τ（SU(2)₃ 偶數扇域）與量子維度 d=(1,φ,φ,1)",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定義",
+      "id": "D67",
+      "statement": "A_CS5=F₁₁[x]/(x⁵)：q⁵=1 之 5 維截斷微分算子代數",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定義",
+      "id": "D68",
+      "statement": "W₂[v][p]=τ(ρ(v)Φ_p)：21 動詞 × 14 範例 × 黃金/CS 結構之 21×14 交織矩陣",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定義",
+      "id": "D69",
+      "statement": "CodeHealth：死碼／重複本體／登錄表重複之可重複靜態健檢",
+      "package": "tools/build_catalog.py",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-GOLD1",
+      "statement": "ℚ(√5)：φ²=φ+1、φ⁻¹=φ−1、φ+ψ=1、φψ=−1、φⁿ=F_nφ+F_{n−1}、L_n=φⁿ+ψⁿ∈ℤ",
+      "package": "src/exact",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-GOLD2",
+      "statement": "ℚ(ζ₅)：ζ⁵=1、Φ₅(ζ)=0；t=ζ+ζ⁴ 滿足 t²+t−1=0 ⇒ 1+t=φ",
+      "package": "src/exact",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-GOLD3",
+      "statement": "Fibonacci 矩陣譜：x²−x−1、譜投影冪等／正交／完備、Qⁿ=[[F_{n+1},F_n],[F_n,F_{n−1}]]、Cassini、fast doubling、Lucas、Zeckendorf",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-GOLD4",
+      "statement": "Fibonacci trace map 保持 Fricke–Vogt 不變量且可逆；字長=F_{k+1}；轉移矩陣滿足 x_{k+1}=2x_kx_{k−1}−x_{k−2}",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-GOLD5",
+      "statement": "黃金比例／Fibonacci 矩陣譜四項憑證合取",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-CS1",
+      "statement": "Verlinde 公式於全部 4³ 組重現 SU(2)₃ 融合律且係數為整數、真空為 δ",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-CS2",
+      "statement": "偶數扇域 {0,2} 為 Fibonacci 融合範疇；N_τ 特徵多項式 x²−x−1；D²=2(φ+2)",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-CS3",
+      "statement": "SU(2)₃ 模數據：Ŝ 對稱、Ŝ²=(1/c₀)I、Ŝ⁴=(1/c₀²)I、dim H_{g=2}=20",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-CS4",
+      "statement": "Wilson loop d=sin(2π/5)/sin(π/5)=φ；WRT(S³)²=c₀=(5−√5)/20",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-CS11",
+      "statement": "陳–西蒙斯四項憑證合取",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-CS5",
+      "statement": "21×14 W₂ 非平凡：ℚ-秩 14、GF(11)-秩 3、非零項 271",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-CS6",
+      "statement": "W₂ Gram S/T 對稱、秩 14、tr S=tr T=ΣW₂²=9615",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-CS7",
+      "statement": "W₂ 之 Kronecker 自交織 rank(K⊗K)=rank(K)²=9",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-CS8",
+      "statement": "全局公理 G 於 W₂ 脈絡：物件／屬性閉集數皆 1568、極性伴隨成立",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-CS9",
+      "statement": "21 算子相異；[D,M_x]=M_x、M_x⁵=0、[∂,M_x]=I−5P₄；21 算子張成 12 維、441 複合張成完整 End(A_CS5)=25",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-CS10",
+      "statement": "跨回合交織：W₁（量子環面）與 W₂（黃金/CS）之堆疊／拼接／聯合 Gram 與兩概念格交集",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-CS12",
+      "statement": "21×14 黃金/CS 交織六項憑證合取",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Health",
+      "statement": "全代碼健檢：57 個未引用函式全數接入真實計算、重複本體合併、mat_rank 溢位修復、恆真式清除",
+      "package": "c1.mbt",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；精確有理／有限穷舉憑證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL156",
+      "statement": "q5_add/sub/mul/neg/inv/pow/is_int（ℚ(√5) 精確算術）",
+      "package": "src/exact",
+      "formula": "O(n)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL157",
+      "statement": "c5_reduce/c5_mul/c5_pow（Φ₅ 分圓環降次）",
+      "package": "src/exact",
+      "formula": "O(n²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL158",
+      "statement": "mat_rank_big（BigInt Bareiss 有理消去求秩，無溢位）",
+      "package": "src/exact",
+      "formula": "O(n³ log‖·‖)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL159",
+      "statement": "qmat_mul/add/sub/smul/pow（M₂(ℚ(√5))）",
+      "package": "src/series",
+      "formula": "O(n)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL160",
+      "statement": "fib_pair 快速倍增 / fib_number / lucas_number",
+      "package": "src/series",
+      "formula": "O(log n)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL161",
+      "statement": "zeckendorf 貪心不相鄰分解",
+      "package": "src/series",
+      "formula": "O(log N)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL162",
+      "statement": "fib_word / word_matrix（Fibonacci 字轉移矩陣）",
+      "package": "src/series",
+      "formula": "O(F_k)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL163",
+      "statement": "fricke_vogt / fib_trace_map",
+      "package": "src/series",
+      "formula": "O(1)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL164",
+      "statement": "cs_chebyshev_u / cs_shat（Kac–Peterson S 之 ℚ(√5) 精確化）",
+      "package": "src/algebra",
+      "formula": "O(n)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL165",
+      "statement": "cs_verlinde / cs_comb / cs_c0",
+      "package": "src/algebra",
+      "formula": "O(k³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL166",
+      "statement": "cs_operators（21 動詞 → A_CS5 微分算子）",
+      "package": "src/compose",
+      "formula": "O(21·n³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL167",
+      "statement": "cs_state / cs_interwoven_matrix（14 範例 × F_{p+1} × L_{p+1}）",
+      "package": "src/compose",
+      "formula": "O(21·14·n²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL168",
+      "statement": "cs_closed_attrs / theorem_cs_cross_round",
+      "package": "src/compose",
+      "formula": "O(2^14·21·14)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL169",
+      "statement": "cs_flatten / iw_flatten_mod（參數化模數，修復跨回合硬編）",
+      "package": "src/compose",
+      "formula": "O(n²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL170",
+      "statement": "theorem_code_health（57 死碼實接與驗證）",
+      "package": "c1.mbt",
+      "formula": "O(1)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL171",
+      "statement": "audit_repository（重複定義／重複本體／死碼／登錄表重複健檢）",
+      "package": "tools/build_catalog.py",
+      "formula": "O(|src|²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL172",
+      "statement": "vec_equal_i64 / vec_equal_int（三處重複本體合併）",
+      "package": "src/exact",
+      "formula": "O(n)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL173",
+      "statement": "rat_coeffs_equal（Fps/Dirichlet::equal 共用）",
+      "package": "src/series",
+      "formula": "O(n)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL174",
+      "statement": "full_mask 取代重複之 lower_mask",
+      "package": "src/galois",
+      "formula": "O(n)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL175",
+      "statement": "pub galois.insert_unique 取代 compose.iw_insert_unique",
+      "package": "src/compose",
+      "formula": "O(n)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL176",
+      "statement": "theorem_fiber_product_universal 恆真式清除",
+      "package": "src/compose",
+      "formula": "O(m·n)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL177",
+      "statement": "theorem_golden_fibonacci / theorem_chern_simons 合取",
+      "package": "src/series,src/algebra",
+      "formula": "O(1)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL178",
+      "statement": "cs_interwoven_stats（秩/非零/概念/張成 inspect）",
+      "package": "src/compose",
+      "formula": "O(2^14·21)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL179",
+      "statement": "Q5/C5 與 Fibonacci/CS 之跨套件型別橋接",
+      "package": "src/exact,src/series,src/algebra",
+      "formula": "O(1)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL180",
+      "statement": "C1-06 W₁ 與 C1-07 W₂ 之堆疊／拼接／聯合 Gram 秩計算",
+      "package": "src/compose",
+      "formula": "O(21³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E101",
+      "statement": "黃金比例",
+      "package": "src/exact",
+      "formula": "φ=(1+√5)/2, φ²=φ+1, φ⁻¹=φ−1, ψ=(1−√5)/2, φψ=−1",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E102",
+      "statement": "φⁿ 與 Lucas",
+      "package": "src/exact",
+      "formula": "φⁿ=F_nφ+F_{n−1}；L_n=φⁿ+ψⁿ∈ℤ",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E103",
+      "statement": "Φ₅ 分圓環",
+      "package": "src/exact",
+      "formula": "Φ₅(z)=1+z+z²+z³+z⁴=0；z⁵=1",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E104",
+      "statement": "分圓黃金橋",
+      "package": "src/exact",
+      "formula": "t=ζ+ζ⁴ ⇒ t²+t−1=0；1+t=φ",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E105",
+      "statement": "Fibonacci 特徵多項式",
+      "package": "src/series",
+      "formula": "χ_Q(λ)=λ²−λ−1；特徵值 φ, ψ=−φ⁻¹",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E106",
+      "statement": "譜投影",
+      "package": "src/series",
+      "formula": "P₊=(Q−ψI)/√5, P₋=(φI−Q)/√5；P₊²=P₊, P₊P₋=0, P₊+P₋=I",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E107",
+      "statement": "Qⁿ 與 Cassini",
+      "package": "src/series",
+      "formula": "Qⁿ=[[F_{n+1},F_n],[F_n,F_{n−1}]]；F_{n+1}F_{n−1}−F_n²=(−1)ⁿ",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E108",
+      "statement": "快速倍增",
+      "package": "src/series",
+      "formula": "F_{2n}=F_n(2F_{n+1}−F_n), F_{2n+1}=F_{n+1}²+F_n²",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E109",
+      "statement": "Fricke–Vogt",
+      "package": "src/series",
+      "formula": "I(x,y,z)=x²+y²+z²−2xyz−1，T(x,y,z)=(2xy−z,x,y)，I∘T=I",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E110",
+      "statement": "Fibonacci 跡遞推",
+      "package": "src/series",
+      "formula": "x_{k+1}=2x_kx_{k−1}−x_{k−2}，|w_k|=F_{k+1}",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E111",
+      "statement": "Kac–Peterson S",
+      "package": "src/algebra",
+      "formula": "S_{ab}=√(2/5)sin((a+1)(b+1)π/5)；Ŝ_{ab}=U_{(a+1)(b+1)−1}(φ/2)",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E112",
+      "statement": "Verlinde",
+      "package": "src/algebra",
+      "formula": "N_{ab}^c=(2/5)sin²(π/5)·Σ_x Ŝ_{ax}Ŝ_{bx}Ŝ_{cx}/Ŝ_{0x}",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E113",
+      "statement": "SU(2)₃ 融合",
+      "package": "src/algebra",
+      "formula": "N_{ab}^c=1 ⟺ |a−b|≤c≤min(a+b,6−a−b) 且 a+b+c 偶",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E114",
+      "statement": "量子維度",
+      "package": "src/algebra",
+      "formula": "d_a=S_{0a}/S_{00}=U_a(φ/2)=(1,φ,φ,1)；D²=Σd²=2(φ+2)",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E115",
+      "statement": "Fibonacci 融合",
+      "package": "src/algebra",
+      "formula": "τ⊗τ=1⊕τ；N_τ=[[0,1],[1,1]]，χ=x²−x−1",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E116",
+      "statement": "模關係",
+      "package": "src/algebra",
+      "formula": "Ŝ²=(1/c₀)I, Ŝ⁴=(1/c₀²)I, (ST)³=S², S⁴=I",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E117",
+      "statement": "WRT 與 Wilson",
+      "package": "src/algebra",
+      "formula": "WRT(S³)²=S₀₀²=c₀=(5−√5)/20；sin(2π/5)/sin(π/5)=φ",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E118",
+      "statement": "A_CS5 微分算子",
+      "package": "src/compose",
+      "formula": "[D,M_x]=M_x, M_x⁵=0, [∂,M_x]=I−5P₄；dim End=25",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E119",
+      "statement": "21×14 黃金/CS 交織",
+      "package": "src/compose",
+      "formula": "W₂[v][p]=τ(ρ(v)Φ_p)；rank_ℚ=14, ΣW₂²=9615, 概念數 1568, rank(K⊗K)=9",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
+    },
+    {
+      "kind": "等式",
+      "id": "E120",
+      "statement": "健檢不變量",
+      "package": "tools/build_catalog.py",
+      "formula": "dead=0, dup_names=0, dup_ids=0, dup_statements=0；rank(WWᵀ)=rank(W)=14",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-07"
     }
   ],
   "references": [
@@ -4940,6 +5597,55 @@
       "1986/2009",
       "https://arxiv.org/pdf/2505.13727",
       "A[N]≅(ℤ/N)^{2g}、Weil 配對雙線性／交錯／非退化；theta group 交換子配對；principal polarization 與 isogeny 核之 isotropic 子群"
+    ],
+    [
+      "R66",
+      "Chou, AdS/CFT Duality and Anyons in SU(N)_k Chern-Simons Theory, arXiv:2505.16760",
+      "2025",
+      "https://arxiv.org/pdf/2505.16760",
+      "SU(2)₃ 之 j=0,1/2,1,3/2 四個可積表現、dim H_{T²}=4；Verlinde dim=Σ_λ(S_{0λ})^{2−2g}；S/T 滿足 (ST)³=S², S⁴=I；N_{ab}^c=Σ_x S_{ax}S_{bx}S*_{cx}/S_{0x}；d_a=S_{0a}/S_{00}；Wilson 幅 sin(4π/5)/sin(π/5) 與黃金比例"
+    ],
+    [
+      "R67",
+      "Fillman–Luna, On the Spectra of Sieved Schrödinger Operators, arXiv:2505.08763v1",
+      "2025",
+      "https://arxiv.org/html/2505.08763v1",
+      "Fibonacci Hamiltonian；trace map T(x,y,z)=(2xy−z,x,y)；T 保持 Fricke–Vogt 不變量；字長 F_k；奇異連續譜與零 Lebesgue 測度"
+    ],
+    [
+      "R68",
+      "Damanik–Gorodetski–Yessen, The Fibonacci Hamiltonian, Invent. Math. (2016)",
+      "2016",
+      "https://link.springer.com/article/10.1007/s00222-016-0660-x",
+      "譜維度／IDS Hölder 指數與 Fibonacci trace map 雙曲性、topological entropy 之關係；判別式 = 轉移矩陣跡"
+    ],
+    [
+      "R69",
+      "Roberts, Trace maps as 3D reversible dynamical systems with an invariant",
+      "1994",
+      "https://link.springer.com/article/10.1007/BF02188581",
+      "Fricke character Î(x,y,z)=x²+y²+z²−2xyz−1；Fibonacci trace map 之對稱性、可逆性與 Nielsen 變換"
+    ],
+    [
+      "R70",
+      "Minev et al., Realizing string-net condensation: Fibonacci anyon braiding, Nat Commun 16:6225 (2025)",
+      "2025",
+      "https://www.nature.com/articles/s41467-025-61493-8",
+      "超導處理器上 Fib-SNC 之 Fibonacci anyon 編織；電荷量測 94%、交換得黃金比例 φ 98%；F-move 振幅由 φ 決定；chromatic polynomial 於 φ+2 取樣"
+    ],
+    [
+      "R71",
+      "Goodman, The Golden Bridge: A Certified Born Probability for Fibonacci Anyons",
+      "2026",
+      "https://www.researchgate.net/publication/408645751_The_Golden_Bridge_A_Certified_Born_Probability_for_Fibonacci_Anyons",
+      "x²=x+1 之 eigenform 即 Fibonacci-anyon 量子維度 φ；編織幅為 Z[ζ₅] 之代數整數；golden ring Z[φ]；Yang–Lee 模型"
+    ],
+    [
+      "R72",
+      "Kac–Peterson / Verlinde formula and SU(2)_k modular data (standard)",
+      "1984/1988",
+      "https://arxiv.org/pdf/2505.16760",
+      "S_{ab}=√(2/(k+2))sin((a+1)(b+1)π/(k+2))；N_{ab}^c=Σ_x S_{ax}S_{bx}S*_{cx}/S_{0x}；charge conjugation 對 SU(2) 為平凡"
     ]
   ]
 }

@@ -17,6 +17,26 @@ pub(all) struct Bezout {
 }
 
 ///|
+///|
+/// C1-07 去重：三處相同的「陣列逐項相等」本體合併至此。
+pub fn vec_equal_i64(a : Array[Int64], b : Array[Int64]) -> Bool {
+  if a.length() != b.length() { return false }
+  for i in 0..<a.length() {
+    if a[i] != b[i] { return false }
+  }
+  true
+}
+
+///|
+pub fn vec_equal_int(a : Array[Int], b : Array[Int]) -> Bool {
+  if a.length() != b.length() { return false }
+  for i in 0..<a.length() {
+    if a[i] != b[i] { return false }
+  }
+  true
+}
+
+///|
 /// 歐幾里得最大公因數，回傳非負值。
 pub fn gcd(a0 : Int64, b0 : Int64) -> Int64 {
   let mut a = if a0 < 0L { -a0 } else { a0 }
@@ -672,34 +692,50 @@ pub fn mat_det(x : Mat) -> Rat {
 }
 ///|
 /// 有理列消去之秩（RREF 主元數）。
-pub fn mat_rank(x : Mat) -> Int {
-  if x.a.length() == 0 { return 0 }
-  let a = mat_clone(x)
+///|
+/// C1-07 健檢修復：以 BigInt 有理數做 fraction-free Bareiss 消去求秩。
+/// 舊版以 Int64 Rat 做 RREF，在 21×21 Gram 矩陣上中介量溢位，
+/// 曾把 rank(WWᵀ)=14 誤報為 21；此版無溢位。
+pub fn mat_rank_big(x : Mat) -> Int {
   let n = x.a.length()
+  if n == 0 { return 0 }
   let m = x.a[0].length()
-  let mut r = 0
-  for c in 0..<m {
-    let mut piv = -1
-    for i in r..<n {
-      if !a.a[i][c].is_zero() { piv = i; break }
-    }
-    if piv < 0 { continue }
-    let tmp = a.a[r]
-    a.a[r] = a.a[piv]
-    a.a[piv] = tmp
-    let p = a.a[r][c]
-    for j in 0..<m { a.a[r][j] = a.a[r][j].div(p).unwrap() }
-    for i in 0..<n {
-      if i == r { continue }
-      let fac = a.a[i][c]
-      if fac.is_zero() { continue }
-      for j in 0..<m { a.a[i][j] = a.a[i][j].sub(fac.mul(a.a[r][j])) }
-    }
-    r += 1
-    if r == n { break }
+  let a : Array[Array[BigRat]] = []
+  for row in x.a {
+    let r : Array[BigRat] = []
+    for e in row { r.push(br_of_rat(e)) }
+    a.push(r)
   }
-  r
+  let mut prev = br_one()
+  let mut rank = 0
+  for c in 0..<m {
+    if rank >= n { break }
+    if br_is_zero(a[rank][c]) {
+      let mut piv = -1
+      for i in (rank + 1)..<n {
+        if !br_is_zero(a[i][c]) { piv = i; break }
+      }
+      if piv < 0 { continue }
+      let tmp = a[rank]
+      a[rank] = a[piv]
+      a[piv] = tmp
+    }
+    let p = a[rank][c]
+    for i in (rank + 1)..<n {
+      for j in (c + 1)..<m {
+        let num = br_sub(br_mul(p, a[i][j]), br_mul(a[i][c], a[rank][j]))
+        a[i][j] = br_div(num, prev)
+      }
+      a[i][c] = br_zero()
+    }
+    prev = p
+    rank = rank + 1
+  }
+  rank
 }
+
+///|
+pub fn mat_rank(x : Mat) -> Int { mat_rank_big(x) }
 
 ///|
 /// 多項式（升冪係數）加法、乘法、純量乘、求值。
@@ -1256,4 +1292,233 @@ pub fn theorem_bareiss_determinant() -> Bool {
   }
   mat_det(mat_from(orig)).equal(rat_int(308323452L)) &&
     mat_det(mat_identity(7)).equal(rat_one())
+}
+
+///|
+/// ═══════════════════════════════════════════════════════════════════════
+/// C1-07 (A) — 精確二次／分圓環
+/// Q5 = ℚ(√5)：元素 a+b√5，φ=(1+√5)/2 滿足 φ²=φ+1。
+/// C5 = ℚ[ζ]/(Φ₅), Φ₅(z)=1+z+z²+z³+z⁴：SU(2)₃ 陳–西蒙斯之
+/// q=e^{2πi/5} 所在的環；t=ζ+ζ⁴ 滿足 t²+t−1=0，故 1+t=φ。
+/// 兩環皆以 Rat 係數精確運算，無浮點、無近似。
+/// ═══════════════════════════════════════════════════════════════════════
+
+///|
+pub(all) struct Q5 {
+  a : Rat
+  b : Rat
+}
+
+///|
+pub fn q5(a : Rat, b : Rat) -> Q5 { Q5::{ a, b } }
+
+///|
+pub fn q5_int(n : Int64) -> Q5 { Q5::{ a: rat_int(n), b: rat_zero() } }
+
+///|
+pub fn q5_phi() -> Q5 {
+  Q5::{ a: rat(1L, 2L), b: rat(1L, 2L) }
+}
+
+///|
+pub fn q5_psi() -> Q5 {
+  Q5::{ a: rat(1L, 2L), b: rat(-1L, 2L) }
+}
+
+///|
+pub fn q5_sqrt5() -> Q5 { Q5::{ a: rat_zero(), b: rat_one() } }
+
+///|
+pub fn q5_add(x : Q5, y : Q5) -> Q5 {
+  Q5::{ a: x.a.add(y.a), b: x.b.add(y.b) }
+}
+
+///|
+pub fn q5_sub(x : Q5, y : Q5) -> Q5 {
+  Q5::{ a: x.a.sub(y.a), b: x.b.sub(y.b) }
+}
+
+///|
+pub fn q5_mul(x : Q5, y : Q5) -> Q5 {
+  Q5::{
+    a: x.a.mul(y.a).add(rat_int(5L).mul(x.b.mul(y.b))),
+    b: x.a.mul(y.b).add(x.b.mul(y.a)),
+  }
+}
+
+///|
+pub fn q5_neg(x : Q5) -> Q5 { Q5::{ a: x.a.neg(), b: x.b.neg() } }
+
+///|
+pub fn q5_inv(x : Q5) -> Q5? {
+  let d = x.a.mul(x.a).sub(rat_int(5L).mul(x.b.mul(x.b)))
+  if d.is_zero() {
+    None
+  } else {
+    Some(Q5::{ a: x.a.div(d).unwrap(), b: x.b.neg().div(d).unwrap() })
+  }
+}
+
+///|
+pub fn q5_equal(x : Q5, y : Q5) -> Bool {
+  x.a.equal(y.a) && x.b.equal(y.b)
+}
+
+///|
+pub fn q5_is_zero(x : Q5) -> Bool { x.a.is_zero() && x.b.is_zero() }
+
+///|
+pub fn q5_is_int(x : Q5) -> Bool { x.b.is_zero() && x.a.d == 1L }
+
+///|
+pub fn q5_pow(x : Q5, n : Int) -> Q5 {
+  let mut out = q5_int(1L)
+  for _i in 0..<n { out = q5_mul(out, x) }
+  out
+}
+
+///|
+/// C5 = ℚ[ζ]/(1+ζ+ζ²+ζ³+ζ⁴)，以次數 ≤3 之係數向量表示。
+pub(all) struct C5 {
+  c : Array[Rat]
+}
+
+///|
+pub fn c5(coeffs : Array[Rat]) -> C5 {
+  let c : Array[Rat] = Array::make(4, rat_zero())
+  for i in 0..<4 {
+    if i < coeffs.length() { c[i] = coeffs[i] }
+  }
+  C5::{ c }
+}
+
+///|
+pub fn c5_int(n : Int64) -> C5 { c5([rat_int(n)]) }
+
+///|
+pub fn c5_zeta() -> C5 { c5([rat_zero(), rat_one()]) }
+
+///|
+pub fn c5_add(x : C5, y : C5) -> C5 {
+  let c : Array[Rat] = Array::make(4, rat_zero())
+  for i in 0..<4 { c[i] = x.c[i].add(y.c[i]) }
+  C5::{ c }
+}
+
+///|
+pub fn c5_sub(x : C5, y : C5) -> C5 {
+  let c : Array[Rat] = Array::make(4, rat_zero())
+  for i in 0..<4 { c[i] = x.c[i].sub(y.c[i]) }
+  C5::{ c }
+}
+
+///|
+pub fn c5_neg(x : C5) -> C5 {
+  let c : Array[Rat] = Array::make(4, rat_zero())
+  for i in 0..<4 { c[i] = x.c[i].neg() }
+  C5::{ c }
+}
+
+///|
+/// ζ⁴ = −1−ζ−ζ²−ζ³：把次數 ≥4 的項降回次數 ≤3。
+fn c5_reduce(v : Array[Rat]) -> Array[Rat] {
+  let w : Array[Rat] = []
+  for x in v { w.push(x) }
+  // z^d = z^{d−4}·z⁴ = −(z^{d−4}+z^{d−3}+z^{d−2}+z^{d−1})；由高次往低次逐項降。
+  let mut d = w.length() - 1
+  while d >= 4 {
+    let e = w[d]
+    if !e.is_zero() {
+      w[d] = rat_zero()
+      for k in 0..<4 {
+        let idx = d - 4 + k
+        w[idx] = w[idx].sub(e)
+      }
+    }
+    d = d - 1
+  }
+  let out : Array[Rat] = Array::make(4, rat_zero())
+  for i in 0..<4 { out[i] = w[i] }
+  out
+}
+
+///|
+pub fn c5_mul(x : C5, y : C5) -> C5 {
+  let tmp : Array[Rat] = Array::make(8, rat_zero())
+  for i in 0..<4 {
+    for j in 0..<4 { tmp[i + j] = tmp[i + j].add(x.c[i].mul(y.c[j])) }
+  }
+  C5::{ c: c5_reduce(tmp) }
+}
+
+///|
+pub fn c5_pow(x : C5, n : Int) -> C5 {
+  let mut out = c5_int(1L)
+  for _i in 0..<n { out = c5_mul(out, x) }
+  out
+}
+
+///|
+pub fn c5_equal(x : C5, y : C5) -> Bool {
+  for i in 0..<4 {
+    if !x.c[i].equal(y.c[i]) { return false }
+  }
+  true
+}
+
+///|
+pub fn c5_is_zero(x : C5) -> Bool {
+  for i in 0..<4 {
+    if !x.c[i].is_zero() { return false }
+  }
+  true
+}
+
+///|
+/// 定理 T-G1：ℚ(√5) 之黃金比例代數。
+/// φ²=φ+1、φ⁻¹=φ−1、φ+ψ=1、φψ=−1、
+/// φⁿ=F_nφ+F_{n−1}、L_n=φⁿ+ψⁿ 為整數（n≤20）。
+pub fn theorem_q5_golden() -> Bool {
+  let phi = q5_phi()
+  let psi = q5_psi()
+  let one = q5_int(1L)
+  if !q5_equal(q5_mul(phi, phi), q5_add(phi, one)) { return false }
+  if !q5_equal(q5_inv(phi).unwrap(), q5_sub(phi, one)) { return false }
+  if !q5_equal(q5_add(phi, psi), one) { return false }
+  if !q5_equal(q5_mul(phi, psi), q5_int(-1L)) { return false }
+  if !q5_equal(q5_mul(q5_sqrt5(), q5_sqrt5()), q5_int(5L)) { return false }
+  let mut f0 = 0L
+  let mut f1 = 1L
+  for n in 1..<21 {
+    let expect = q5_add(q5_mul(q5_int(f1), phi), q5_int(f0))
+    if !q5_equal(q5_pow(phi, n), expect) { return false }
+    let luc = q5_add(q5_pow(phi, n), q5_pow(psi, n))
+    if !q5_is_int(luc) { return false }
+    let next = f0 + f1
+    f0 = f1
+    f1 = next
+  }
+  true
+}
+
+///|
+/// 定理 T-G2：分圓環 ℚ(ζ₅) 與黃金比例之橋。
+/// ζ⁵=1、Φ₅(ζ)=0；t=ζ+ζ⁴ 滿足 t²+t−1=0 ⇒ (1+t)²=(1+t)+1，
+/// 即 SU(2)₃ 之 q=e^{2πi/5} 環中包含黃金比例（Wilson loop 量子維度）。
+pub fn theorem_c5_golden_bridge() -> Bool {
+  let z = c5_zeta()
+  let z4 = c5_pow(z, 4)
+  let t = c5_add(z, z4)
+  let one = c5_int(1L)
+  if !c5_equal(c5_pow(z, 5), one) { return false }
+  let z2 = c5_pow(z, 2)
+  let z3 = c5_pow(z, 3)
+  let phi5 = c5_add(c5_add(c5_add(c5_add(one, z), z2), z3), z4)
+  if !c5_is_zero(phi5) { return false }
+  let t2 = c5_mul(t, t)
+  let rel = c5_add(c5_add(t2, t), c5_int(-1L))
+  if !c5_is_zero(rel) { return false }
+  let g = c5_add(one, t)
+  let g2 = c5_mul(g, g)
+  c5_equal(g2, c5_add(g, one))
 }

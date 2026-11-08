@@ -86,8 +86,8 @@ INTERFACES = {
     "src/graphs": "接入：n,k 或位元遮罩鄰接列。輸出：chromatic_number、max_clique、betti_numbers、tutte_coeffs、theorem_*。",
     "src/compose": "接入：布爾格、布林矩陣、矩陣、Context。輸出：lan_poset/ran_poset、kronecker、relation_tensor、theorem_C*。",
     "src/catalog": "接入：docs/catalog.json。輸出：catalog()、catalog_size()、count_kind()、theorem_catalog_consistent()。",
-    "cmd/main": "接入：root @c1.report()。輸出：stdout inspect 報表（60 行憑證）。",
-    "docs": "接入：tools/build_catalog.py。輸出：catalog.json（498 筆）。",
+    "cmd/main": "接入：root @c1.report()。輸出：stdout inspect 報表（65 行憑證）。",
+    "docs": "接入：tools/build_catalog.py。輸出：catalog.json（571 筆）。",
     "tools": "接入：Python 標準庫 + openpyxl。輸出：catalog.json、catalog.mbt、algorithm.xlsx、各 README.md。",
 }
 
@@ -99,7 +99,7 @@ def folder_readme(folder):
     eq = [e for e in E if e["package"] == folder and e["kind"] == "等式"]
     ax = [e for e in E if e["package"] == folder and e["kind"] == "公理"]
     L = ["# " + folder + " — " + ROLES[folder], ""]
-    L += ["> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。", ""]
+    L += ["> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織／C1-07 黃金比例、陳–西蒙斯與全代碼健檢。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。", ""]
     if ax:
         L += ["## 已獲得公理", ""] + ["- **{}** {}".format(e["id"], e["statement"]) for e in ax] + [""]
     L += ["## 已獲得定理列表", ""]
@@ -130,11 +130,11 @@ def folder_readme(folder):
     return "\n".join(L)
 
 
-ROOT_README = """# C1 — 全局公理伽羅瓦對應（C1-01..C1-06 累積切片）
+ROOT_README = """# C1 — 全局公理伽羅瓦對應（C1-01..C1-07 累積切片）
 
 > 依 `工程內容03.md`／`工程約束.md`／`作業規範.md`／`組合範例.md` 建立之首次切片。
 > 全局公理 **G = 伽羅瓦對應（極性伴隨）**；局部公理 L1..L5 由本回合代理決定。
-> C1-01 為**首次開發**；C1-02..C1-06 逐回合補回前沿待辦。尚未達成 5,000,000 行／10,000 條演算法之最終目標；未完成部分不列為已完成。
+> C1-01 為**首次開發**；C1-02..C1-07 逐回合補回前沿待辦。尚未達成 5,000,000 行／10,000 條演算法之最終目標；未完成部分不列為已完成。
 
 ## 全局公理
 
@@ -172,7 +172,7 @@ src/exact    ──► src/axioms ──► src/galois ──► src/series ─�
 - `src/algebra`：歪多項式環（Ore）、Hilbert–Poincaré 級數、局部化、Ext¹、Morita
 - `src/graphs`：克內澤圖、Lovász/EKR、Ramsey、擬陣 Tutte、單純複形 Betti
 - `src/compose`：14 種組合手法（Kan、束、纖維積、單子、張量、纖維範疇、推出、交織、博弈管線等）
-- `src/catalog`：498 筆定理／演算法／等式登錄
+- `src/catalog`：571 筆定理／演算法／等式登錄
 - `algorithm.xlsx`：由 `docs/catalog.json` 單一來源產生之活頁簿
 - `Dev.txt`：流水式帳本；`AGENT.md` 與 `工程約束.md` 為同一份文件
 
@@ -197,8 +197,8 @@ moon run cmd/main
 | `moon check --deny-warn`（全域） | Finished，21 tasks |
 | `moon prove --deny-warn` | `1 of 1 packages proved, 17 goals proved` |
 | `moon build` | wasm artifact 生成 |
-| `moon run cmd/main` | 60 行真實 inspect 憑證，全數 OK |
-| 登錄表 | 6 公理／52 定義／8 命題／14 引理／163 定理／155 演算法／100 等式 = 498 筆；前沿文獻 65 筆 |
+| `moon run cmd/main` | 65 行真實 inspect 憑證，全數 OK |
+| 登錄表 | 6 公理／62 定義／8 命題／14 引理／181 定理／180 演算法／120 等式 = 571 筆；前沿文獻 72 筆 |
 | CI | `.github/workflows/c1-ci.yml` 推送全域編譯與形式化驗證 |
 
 ## C1-02：前沿查證與 §6 待辦補回
@@ -330,20 +330,41 @@ localized quantum torus、Weil pairing/theta group）。完整書目見
 21 算子張成 14 維／441 複合張成 81 維；`moon run cmd/main` 之 inspect 報表
 60 行全數 OK。
 
+## C1-07：黃金比例／Fibonacci 矩陣譜／陳–西蒙斯／21×14 交織／全代碼健檢
+
+依《作業規範》「不時聯網搜查及查證最前沿論文」，本回合查證 R66..R72 共 7 組
+（arXiv:2505.16760 之 SU(2)₃ 模數據與 Verlinde 公式、arXiv:2505.08763v1 之
+Fibonacci Hamiltonian trace map 與 Fricke–Vogt 不變量、Damanik–Gorodetski–Yessen
+之譜維度、Roberts 之 Fricke character、2025 Nature Commun 16:6225 之 Fibonacci
+anyon 編織測得 φ、2026 Golden Bridge 之 Z[ζ₅] 代數整數、Kac–Peterson 標準模數據）。
+完整書目見 `algorithm.xlsx`「前沿文獻」與 `docs/catalog.json`。
+本回合僅修改既有檔案，未新增文檔。
+
+| 落地結構 | 內容 | 憑證 |
+| --- | --- | --- |
+| 黃金比例與 Fibonacci 矩陣譜 | `Q5=ℚ(√5)`、`C5=ℚ[ζ]/(Φ₅)` 精確環；φ²=φ+1、φⁿ=F_nφ+F_{n−1}、L_n=φⁿ+ψⁿ；Q=[[1,1],[1,0]] 之特徵多項式 x²−x−1、譜投影 P±、Qⁿ、Cassini、fast doubling、Zeckendorf；Fibonacci trace map 保持 `I=x²+y²+z²−2xyz−1` | T-GOLD1..GOLD5 |
+| SU(2)₃ 陳–西蒙斯 | Kac–Peterson `S_{ab}=√(2/5)sin((a+1)(b+1)π/5)` 以 Chebyshev `U_n(φ/2)` 精確化；Verlinde 公式於全部 4³ 組重現組合融合律；偶數扇域 {0,2} 即 Fibonacci 融合範疇 `τ⊗τ=1⊕τ`；量子維度 (1,φ,φ,1)、`Ŝ²=(1/c₀)I`、dim H_{g=2}=20；Wilson loop `sin(2π/5)/sin(π/5)=φ` | T-CS1..CS4, T-CS11 |
+| 21×14 交織（C1-07） | 載體 `A_CS5=F₁₁[x]/(x⁵)`；21 動詞 → 21 個相異微分算子 ρ(v)，14 範例狀態由 `deriv_invariant`、`F_{p+1}`、`L_{p+1}` 實算交織；`W₂[v][p]=τ(ρ(v)Φ_p)`；與自身交織得 Gram（秩 14、跡 9615）、Kronecker `rank(K⊗K)=9`、441 複合張成完整 `End(A_CS5)`=25、全局公理 G 之概念格 1568/1568；並與 C1-06 之 W₁ 跨回合堆疊／拼接／聯合 Gram 交織 | T-CS5..CS10, T-CS12 |
+| 全代碼健檢 | `audit_repository()` 靜態掃描：未引用函式 **57 → 0**、重複定義 0、登錄表重複 ID／陳述 0；合併三處相同 `*_equal` 本體、`Fps/Dirichlet::equal`、`lower_mask`、`insert_unique`、`iw_flatten`；修復 `mat_rank` 之 Int64 溢位（改 BigInt Bareiss）、`iw_flatten` 硬編模 7 誤用、`c5_reduce` 高次降次、`theorem_fiber_product_universal` 之恆真式 | T-Health |
+
+實測：C1-07 交織矩陣 ℚ-秩 14／GF(11)-秩 3／非零項 271／概念數 1568／
+21 算子張成 12 維／441 複合張成 81→25 維（完整 End）；`moon run cmd/main`
+之 inspect 報表 65 行全數 OK。
+
 ## 未完成（誠實標記）
 
-- 5,000,000 行程式碼、10,000 條中階以上演算法：目前 **155 / 10,000** 條演算法、
-  約 1.4 萬行，仍為早期切片；「集庫成群」已建立聚類演算法與憑證，但庫規模本身未達最終目標。
-- Connes 譜 triple 之**無限維解析極限／RH 一般等價證明**、Spec Z 之 archimedean
-  adelic Abel–Jacobi 解析：已有逐條有限域曲線與有理餘項界的有限精確憑證，
-  以及 q-商 `F_p^*/⟨q⟩` 之有限 Abel–Jacobi；皆非 ℂ 上無限維週期積分或一般解析極限。
-- 高階 K 理論、導出方案之 ∞-範疇極限、higher motives（(∞,n)-category 層級）：
-  目前只到 K₀ 有限層。
-- 無限維複數域 PV 擴張、代數閉包上完整 δ-Galois 群、解析單值群、Kovacic II/III：
-  目前為 F_p[t]/(t^p) 上任意二階 δ-模之有限精確模型。
-- 量子環面之 C*-範數完備化、無理 θ 之 Powers–Rieffel 投影解析構造、
-  q 非單位根之無限維 Γ-bundle（R56 之 uncountably categorical 結構）：
-  目前為 qⁿ=1 之 n² 維有限 root algebra 與精確 q-指數配對。
+- 5,000,000 行程式碼、10,000 條中階以上演算法：目前 **180 / 10,000** 條演算法、
+  14,786 行，仍為早期切片；「集庫成群」已建立聚類演算法與憑證，但庫規模本身未達最終目標。
+- Connes 譜 triple 之無限維解析極限／RH 一般證明、Spec Z 之 archimedean
+  adelic Abel–Jacobi 解析：目前為有限域曲線、有理餘項界與 q-商之有限精確憑證。
+- 量子環面之 C*-範數完備化、無理 θ 之 Powers–Rieffel 投影、q 非單位根之無限維
+  Γ-bundle：目前為 qⁿ=1 之有限 root algebra 與精確 q-指數配對。
+- 高階 K 理論、導出方案之 ∞-範疇極限、higher motives、無限維複數域 PV 擴張、
+  Kovacic II/III：沿用 §6'''' 之誠實標記。
+- Fibonacci Hamiltonian 之無限維奇異連續譜與 Hausdorff 維度：本回合為有限階
+  trace map／Fricke–Vogt 不變量之精確有理憑證（k≥6 超出 Int64 Rat 範圍，未冒充）。
+- SU(2)₃ 之完整 T 矩陣相位、非零 genus 之 WRT 不變量與 3-流形手術公式：
+  本回合為融合環／模 S 矩陣／量子維度之有限精確憑證。
 - `docs/` 其餘設計文件：依《工程約束》「非首次開發、創建新文檔前需先獲准」，
   本回合不另建新文檔，改以既有 `Dev.txt`、`README.md` 與各資料夾 README 記錄。
 - git 仍無 remote：CI workflow 與 commit 僅本機落地，**未 push**。

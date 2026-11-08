@@ -1,6 +1,6 @@
 # src/algebra — Ore 歪多項式環、Hilbert–Poincaré、局部化、Ext¹、Morita
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織／C1-07 黃金比例、陳–西蒙斯與全代碼健檢。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得定理列表
 
@@ -50,6 +50,11 @@
 - **T-QT6** Weil 配對雙線性／交錯／非退化；[g_x,g_y]=q^{bc−ad}=e_n(x,y)⁻¹
 - **T-QT7** SL₂(ℤ) Morita 作用：么模基底變換、ℤ+θℤ 保持、(gh)·θ=g·(h·θ)
 - **T-QT8** 量子二維環面七項憑證合取
+- **T-CS1** Verlinde 公式於全部 4³ 組重現 SU(2)₃ 融合律且係數為整數、真空為 δ
+- **T-CS2** 偶數扇域 {0,2} 為 Fibonacci 融合範疇；N_τ 特徵多項式 x²−x−1；D²=2(φ+2)
+- **T-CS3** SU(2)₃ 模數據：Ŝ 對稱、Ŝ²=(1/c₀)I、Ŝ⁴=(1/c₀²)I、dim H_{g=2}=20
+- **T-CS4** Wilson loop d=sin(2π/5)/sin(π/5)=φ；WRT(S³)²=c₀=(5−√5)/20
+- **T-CS11** 陳–西蒙斯四項憑證合取
 
 ## 已實作演算法列表
 
@@ -87,6 +92,8 @@
 - **AL136** qt_root_weil_exp / qt_root_comm_exp（O(1)）
 - **AL137** theorem_qt_morita_sl2（SL₂(ℤ) 有理分式作用與群律）（O(|G|²)）
 - **AL155** qt_root_qshift_matrix / qt_root_trace_projection（O(n⁴)）
+- **AL164** cs_chebyshev_u / cs_shat（Kac–Peterson S 之 ℚ(√5) 精確化）（O(n)）
+- **AL165** cs_verlinde / cs_comb / cs_c0（O(k³)）
 
 ## 等式
 
@@ -114,6 +121,13 @@
 - **E86** Weil pairing：`e_n((a,b),(c,d))=q^{ad−bc}；[g_x,g_y]=q^{bc−ad}=e_n(x,y)⁻¹`
 - **E87** Heisenberg 表示：`U=diag(q^{−i}), V e_i=e_{i+1} ⇒ VU=qUV, Uⁿ=Vⁿ=I`
 - **E88** SL₂(ℤ) Morita：`θ↦(aθ+b)/(cθ+d)；ℤ+θℤ ≅ (cθ+d)⁻¹(ℤ+θℤ)；K₀(A_θ)≅ℤ+θℤ`
+- **E111** Kac–Peterson S：`S_{ab}=√(2/5)sin((a+1)(b+1)π/5)；Ŝ_{ab}=U_{(a+1)(b+1)−1}(φ/2)`
+- **E112** Verlinde：`N_{ab}^c=(2/5)sin²(π/5)·Σ_x Ŝ_{ax}Ŝ_{bx}Ŝ_{cx}/Ŝ_{0x}`
+- **E113** SU(2)₃ 融合：`N_{ab}^c=1 ⟺ |a−b|≤c≤min(a+b,6−a−b) 且 a+b+c 偶`
+- **E114** 量子維度：`d_a=S_{0a}/S_{00}=U_a(φ/2)=(1,φ,φ,1)；D²=Σd²=2(φ+2)`
+- **E115** Fibonacci 融合：`τ⊗τ=1⊕τ；N_τ=[[0,1],[1,1]]，χ=x²−x−1`
+- **E116** 模關係：`Ŝ²=(1/c₀)I, Ŝ⁴=(1/c₀²)I, (ST)³=S², S⁴=I`
+- **E117** WRT 與 Wilson：`WRT(S³)²=S₀₀²=c₀=(5−√5)/20；sin(2π/5)/sin(π/5)=φ`
 
 ## 資料夾視角依賴關係圖
 
@@ -180,11 +194,13 @@
   qt_mat_smul  qt_mat_equal  qt_root_apply  qt_root_weil_exp
   qt_root_comm_exp  qt_root_qshift_matrix  qt_root_trace_projection  theorem_qt_relation
   theorem_qt_trace_cyclic  theorem_qt_derivations  theorem_qt_center  theorem_qt_heisenberg
-  theorem_qt_weil_pairing  theorem_qt_morita_sl2  theorem_quantum_torus  SkewPoly
-  OreDiv  Fq2  SkewFq  SFqDiv
-  OreGCL  F5pDiv  SkewGB  FuDiv
-  FuBezout  DiffModule  QTMon  QTElem
-  QTRoot
+  theorem_qt_weil_pairing  theorem_qt_morita_sl2  theorem_quantum_torus  cs_chebyshev_u
+  cs_shat  cs_c0  cs_comb  cs_verlinde
+  theorem_cs_verlinde  theorem_cs_fibonacci_sector  theorem_cs_modular  theorem_cs_wilson_golden
+  theorem_chern_simons  SkewPoly  OreDiv  Fq2
+  SkewFq  SFqDiv  OreGCL  F5pDiv
+  SkewGB  FuDiv  FuBezout  DiffModule
+  QTMon  QTElem  QTRoot
 ```
 
 ## 驗證

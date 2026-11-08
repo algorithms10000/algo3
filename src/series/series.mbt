@@ -279,12 +279,17 @@ pub fn fps_neg(a : Fps) -> Fps {
 }
 
 ///|
-pub fn Fps::equal(self : Fps, o : Fps) -> Bool {
-  let n = min_int(self.coeffs.length(), o.coeffs.length())
+fn rat_coeffs_equal(a : Array[@exact.Rat], b : Array[@exact.Rat]) -> Bool {
+  let n = min_int(a.length(), b.length())
   for i in 0..<n {
-    if !self.coeffs[i].equal(o.coeffs[i]) { return false }
+    if !a[i].equal(b[i]) { return false }
   }
   true
+}
+
+///|
+pub fn Fps::equal(self : Fps, o : Fps) -> Bool {
+  rat_coeffs_equal(self.coeffs, o.coeffs)
 }
 
 ///|
@@ -633,11 +638,7 @@ pub fn ds_phi(n : Int) -> Dirichlet {
 
 ///|
 pub fn Dirichlet::equal(self : Dirichlet, o : Dirichlet) -> Bool {
-  let n = min_int(self.coeffs.length(), o.coeffs.length())
-  for i in 0..<n {
-    if !self.coeffs[i].equal(o.coeffs[i]) { return false }
-  }
-  true
+  rat_coeffs_equal(self.coeffs, o.coeffs)
 }
 
 ///|
@@ -2508,4 +2509,310 @@ pub fn theorem_abel_jacobi() -> Bool {
   theorem_aj_group_law() && theorem_aj_abel() && theorem_aj_pic0() &&
     theorem_aj_gamma_pairing() && theorem_aj_quantum_quotient() &&
     theorem_aj_weil_torsion()
+}
+
+///|
+/// ═══════════════════════════════════════════════════════════════════════
+/// C1-07 (B) — 黃金比例與 Fibonacci 矩陣譜
+/// Q=[[1,1],[1,0]] 之特徵多項式 x²−x−1，特徵值 φ=(1+√5)/2 與 ψ=−φ⁻¹；
+/// 譜投影 P± ∈ M₂(ℚ(√5))、Qⁿ=[[F_{n+1},F_n],[F_n,F_{n−1}]]、Cassini、
+/// fast doubling、Lucas、Zeckendorf。
+/// 另落地 Fibonacci Hamiltonian 之 trace map T(x,y,z)=(2xy−z,x,y)
+/// 與 Fricke–Vogt 不變量 I=x²+y²+z²−2xyz−1（R67 arXiv:2505.08763v1），
+/// 以精確有理轉移矩陣驗證 x_{k+1}=2x_kx_{k−1}−x_{k−2}。
+/// ═══════════════════════════════════════════════════════════════════════
+
+///|
+pub(all) struct QMat {
+  a : Array[Array[@exact.Q5]]
+}
+
+///|
+fn q5i(n : Int64) -> @exact.Q5 { @exact.q5_int(n) }
+
+///|
+pub fn qmat(a : Array[Array[@exact.Q5]]) -> QMat { QMat::{ a } }
+
+///|
+pub fn qmat_identity() -> QMat {
+  qmat([[q5i(1L), q5i(0L)], [q5i(0L), q5i(1L)]])
+}
+
+///|
+pub fn qmat_mul(x : QMat, y : QMat) -> QMat {
+  let a : Array[Array[@exact.Q5]] = []
+  for i in 0..<2 {
+    let row : Array[@exact.Q5] = []
+    for j in 0..<2 {
+      let mut s = q5i(0L)
+      for t in 0..<2 { s = @exact.q5_add(s, @exact.q5_mul(x.a[i][t], y.a[t][j])) }
+      row.push(s)
+    }
+    a.push(row)
+  }
+  QMat::{ a }
+}
+
+///|
+pub fn qmat_add(x : QMat, y : QMat) -> QMat {
+  let a : Array[Array[@exact.Q5]] = []
+  for i in 0..<2 {
+    let row : Array[@exact.Q5] = []
+    for j in 0..<2 { row.push(@exact.q5_add(x.a[i][j], y.a[i][j])) }
+    a.push(row)
+  }
+  QMat::{ a }
+}
+
+///|
+pub fn qmat_sub(x : QMat, y : QMat) -> QMat {
+  let a : Array[Array[@exact.Q5]] = []
+  for i in 0..<2 {
+    let row : Array[@exact.Q5] = []
+    for j in 0..<2 { row.push(@exact.q5_sub(x.a[i][j], y.a[i][j])) }
+    a.push(row)
+  }
+  QMat::{ a }
+}
+
+///|
+pub fn qmat_smul(s : @exact.Q5, x : QMat) -> QMat {
+  let a : Array[Array[@exact.Q5]] = []
+  for i in 0..<2 {
+    let row : Array[@exact.Q5] = []
+    for j in 0..<2 { row.push(@exact.q5_mul(s, x.a[i][j])) }
+    a.push(row)
+  }
+  QMat::{ a }
+}
+
+///|
+pub fn qmat_equal(x : QMat, y : QMat) -> Bool {
+  for i in 0..<2 {
+    for j in 0..<2 {
+      if !@exact.q5_equal(x.a[i][j], y.a[i][j]) { return false }
+    }
+  }
+  true
+}
+
+///|
+pub fn qmat_pow(x : QMat, n : Int) -> QMat {
+  let mut out = qmat_identity()
+  for _i in 0..<n { out = qmat_mul(out, x) }
+  out
+}
+
+///|
+pub fn fibonacci_matrix() -> QMat {
+  qmat([[q5i(1L), q5i(1L)], [q5i(1L), q5i(0L)]])
+}
+
+///|
+/// 演算法 A-Fib1：fast doubling 同時得 (F_n, F_{n+1})，O(log n)。
+pub fn fib_pair(n : Int) -> (Int64, Int64) {
+  if n == 0 { return (0L, 1L) }
+  let (a, b) = fib_pair(n / 2)
+  let c = a * (2L * b - a)
+  let d = a * a + b * b
+  if n % 2 == 0 { (c, d) } else { (d, c + d) }
+}
+
+///|
+pub fn fib_number(n : Int) -> Int64 { fib_pair(n).0 }
+
+///|
+pub fn lucas_number(n : Int) -> Int64 {
+  if n == 0 { 2L } else { fib_number(n - 1) + fib_number(n + 1) }
+}
+
+///|
+/// 演算法 A-Fib2：Zeckendorf 分解（貪心取不相鄰 Fibonacci 數）。
+pub fn zeckendorf(n : Int64) -> Array[Int64] {
+  let out : Array[Int64] = []
+  let mut rem = n
+  let mut a = 1L
+  let mut b = 2L
+  let fs : Array[Int64] = []
+  while a <= n {
+    fs.push(a)
+    let t = a + b
+    a = b
+    b = t
+  }
+  let mut i = fs.length() - 1
+  while i >= 0 {
+    if fs[i] <= rem {
+      out.push(fs[i])
+      rem = rem - fs[i]
+    }
+    i = i - 1
+  }
+  out
+}
+
+///|
+/// 定理 T-G3：Fibonacci 矩陣譜。特徵多項式 x²−x−1、
+/// 譜投影 P± 滿足 P²=P、P₊P₋=0、P₊+P₋=I、Q=φP₊+ψP₋；
+/// Qⁿ=[[F_{n+1},F_n],[F_n,F_{n−1}]]、Cassini、fast doubling、Lucas、Zeckendorf。
+pub fn theorem_fib_spectrum() -> Bool {
+  let q = fibonacci_matrix()
+  let phi = @exact.q5_phi()
+  let psi = @exact.q5_psi()
+  let zero = q5i(0L)
+  let ii = qmat_identity()
+  // (Q−φI)(Q−ψI) = Q²−Q−I = 0
+  let lhs = qmat_mul(qmat_sub(q, qmat_smul(phi, ii)),
+                     qmat_sub(q, qmat_smul(psi, ii)))
+  if !qmat_equal(lhs, qmat([[zero, zero], [zero, zero]])) { return false }
+  let s5 = @exact.q5_sqrt5()
+  let inv_s5 = @exact.q5_inv(s5).unwrap()
+  let pp = qmat_smul(inv_s5, qmat_sub(q, qmat_smul(psi, ii)))
+  let pm = qmat_smul(inv_s5, qmat_sub(qmat_smul(phi, ii), q))
+  if !qmat_equal(qmat_mul(pp, pp), pp) { return false }
+  if !qmat_equal(qmat_mul(pm, pm), pm) { return false }
+  if !qmat_equal(qmat_mul(pp, pm), qmat([[zero, zero], [zero, zero]])) {
+    return false
+  }
+  if !qmat_equal(qmat_add(pp, pm), ii) { return false }
+  if !qmat_equal(q, qmat_add(qmat_smul(phi, pp), qmat_smul(psi, pm))) {
+    return false
+  }
+  for n in 0..<13 {
+    let expect = qmat([
+      [q5i(fib_number(n + 1)), q5i(fib_number(n))],
+      [q5i(fib_number(n)), q5i(fib_number(n - 1))],
+    ])
+    if n == 0 {
+      // Q⁰=I；跳過 F_{−1} 之定義
+      if !qmat_equal(qmat_pow(q, 0), ii) { return false }
+      continue
+    }
+    if !qmat_equal(qmat_pow(q, n), expect) { return false }
+    // Cassini：F_{n+1}F_{n−1}−F_n²=(−1)^n
+    let cass = fib_number(n + 1) * fib_number(n - 1) -
+               fib_number(n) * fib_number(n)
+    let want = if n % 2 == 0 { 1L } else { -1L }
+    if cass != want { return false }
+    // fast doubling 與逐步遞推一致
+    let (a, b) = fib_pair(n)
+    if a != fib_number(n) || b != fib_number(n + 1) { return false }
+    // L_n = φⁿ+ψⁿ 為整數
+    let luc = @exact.q5_add(@exact.q5_pow(phi, n), @exact.q5_pow(psi, n))
+    if !@exact.q5_is_int(luc) { return false }
+    if luc.a.n != lucas_number(n) { return false }
+  }
+  for n in 1L..<200L {
+    let z = zeckendorf(n)
+    let mut s = 0L
+    for v in z { s = s + v }
+    if s != n { return false }
+    for i in 0..<(z.length() - 1) {
+      if z[i] == 2L * z[i + 1] { return false }
+    }
+  }
+  true
+}
+
+///|
+fn fib_word(k : Int) -> Array[Int] {
+  // w₀=[0] (B), w₁=[1] (A), w_{k+1}=w_{k−1}⧺w_k
+  let words : Array[Array[Int]] = [[0], [1]]
+  for _i in 2..<(k + 1) {
+    let prev = words[words.length() - 2]
+    let cur = words[words.length() - 1]
+    let w : Array[Int] = []
+    for v in prev { w.push(v) }
+    for v in cur { w.push(v) }
+    words.push(w)
+  }
+  words[k]
+}
+
+///|
+fn tf_mat(e : @exact.Rat, v : @exact.Rat, letter : Int) -> @exact.Mat {
+  let val = if letter == 1 { e.sub(v) } else { e }
+  @exact.mat_from([
+    [val, @exact.rat_int(-1L)], [@exact.rat_one(), @exact.rat_zero()],
+  ])
+}
+
+///|
+fn word_matrix(e : @exact.Rat, v : @exact.Rat, w : Array[Int]) -> @exact.Mat {
+  let mut out = @exact.mat_identity(2)
+  let mut i = w.length() - 1
+  while i >= 0 {
+    out = @exact.mat_mul(tf_mat(e, v, w[i]), out)
+    i = i - 1
+  }
+  out
+}
+
+///|
+/// Fricke–Vogt 不變量 I(x,y,z)=x²+y²+z²−2xyz−1。
+pub fn fricke_vogt(x : @exact.Rat, y : @exact.Rat, z : @exact.Rat) -> @exact.Rat {
+  x.mul(x).add(y.mul(y)).add(z.mul(z))
+    .sub(@exact.rat_int(2L).mul(x.mul(y.mul(z))))
+    .sub(@exact.rat_one())
+}
+
+///|
+/// Fibonacci trace map T(x,y,z)=(2xy−z,x,y)。
+pub fn fib_trace_map(x : @exact.Rat, y : @exact.Rat, z : @exact.Rat) -> Array[@exact.Rat] {
+  [@exact.rat_int(2L).mul(x.mul(y)).sub(z), x, y]
+}
+
+///|
+/// 定理 T-G4：trace map 保持 Fricke–Vogt 不變量、可逆；
+/// Fibonacci 字長 = F_{k+1}；精確轉移矩陣滿足
+/// x_{k+1}=2x_kx_{k−1}−x_{k−2} 且 I(x_{k+1},x_k,x_{k−1}) 為常數。
+pub fn theorem_fib_trace_map() -> Bool {
+  let samples : Array[Array[@exact.Rat]] = [
+    [@exact.rat(1L, 2L), @exact.rat(3L, 2L), @exact.rat_int(2L)],
+    [@exact.rat_int(2L), @exact.rat(1L, 3L), @exact.rat(5L, 2L)],
+    [@exact.rat(-1L, 2L), @exact.rat(7L, 3L), @exact.rat(1L, 5L)],
+  ]
+  for s in samples {
+    let t = fib_trace_map(s[0], s[1], s[2])
+    if !fricke_vogt(t[0], t[1], t[2]).equal(fricke_vogt(s[0], s[1], s[2])) {
+      return false
+    }
+    // T⁻¹(a,b,c) = (b, c, 2bc−a)
+    let inv : Array[@exact.Rat] = [
+      t[1], t[2], @exact.rat_int(2L).mul(t[1].mul(t[2])).sub(t[0]),
+    ]
+    if !inv[0].equal(s[0]) || !inv[1].equal(s[1]) || !inv[2].equal(s[2]) {
+      return false
+    }
+  }
+  let e = @exact.rat(1L, 2L)
+  let v = @exact.rat_one()
+  let xs : Array[@exact.Rat] = []
+  for k in 0..<8 {
+    let w = fib_word(k)
+    if w.length() != fib_number(k + 1).to_int() { return false }
+    let m = word_matrix(e, v, w)
+    let tr = @exact.mat_trace(m)
+    xs.push(tr.div(@exact.rat_int(2L)).unwrap())
+  }
+  let mut const0 : @exact.Rat? = None
+  // k≤5 為 Int64 Rat 精確範圍；k≥6 之分子超出 2^63，另屬溢位邊界，不冒充憑證。
+  for k in 2..<6 {
+    if !xs[k + 1].equal(
+      @exact.rat_int(2L).mul(xs[k].mul(xs[k - 1])).sub(xs[k - 2])) {
+      return false
+    }
+    let iv = fricke_vogt(xs[k + 1], xs[k], xs[k - 1])
+    match const0 {
+      None => const0 = Some(iv)
+      Some(c) => if !iv.equal(c) { return false }
+    }
+  }
+  true
+}
+
+///|
+pub fn theorem_golden_fibonacci() -> Bool {
+  theorem_fib_spectrum() && theorem_fib_trace_map() &&
+    @exact.theorem_q5_golden() && @exact.theorem_c5_golden_bridge()
 }

@@ -307,11 +307,7 @@ pub fn vec_scale(w : Array[Int64], s : Int64) -> Array[Int64] {
 
 ///|
 fn vec_equal(a : Array[Int64], b : Array[Int64]) -> Bool {
-  if a.length() != b.length() { return false }
-  for i in 0..<a.length() {
-    if a[i] != b[i] { return false }
-  }
-  true
+  @exact.vec_equal_i64(a, b)
 }
 
 ///|

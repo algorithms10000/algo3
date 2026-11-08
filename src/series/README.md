@@ -1,6 +1,6 @@
 # src/series — 局部公理 L1/L2/L3：多項式、形式冪級數、洛朗、狄利克雷、商環、全純
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織／C1-07 黃金比例、陳–西蒙斯與全代碼健檢。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得公理
 
@@ -48,6 +48,9 @@
 - **T-AJ5** AJ_q 為滿同態、核=⟨q⟩、陪集數=(p−1)/ord(q)
 - **T-AJ6** E(F₇)[3]≅(ℤ/3)²：標號群律、AJ 相容、Weil 配對雙線性／交錯／非退化
 - **T-AJ7** Abel–Jacobi 六項憑證合取
+- **T-GOLD3** Fibonacci 矩陣譜：x²−x−1、譜投影冪等／正交／完備、Qⁿ=[[F_{n+1},F_n],[F_n,F_{n−1}]]、Cassini、fast doubling、Lucas、Zeckendorf
+- **T-GOLD4** Fibonacci trace map 保持 Fricke–Vogt 不變量且可逆；字長=F_{k+1}；轉移矩陣滿足 x_{k+1}=2x_kx_{k−1}−x_{k−2}
+- **T-GOLD5** 黃金比例／Fibonacci 矩陣譜四項憑證合取
 
 ## 已實作演算法列表
 
@@ -89,6 +92,12 @@
 - **AL142** aj_gamma_vu / aj_gamma_uv / aj_gamma_core（O(1)）
 - **AL143** aj_q_order / aj_q_coset（q-商之正規代表）（O(ord(q))）
 - **AL144** aj_weil_label（E[N] 標號配對）（O(1)）
+- **AL159** qmat_mul/add/sub/smul/pow（M₂(ℚ(√5))）（O(n)）
+- **AL160** fib_pair 快速倍增 / fib_number / lucas_number（O(log n)）
+- **AL161** zeckendorf 貪心不相鄰分解（O(log N)）
+- **AL162** fib_word / word_matrix（Fibonacci 字轉移矩陣）（O(F_k)）
+- **AL163** fricke_vogt / fib_trace_map（O(1)）
+- **AL173** rat_coeffs_equal（Fps/Dirichlet::equal 共用）（O(n)）
 
 ## 等式
 
@@ -124,6 +133,12 @@
 - **E94** 核心雙線性：`⟨u(q^r u,v)|v(q^s v,u)⟩ = q^{r·s}（么正不變性）`
 - **E95** q-商 AJ：`AJ_q : F_p^* → F_p^*/⟨q⟩，ker=⟨q⟩，|coker|=(p−1)/ord(q)`
 - **E96** E[3] 標號 Weil 配對：`E(F₇)[3]≅(ℤ/3)²，e₃((a,b),(c,d))=2^{ad−bc} mod 7`
+- **E105** Fibonacci 特徵多項式：`χ_Q(λ)=λ²−λ−1；特徵值 φ, ψ=−φ⁻¹`
+- **E106** 譜投影：`P₊=(Q−ψI)/√5, P₋=(φI−Q)/√5；P₊²=P₊, P₊P₋=0, P₊+P₋=I`
+- **E107** Qⁿ 與 Cassini：`Qⁿ=[[F_{n+1},F_n],[F_n,F_{n−1}]]；F_{n+1}F_{n−1}−F_n²=(−1)ⁿ`
+- **E108** 快速倍增：`F_{2n}=F_n(2F_{n+1}−F_n), F_{2n+1}=F_{n+1}²+F_n²`
+- **E109** Fricke–Vogt：`I(x,y,z)=x²+y²+z²−2xyz−1，T(x,y,z)=(2xy−z,x,y)，I∘T=I`
+- **E110** Fibonacci 跡遞推：`x_{k+1}=2x_kx_{k−1}−x_{k−2}，|w_k|=F_{k+1}`
 
 ## 資料夾視角依賴關係圖
 
@@ -185,9 +200,14 @@
   aj_gamma_vu  aj_gamma_uv  aj_gamma_core  aj_q_order
   aj_q_coset  aj_weil_label  theorem_aj_group_law  theorem_aj_abel
   theorem_aj_pic0  theorem_aj_gamma_pairing  theorem_aj_quantum_quotient  theorem_aj_weil_torsion
-  theorem_abel_jacobi  Poly  Fps  Laurent
-  Dirichlet  Quot  DivMod  ConvAlg
-  WeilCurve  ECPoint  AJTerm  AJDivisor
+  theorem_abel_jacobi  qmat  qmat_identity  qmat_mul
+  qmat_add  qmat_sub  qmat_smul  qmat_equal
+  qmat_pow  fibonacci_matrix  fib_pair  fib_number
+  lucas_number  zeckendorf  theorem_fib_spectrum  fricke_vogt
+  fib_trace_map  theorem_fib_trace_map  theorem_golden_fibonacci  Poly
+  Fps  Laurent  Dirichlet  Quot
+  DivMod  ConvAlg  WeilCurve  ECPoint
+  AJTerm  AJDivisor  QMat
 ```
 
 ## 驗證

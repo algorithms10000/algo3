@@ -35,13 +35,6 @@ pub fn full_mask(n : Int) -> UInt64 {
 }
 
 ///|
-pub fn lower_mask(n : Int) -> UInt64 {
-  let mut m = 0UL
-  for i in 0..<n { m = @exact.set_bit(m, i) }
-  m
-}
-
-///|
 pub fn entry(ctx : Context, x : Int, y : Int) -> Bool {
   @exact.bit(ctx.rows[x], y)
 }
@@ -91,7 +84,7 @@ pub fn adjoint_pair(ctx : Context, a : UInt64, b : UInt64) -> Bool {
 pub fn total_masks(n : Int) -> UInt64 { 1UL << n }
 
 ///|
-fn insert_unique(xs : Array[UInt64], v : UInt64) -> Unit {
+pub fn insert_unique(xs : Array[UInt64], v : UInt64) -> Unit {
   for i in 0..<xs.length() {
     if xs[i] == v { return }
   }
@@ -139,9 +132,9 @@ pub fn next_closure_intents(ctx : Context) -> Array[UInt64] {
     for ii = 0; ii < ctx.ny; ii = ii + 1 {
       let i = ctx.ny - 1 - ii
       if ((b >> i) & 1UL) == 1UL { continue }
-      let cand = closure_attr(ctx, (b & lower_mask(i)) | (1UL << i))
+      let cand = closure_attr(ctx, (b & full_mask(i)) | (1UL << i))
       let diff = cand & (all ^ b)
-      if (diff & lower_mask(i)) == 0UL {
+      if (diff & full_mask(i)) == 0UL {
         b = cand
         out.push(b)
         found = true
@@ -427,9 +420,9 @@ pub fn next_closure_constrained(ctx : Context, required : UInt64) -> Array[UInt6
     for ii in 0..<ctx.ny {
       let i = ctx.ny - 1 - ii
       if ((b >> i) & 1UL) == 1UL { continue }
-      let cand = constraint_closure(ctx, required, (b & lower_mask(i)) | (1UL << i))
+      let cand = constraint_closure(ctx, required, (b & full_mask(i)) | (1UL << i))
       let diff = cand & (all ^ b)
-      if (diff & lower_mask(i)) == 0UL {
+      if (diff & full_mask(i)) == 0UL {
         b = cand
         out.push(b)
         found = true
@@ -603,7 +596,7 @@ fn fcbo_generate(
   let qd : Array[UInt64] = []
   let qj : Array[Int] = []
   for j in task.y..<ctx.ny {
-    let low = lower_mask(j)
+    let low = full_mask(j)
     let in_b = ((task.b >> j) & 1UL) == 1UL
     let newtest = subset(task.ns[j] & low, task.b & low)
     if !in_b && newtest {
@@ -678,7 +671,7 @@ pub fn cbo_closure_count(ctx : Context) -> Int {
       let cc = t.a & column_mask(ctx, j)
       let dd = polar_obj(ctx, cc)
       count += 1
-      let low = lower_mask(j)
+      let low = full_mask(j)
       if (t.b & low) == (dd & low) {
         q.push(FCbOTask::{ a: cc, b: dd, y: j + 1, ns: [] })
       }

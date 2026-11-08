@@ -72,11 +72,7 @@ fn ideal_max_lcm_degree(ideal : MonoIdeal) -> Int {
 
 ///|
 fn expvec_equal(a : Array[Int], b : Array[Int]) -> Bool {
-  if a.length() != b.length() { return false }
-  for i in 0..<a.length() {
-    if a[i] != b[i] { return false }
-  }
-  true
+  @exact.vec_equal_int(a, b)
 }
 
 ///|
