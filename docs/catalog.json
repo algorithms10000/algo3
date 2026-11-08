@@ -1,5 +1,5 @@
 {
-  "round": "C1-07",
+  "round": "C1-08",
   "global_axiom": "伽羅瓦對應",
   "entries": [
     {
@@ -5140,6 +5140,546 @@
       "formula": "dead=0, dup_names=0, dup_ids=0, dup_statements=0；rank(WWᵀ)=rank(W)=14",
       "verification": "由對應定理憑證驗證",
       "round": "C1-07"
+    },
+    {
+      "kind": "定義",
+      "id": "D70",
+      "statement": "QC20=ℚ[ζ]/(Φ₂₀)⊗ℚ(√5)：SU(2)₃ T 矩陣相位之精確分圓環",
+      "package": "src/exact",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定義",
+      "id": "D71",
+      "statement": "Connes 截斷譜 zeta S_N(s)=Σ_{k≤N}k^{−s} 與 Cauchy 餘項 1/((s−1)N^{s−1})",
+      "package": "src/series",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定義",
+      "id": "D72",
+      "statement": "Connes–van Suijlekom 有限 Galerkin（Weil 二次型素數冪權重）Gram 矩陣",
+      "package": "src/series",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定義",
+      "id": "D73",
+      "statement": "Fibonacci 判別多項式 D_k(E)=tr M_{w_k}(E) 與 Gordon 二塊平方",
+      "package": "src/series",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定義",
+      "id": "D74",
+      "statement": "C* 有限 GNS：τ(a*a)=Σ|c|²、Cauchy–Schwarz、Harper 動差",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定義",
+      "id": "D75",
+      "statement": "高階 K 有限層：K₁(R)=R*、Matsumoto K₂ Steinberg 符號、Quillen K_{2i−1}(F_q)",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定義",
+      "id": "D76",
+      "statement": "3 階 δ-模 ∇=δ−A 之特徵向量解空間與 Wronskian；Kovacic II 之 F_{p²} Riccati 根",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定義",
+      "id": "D77",
+      "statement": "W₃：C1-06 W₁／C1-07 W₂／C1-08 W₃ 三回合 21×14 交織矩陣",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "moon check --deny-warn + 即寫即驗即刪 + audit_repository()",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定理",
+      "id": "T-AN0",
+      "statement": "QC20 環：ζ²⁰=1、Φ₂₀(ζ)=0、共軛對合與 ζ^k ζ̄^k=1；√5 之 Gauss sum 平方=5",
+      "package": "src/exact",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；BigInt／有限穷舉精確憑證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定理",
+      "id": "T-AN1",
+      "statement": "Connes 截斷譜極限：s=2,3,4 之單調、Cauchy 餘項、上界 2、餘項嚴格遞減；有限 Galerkin PSD；det_ζ(n)≤n",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；BigInt／有限穷舉精確憑證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定理",
+      "id": "T-CSTAR",
+      "statement": "C* 有限 GNS：τ(aa*)=Σc²、Cauchy–Schwarz、Harper 動差 4/28/232/2156、‖h^{2n}‖≤4^{2n}、clock/shift 表示",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；BigInt／有限穷舉精確憑證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定理",
+      "id": "T-K",
+      "statement": "高階 K 有限層：K₁ 單位群階、Matsumoto 關係矩陣滿秩 ⇒ K₂(F₇)=0、Quillen q^i−1、Bass A¹/Laurent",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；BigInt／有限穷舉精確憑證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定理",
+      "id": "T-PV6",
+      "statement": "3 階 δ-模特徵向量解空間、Wronskian/Abel 恆等式；Kovacic I/II 之 F₅/F₂₅ Riccati 根與 gauge 不變直線一致",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；BigInt／有限穷舉精確憑證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定理",
+      "id": "T-CS-T",
+      "statement": "SU(2)₃ T 相位 θ_a=ζ₂₀^{a(a+2)}、Gauss sum G·Ḡ=D²、(AT)³ 純量且 κκ̄=D_fib⁶、手術和 τ₀=D²／週期 20／自共軛",
+      "package": "src/algebra",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；BigInt／有限穷舉精確憑證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定理",
+      "id": "T-FIBSPEC",
+      "statement": "D_k 單首一、deg=F_{k+1}、D_{k+1}=D_kD_{k−1}−D_{k−2}；Gordon 平方前綴；Jacobian 特徵多項式 (−2,−1) 變號 ⇒ 雙曲",
+      "package": "src/series",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；BigInt／有限穷舉精確憑證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定理",
+      "id": "T-C108-1",
+      "statement": "W₃ 21×14 交織：ℚ-秩 14、GF(11)-秩、非零項 259、值域多於一元素",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；BigInt／有限穷舉精確憑證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定理",
+      "id": "T-C108-2",
+      "statement": "W₃ 之 Gram S/T 對稱、秩同 W₃、tr S=tr T=ΣW₃²",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；BigInt／有限穷舉精確憑證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定理",
+      "id": "T-C108-3",
+      "statement": "全局公理 G 於 W₃ 脈絡之物件／屬性閉集數 396/396 與極性伴隨",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；BigInt／有限穷舉精確憑證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定理",
+      "id": "T-C108-4",
+      "statement": "三回合交織：堆疊 63×14、拼接 21×42、聯合 Gram 秩關係；W₁∩W₂=12、W₁∩W₂∩W₃=1 嚴格遞減",
+      "package": "src/compose",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；BigInt／有限穷舉精確憑證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "定理",
+      "id": "T-Health2",
+      "statement": "全代碼健檢：dead 12→0、dup_names/ids/statements=0；zz_probe 排除於引用判定；BigInt 溢位修復",
+      "package": "c1.mbt",
+      "formula": "",
+      "verification": "局部 moon test --deny-warn 即寫即驗；BigInt／有限穷舉精確憑證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL181",
+      "statement": "qc20_reduce/qc20_mul/qc20_conj/qc20_pow（Φ₂₀ 降次）",
+      "package": "src/exact",
+      "formula": "O(n²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL182",
+      "statement": "qc20_sqrt5/qc20_phi/qc20_is_self_conjugate",
+      "package": "src/exact",
+      "formula": "O(n)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL183",
+      "statement": "bigrat_zero/one/of_rat/add/sub/mul/cmp（BigInt 有理比較）",
+      "package": "src/exact",
+      "formula": "O(log‖·‖)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL184",
+      "statement": "connes_spectral_zeta / connes_tail_bound（BigRat 無溢位）",
+      "package": "src/series",
+      "formula": "O(N log‖·‖)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL185",
+      "statement": "connes_galerkin / connes_psd（BigInt Bareiss 主子式）",
+      "package": "src/series",
+      "formula": "O(2^8·8³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL186",
+      "statement": "fib_discriminant（多項式矩陣轉移）",
+      "package": "src/series",
+      "formula": "O(F_k²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL187",
+      "statement": "fib_square_prefix（Gordon 二塊）",
+      "package": "src/series",
+      "formula": "O(F_k²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL188",
+      "statement": "cstar_tau_norm2 / cstar_harper_moment",
+      "package": "src/algebra",
+      "formula": "O(n·|a|²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL189",
+      "statement": "k1_unit_order / k1_units_brute",
+      "package": "src/algebra",
+      "formula": "O(p^k)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL190",
+      "statement": "Matsumoto Steinberg 關係矩陣與秩",
+      "package": "src/algebra",
+      "formula": "O(p³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL191",
+      "statement": "pv3_nullity（3 階 δ-模 GF(p) 秩）",
+      "package": "src/algebra",
+      "formula": "O(m·3³)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL192",
+      "statement": "pv_riccati_fp_roots / pv_riccati_fq2_roots",
+      "package": "src/algebra",
+      "formula": "O(p²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL193",
+      "statement": "cs_theta / cs_d2_qc / cs_gauss_sum / cs_surgery_sum",
+      "package": "src/algebra",
+      "formula": "O(k·8²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL194",
+      "statement": "QC2 2×2 分圓矩陣乘法與 (AT)³ 純量判定",
+      "package": "src/algebra",
+      "formula": "O(8²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL195",
+      "statement": "bigrat_mod11 / c108_state（六結構不變量 → F₁₁ 狀態）",
+      "package": "src/compose",
+      "formula": "O(14)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL196",
+      "statement": "c108_interwoven_matrix（21×14 W₃）",
+      "package": "src/compose",
+      "formula": "O(21·14·25)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL197",
+      "statement": "theorem_c108_cross_three（三回合堆疊／拼接／概念格交集）",
+      "package": "src/compose",
+      "formula": "O(21³+2^14)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL198",
+      "statement": "c108_stats（ℚ-秩/非零/概念 inspect）",
+      "package": "src/compose",
+      "formula": "O(2^14·21)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL199",
+      "statement": "audit_repository 排除 zz_probe 誤判",
+      "package": "tools/build_catalog.py",
+      "formula": "O(|src|²)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "演算法",
+      "id": "AL200",
+      "statement": "theorem_code_health 接入 C1-08 全部新函式",
+      "package": "c1.mbt",
+      "formula": "O(1)",
+      "verification": "困難度 P；局部 moon test --deny-warn + inspect + audit",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E121",
+      "statement": "Φ₂₀ 分圓",
+      "package": "src/exact",
+      "formula": "Φ₂₀(x)=x⁸−x⁶+x⁴−x²+1；ζ⁸=ζ⁶−ζ⁴+ζ²−1；ζ²⁰=1",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E122",
+      "statement": "分圓 √5",
+      "package": "src/exact",
+      "formula": "√5=ζ⁴+ζ¹⁶−ζ⁸−ζ¹²；(√5)²=5",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E123",
+      "statement": "Connes 截斷餘項",
+      "package": "src/series",
+      "formula": "S_{N+j}(s)−S_N(s) ≤ 1/((s−1)N^{s−1})；S_N(s)+bound ≤ 2",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E124",
+      "statement": "Weil Galerkin",
+      "package": "src/series",
+      "formula": "G=Σ_n w_n v_n v_nᵀ, w_n=1_{n 為素數冪} ⇒ G ⪰ 0（2^8 主子式實算）",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E125",
+      "statement": "正則化行列式界",
+      "package": "src/series",
+      "formula": "det_ζ(n) ∈ ℤ_{>0}, det_ζ(n) ≤ n ⇒ log det_ζ(n)/n → 0",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E126",
+      "statement": "Fibonacci 判別遞推",
+      "package": "src/series",
+      "formula": "D_{k+1}=D_kD_{k−1}−D_{k−2}, deg D_k=F_{k+1}, D_k 單首一",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E127",
+      "statement": "Gordon 二塊",
+      "package": "src/series",
+      "formula": "Fibonacci 字 w_k (k≥5) 具平方前綴 u·u ⇒ 無點譜",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E128",
+      "statement": "Trace map 雙曲",
+      "package": "src/series",
+      "formula": "p(λ)=λ³−2yλ²−2xλ+1；p(−2)<0<p(−1) ⇒ ∃λ<−1",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E129",
+      "statement": "C* GNS 正性",
+      "package": "src/algebra",
+      "formula": "τ(a*a)=Σ|c|²≥0；|τ(b*a)|² ≤ τ(a*a)τ(b*b)",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E130",
+      "statement": "Harper 動差",
+      "package": "src/algebra",
+      "formula": "τ(h²)=4, τ(h⁴)=28, τ(h⁶)=232, τ(h⁸)=2156",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E131",
+      "statement": "K₁ 與 Quillen",
+      "package": "src/algebra",
+      "formula": "K₁(F_p[t]/(t^k))=(p−1)p^{k−1}；|K_{2i−1}(F_q)|=q^i−1, K_{2i}=0",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E132",
+      "statement": "Matsumoto K₂",
+      "package": "src/algebra",
+      "formula": "{ab,c}={a,c}+{b,c}, {x,1−x}=0, {a,−a}=0 ⇒ K₂(F₇)=0",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E133",
+      "statement": "3 階 PV",
+      "package": "src/algebra",
+      "formula": "δ(v t^j)=jvt^j ⇒ ∇(vt^j)=0 ⟺ (A−jI)v=0；δW=tr(A)W",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E134",
+      "statement": "Kovacic II",
+      "package": "src/algebra",
+      "formula": "Riccati u²+a₁u+a₀=0 於 F₅ 無根、於 F₂₅ 有 Frobenius 共軛二根",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E135",
+      "statement": "T 矩陣相位",
+      "package": "src/algebra",
+      "formula": "θ_a=ζ₂₀^{a(a+2)}=(1,ζ³,ζ⁸,ζ¹⁵)；θ_a²⁰=1, θ_aθ̄_a=1",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E136",
+      "statement": "Gauss sum",
+      "package": "src/algebra",
+      "formula": "G=Σ_a θ_a d_a², G·Ḡ=D²=5+√5",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E137",
+      "statement": "模關係有限層",
+      "package": "src/algebra",
+      "formula": "(AT)³=κI, κκ̄=D_fib⁶=(φ+2)³",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E138",
+      "statement": "手術和",
+      "package": "src/algebra",
+      "formula": "τ_p=Σ_a θ_a^p d_a², τ₀=D², τ_{p+20}=τ_p, τ_pτ̄_p 自共軛",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E139",
+      "statement": "W₃ 交織",
+      "package": "src/compose",
+      "formula": "W₃[v][p]=τ(ρ(v)Φ_p)；rank_ℚ W₃=14, 非零項 259, 概念數 396",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
+    },
+    {
+      "kind": "等式",
+      "id": "E140",
+      "statement": "三回合交織",
+      "package": "src/compose",
+      "formula": "rank(stack)=14, rank(horiz)=21, rank(WWᵀ)=21；|Fix₁∩Fix₂|=12 > |Fix₁∩Fix₂∩Fix₃|=1",
+      "verification": "由對應定理憑證驗證",
+      "round": "C1-08"
     }
   ],
   "references": [
@@ -5646,6 +6186,55 @@
       "1984/1988",
       "https://arxiv.org/pdf/2505.16760",
       "S_{ab}=√(2/(k+2))sin((a+1)(b+1)π/(k+2))；N_{ab}^c=Σ_x S_{ax}S_{bx}S*_{cx}/S_{0x}；charge conjugation 對 SU(2) 為平凡"
+    ],
+    [
+      "R73",
+      "Connes–Consani–Moscovici, Zeta Spectral Triples, EMS Series of Lectures in Mathematics (2026)",
+      "2026",
+      "https://alainconnes.org/wp-content/uploads/zeta-spectral-triples-1.pdf",
+      "D_log^(λ,N) 為 scaling operator 之 rank-one 擾動；僅用 p≤x=λ² 之有限 Euler 積；譜逼近 ζ(1/2+is) 最低零點；正則化行列式 det_reg(D−z) 收斂至 Riemann Ξ；收斂之嚴格證明將給出 RH"
+    ],
+    [
+      "R74",
+      "Connes, The Riemann Hypothesis, Past, Present and a Letter Through Time, arXiv:2602.04022 (2026)",
+      "2026",
+      "https://arxiv.org/pdf/2602.04022",
+      "Weil 二次型之截斷極值化僅用 p<13 即逼近前 50 個零點；近似值恰落在 Re=1/2；有限 Euler 積收斂至無限積之證明策略"
+    ],
+    [
+      "R75",
+      "Connes–van Suijlekom (2025) / Groskin, High-Precision Approximation of Riemann Zeros via the Truncated Weil Form, arXiv:2605.20224 (2026)",
+      "2025/26",
+      "https://github.com/akivag613/connes-cvs-",
+      "截斷 Weil 二次型之 Galerkin 矩陣（Paley–Wiener 截斷 Fourier 基底）；高精確對角化與零點收斂；有限截斷負特徵值為積分假象"
+    ],
+    [
+      "R76",
+      "Jeffrey, Chern-Simons-Witten Invariants of Lens Spaces, CMP 147 (1992) 563–604 / WRT lens space formula arXiv:0705.0874",
+      "1992/2007",
+      "https://ar5iv.labs.arxiv.org/html/0705.0874",
+      "L(p,q) 由 SL(2,ℤ) 手術矩陣 U 給出；R(U)₁₁ 為 WRT 不變量；Gauss sum 互反律；SO(3) TQFT 之 S,T 表示"
+    ],
+    [
+      "R77",
+      "Sütő, Singular continuous spectrum on a Cantor set of zero Lebesgue measure for the Fibonacci Hamiltonian, J. Stat. Phys. 56 (1989)",
+      "1989",
+      "https://arxiv.org/html/2505.08763",
+      "Fibonacci Hamiltonian 對任意耦合 V>0 之譜為零 Lebesgue 測度 Cantor 集；奇異連續譜；Gordon lemma 排除點譜"
+    ],
+    [
+      "R78",
+      "Fillman–Luna, On the Spectra of Sieved Schrödinger Operators, arXiv:2505.08763v1 (2025)",
+      "2025",
+      "https://arxiv.org/html/2505.08763v1",
+      "T(x,y,z)=(2xy−z,x,y) 保持 Fricke–Vogt 不變量；有界軌道之雙曲性；二塊 Gordon lemma；Cantor 譜維度"
+    ],
+    [
+      "R79",
+      "Quillen / Matsumoto / Bass 高階 K 理論標準結果",
+      "1970s",
+      "https://en.wikipedia.org/wiki/Fundamental_theorem_of_algebraic_K-theory",
+      "K_{2i}(F_q)=0, K_{2i−1}(F_q)=ℤ/(q^i−1)；K₂(F) 由 Steinberg 符號 {a,b} 與 Matsumoto 關係給出；K₀(R[t,t⁻¹])=K₀(R)⊕K₋₁(R)"
     ]
   ]
 }

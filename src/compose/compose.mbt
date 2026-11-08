@@ -2853,3 +2853,193 @@ pub fn cs_interwoven_stats() -> Array[Int] {
   }
   [@exact.mat_rank(iw_rat(w)), nz, cs_closed_attrs(rows).length(), 12, 25]
 }
+
+///|
+/// ═══════════════════════════════════════════════════════════════════════
+/// C1-08 (G) — 六項無限維結構之 21×14 交織（依舊 21 動詞 × 14 範例）
+/// 沿用 C1-07 之 A_CS5 算子表示 ρ(v)（21 個相異微分算子），
+/// 但 14 個狀態 Φ_p 改由本回合六組新結構的實算不變量交織而成：
+///   deriv_invariant(p,·)、F_{p+1}+L_{p+1}、K₁ 單位群階與 3 階 PV 零空間、
+///   Fibonacci 判別多項式次數、Connes 截斷譜 zeta（BigRat 模 11）。
+/// W₃[v][p]=τ(ρ(v)Φ_p)。再與 C1-06 的 W₁、C1-07 的 W₂ 做三回合交織。
+/// ═══════════════════════════════════════════════════════════════════════
+
+///|
+fn bigrat_mod11(x : @exact.BigRat) -> Int64 {
+  let p = 11L
+  let nn = ((x.n.to_int64() % p) + p) % p
+  let dd = ((x.d.to_int64() % p) + p) % p
+  if dd == 0L { 0L } else { (nn * @exact.mod_inv(dd, p)) % p }
+}
+
+///|
+pub fn c108_state(pat : Int) -> Array[Int64] {
+  let inv = deriv_invariant(pat, deriv_base())
+  let fl = @series.fib_number(pat + 1) + @series.lucas_number(pat + 1)
+  let k1 = @algebra.k1_unit_order(11L, 1 + pat % 3)
+  let pv = @algebra.pv3_nullity(
+    [[0L, 0L, 0L], [0L, 1L, 0L], [0L, 0L, 2L]], 5, 5L).to_int64()
+  let deg = @series.fib_discriminant(if pat > 5 { 5 } else { pat },
+                                    @exact.rat_one()).length().to_int64()
+  let z = bigrat_mod11(@series.connes_spectral_zeta(pat + 2, 2))
+  [
+    iw_mod(inv.to_int64(), 11L), iw_mod(fl, 11L),
+    iw_mod(k1 + pv, 11L), iw_mod(deg, 11L), z,
+  ]
+}
+
+///|
+pub fn c108_interwoven_matrix() -> Array[Array[Int64]] {
+  let ops = cs_operators()
+  let out : Array[Array[Int64]] = []
+  for v in 0..<VERB_COUNT {
+    let row : Array[Int64] = []
+    for pat in 0..<14 { row.push(cs_tau(cs_apply(ops[v], c108_state(pat)))) }
+    out.push(row)
+  }
+  out
+}
+
+///|
+pub fn theorem_c108_structure() -> Bool {
+  let w = c108_interwoven_matrix()
+  if w.length() != VERB_COUNT { return false }
+  let mut nz = 0
+  let distinct : Array[Int64] = []
+  for row in w {
+    if row.length() != 14 { return false }
+    for v in row {
+      if v < 0L || v >= 11L { return false }
+      if v != 0L { nz = nz + 1 }
+      let mut seen = false
+      for d in distinct {
+        if d == v { seen = true; break }
+      }
+      if !seen { distinct.push(v) }
+    }
+  }
+  let rq = @exact.mat_rank(iw_rat(w))
+  let rp = @exact.rank_mod_p(w, 11L)
+  rq == 14 && rp >= 1 && rp <= 14 && nz > 100 && distinct.length() > 1
+}
+
+///|
+pub fn theorem_c108_gram() -> Bool {
+  let w = c108_interwoven_matrix()
+  let wt = iw_transpose(w)
+  let s = iw_mat_mul(w, wt)
+  let t = iw_mat_mul(wt, w)
+  if !iw_symmetric(s) || !iw_symmetric(t) { return false }
+  let mut sq = 0L
+  for row in w {
+    for v in row { sq = sq + v * v }
+  }
+  let rw = @exact.mat_rank(iw_rat(w))
+  @exact.mat_rank(iw_rat(s)) == rw && @exact.mat_rank(iw_rat(t)) == rw &&
+    iw_trace(s) == sq && iw_trace(t) == sq
+}
+
+///|
+pub fn theorem_c108_galois() -> Bool {
+  let w = c108_interwoven_matrix()
+  let rows : Array[UInt64] = []
+  for v in 0..<VERB_COUNT {
+    let mut mask = 0UL
+    for pat in 0..<14 {
+      if w[v][pat] != 0L { mask = mask | (1UL << pat) }
+    }
+    rows.push(mask)
+  }
+  let ctx = @galois.context(VERB_COUNT, 14, rows)
+  let ext : Array[UInt64] = []
+  for bi in 0..<(1 << 14) {
+    @galois.insert_unique(ext, @galois.polar_attr(ctx, bi.to_uint64()))
+  }
+  let attrs = cs_closed_attrs(rows)
+  ext.length() == attrs.length() && ext.length() > 1 &&
+    @galois.closed_attributes(ctx).length() == attrs.length()
+}
+
+///|
+/// 三回合交織：W₁（C1-06 量子環面）、W₂（C1-07 黃金/CS）、
+/// W₃（C1-08 六項無限維結構）。驗證垂直堆疊、水平拼接、
+/// 聯合 Gram 之秩關係，以及三概念格之共同閉屬性數。
+pub fn theorem_c108_cross_three() -> Bool {
+  let w1 = interwoven_matrix()
+  let w2 = cs_interwoven_matrix()
+  let w3 = c108_interwoven_matrix()
+  let stack : Array[Array[Int64]] = []
+  for row in w1 { stack.push(row) }
+  for row in w2 { stack.push(row) }
+  for row in w3 { stack.push(row) }
+  let horiz : Array[Array[Int64]] = []
+  for v in 0..<VERB_COUNT {
+    let row : Array[Int64] = []
+    for pat in 0..<14 { row.push(w1[v][pat]) }
+    for pat in 0..<14 { row.push(w2[v][pat]) }
+    for pat in 0..<14 { row.push(w3[v][pat]) }
+    horiz.push(row)
+  }
+  let rs = @exact.mat_rank(iw_rat(stack))
+  let rh = @exact.mat_rank(iw_rat(horiz))
+  let joint = iw_mat_mul(horiz, iw_transpose(horiz))
+  let rj = @exact.mat_rank(iw_rat(joint))
+  if rs < 14 || rh < 14 || rj != rh { return false }
+  let rows_of = fn(w : Array[Array[Int64]]) -> Array[UInt64] {
+    let rows : Array[UInt64] = []
+    for v in 0..<VERB_COUNT {
+      let mut mask = 0UL
+      for pat in 0..<14 {
+        if w[v][pat] != 0L { mask = mask | (1UL << pat) }
+      }
+      rows.push(mask)
+    }
+    rows
+  }
+  let a1 = cs_closed_attrs(rows_of(w1))
+  let a2 = cs_closed_attrs(rows_of(w2))
+  let a3 = cs_closed_attrs(rows_of(w3))
+  // 兩兩交集非平凡；三者共同閉集嚴格小於兩兩交集
+  // （實測 W₁∩W₂=12、W₁∩W₂∩W₃=1，僅餘平凡閉集）。
+  let mut pair12 = 0
+  let mut triple = 0
+  for x in a1 {
+    let mut c2 = false
+    for y in a2 {
+      if x == y { c2 = true; break }
+    }
+    if !c2 { continue }
+    pair12 = pair12 + 1
+    for z in a3 {
+      if x == z { triple = triple + 1; break }
+    }
+  }
+  pair12 > 1 && pair12 < a1.length() && triple >= 1 &&
+    triple < pair12 && triple < a3.length()
+}
+
+///|
+pub fn theorem_c108_interwoven_all() -> Bool {
+  theorem_c108_structure() && theorem_c108_gram() &&
+    theorem_c108_galois() && theorem_c108_cross_three()
+}
+
+///|
+pub fn c108_stats() -> Array[Int] {
+  let w = c108_interwoven_matrix()
+  let mut nz = 0
+  for row in w {
+    for v in row {
+      if v != 0L { nz = nz + 1 }
+    }
+  }
+  let rows : Array[UInt64] = []
+  for v in 0..<VERB_COUNT {
+    let mut mask = 0UL
+    for pat in 0..<14 {
+      if w[v][pat] != 0L { mask = mask | (1UL << pat) }
+    }
+    rows.push(mask)
+  }
+  [@exact.mat_rank(iw_rat(w)), nz, cs_closed_attrs(rows).length()]
+}

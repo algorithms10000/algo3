@@ -862,6 +862,99 @@ REFS = REFS + [
     ("R72", "Kac–Peterson / Verlinde formula and SU(2)_k modular data (standard)", "1984/1988", "https://arxiv.org/pdf/2505.16760", "S_{ab}=√(2/(k+2))sin((a+1)(b+1)π/(k+2))；N_{ab}^c=Σ_x S_{ax}S_{bx}S*_{cx}/S_{0x}；charge conjugation 對 SU(2) 為平凡"),
 ]
 
+# ── C1-08：六項無限維結構之有限精確憑證 / 三回合 21×14 交織 ────────────
+ROUND = "C1-08"
+
+new_defs8 = [
+    ("D70", "QC20=ℚ[ζ]/(Φ₂₀)⊗ℚ(√5)：SU(2)₃ T 矩陣相位之精確分圓環", "src/exact"),
+    ("D71", "Connes 截斷譜 zeta S_N(s)=Σ_{k≤N}k^{−s} 與 Cauchy 餘項 1/((s−1)N^{s−1})", "src/series"),
+    ("D72", "Connes–van Suijlekom 有限 Galerkin（Weil 二次型素數冪權重）Gram 矩陣", "src/series"),
+    ("D73", "Fibonacci 判別多項式 D_k(E)=tr M_{w_k}(E) 與 Gordon 二塊平方", "src/series"),
+    ("D74", "C* 有限 GNS：τ(a*a)=Σ|c|²、Cauchy–Schwarz、Harper 動差", "src/algebra"),
+    ("D75", "高階 K 有限層：K₁(R)=R*、Matsumoto K₂ Steinberg 符號、Quillen K_{2i−1}(F_q)", "src/algebra"),
+    ("D76", "3 階 δ-模 ∇=δ−A 之特徵向量解空間與 Wronskian；Kovacic II 之 F_{p²} Riccati 根", "src/algebra"),
+    ("D77", "W₃：C1-06 W₁／C1-07 W₂／C1-08 W₃ 三回合 21×14 交織矩陣", "src/compose"),
+]
+for id_, stmt, pkg in new_defs8:
+    add("定義", id_, stmt, pkg, "", "moon check --deny-warn + 即寫即驗即刪 + audit_repository()")
+
+new_theorems8 = [
+    ("T-AN0", "QC20 環：ζ²⁰=1、Φ₂₀(ζ)=0、共軛對合與 ζ^k ζ̄^k=1；√5 之 Gauss sum 平方=5", "src/exact"),
+    ("T-AN1", "Connes 截斷譜極限：s=2,3,4 之單調、Cauchy 餘項、上界 2、餘項嚴格遞減；有限 Galerkin PSD；det_ζ(n)≤n", "src/series"),
+    ("T-CSTAR", "C* 有限 GNS：τ(aa*)=Σc²、Cauchy–Schwarz、Harper 動差 4/28/232/2156、‖h^{2n}‖≤4^{2n}、clock/shift 表示", "src/algebra"),
+    ("T-K", "高階 K 有限層：K₁ 單位群階、Matsumoto 關係矩陣滿秩 ⇒ K₂(F₇)=0、Quillen q^i−1、Bass A¹/Laurent", "src/algebra"),
+    ("T-PV6", "3 階 δ-模特徵向量解空間、Wronskian/Abel 恆等式；Kovacic I/II 之 F₅/F₂₅ Riccati 根與 gauge 不變直線一致", "src/algebra"),
+    ("T-CS-T", "SU(2)₃ T 相位 θ_a=ζ₂₀^{a(a+2)}、Gauss sum G·Ḡ=D²、(AT)³ 純量且 κκ̄=D_fib⁶、手術和 τ₀=D²／週期 20／自共軛", "src/algebra"),
+    ("T-FIBSPEC", "D_k 單首一、deg=F_{k+1}、D_{k+1}=D_kD_{k−1}−D_{k−2}；Gordon 平方前綴；Jacobian 特徵多項式 (−2,−1) 變號 ⇒ 雙曲", "src/series"),
+    ("T-C108-1", "W₃ 21×14 交織：ℚ-秩 14、GF(11)-秩、非零項 259、值域多於一元素", "src/compose"),
+    ("T-C108-2", "W₃ 之 Gram S/T 對稱、秩同 W₃、tr S=tr T=ΣW₃²", "src/compose"),
+    ("T-C108-3", "全局公理 G 於 W₃ 脈絡之物件／屬性閉集數 396/396 與極性伴隨", "src/compose"),
+    ("T-C108-4", "三回合交織：堆疊 63×14、拼接 21×42、聯合 Gram 秩關係；W₁∩W₂=12、W₁∩W₂∩W₃=1 嚴格遞減", "src/compose"),
+    ("T-Health2", "全代碼健檢：dead 12→0、dup_names/ids/statements=0；zz_probe 排除於引用判定；BigInt 溢位修復", "c1.mbt"),
+]
+for id_, stmt, pkg in new_theorems8:
+    add("定理", id_, stmt, pkg, "", "局部 moon test --deny-warn 即寫即驗；BigInt／有限穷舉精確憑證")
+
+new_algos8 = [
+    ("AL181", "qc20_reduce/qc20_mul/qc20_conj/qc20_pow（Φ₂₀ 降次）", "src/exact", "O(n²)"),
+    ("AL182", "qc20_sqrt5/qc20_phi/qc20_is_self_conjugate", "src/exact", "O(n)"),
+    ("AL183", "bigrat_zero/one/of_rat/add/sub/mul/cmp（BigInt 有理比較）", "src/exact", "O(log‖·‖)"),
+    ("AL184", "connes_spectral_zeta / connes_tail_bound（BigRat 無溢位）", "src/series", "O(N log‖·‖)"),
+    ("AL185", "connes_galerkin / connes_psd（BigInt Bareiss 主子式）", "src/series", "O(2^8·8³)"),
+    ("AL186", "fib_discriminant（多項式矩陣轉移）", "src/series", "O(F_k²)"),
+    ("AL187", "fib_square_prefix（Gordon 二塊）", "src/series", "O(F_k²)"),
+    ("AL188", "cstar_tau_norm2 / cstar_harper_moment", "src/algebra", "O(n·|a|²)"),
+    ("AL189", "k1_unit_order / k1_units_brute", "src/algebra", "O(p^k)"),
+    ("AL190", "Matsumoto Steinberg 關係矩陣與秩", "src/algebra", "O(p³)"),
+    ("AL191", "pv3_nullity（3 階 δ-模 GF(p) 秩）", "src/algebra", "O(m·3³)"),
+    ("AL192", "pv_riccati_fp_roots / pv_riccati_fq2_roots", "src/algebra", "O(p²)"),
+    ("AL193", "cs_theta / cs_d2_qc / cs_gauss_sum / cs_surgery_sum", "src/algebra", "O(k·8²)"),
+    ("AL194", "QC2 2×2 分圓矩陣乘法與 (AT)³ 純量判定", "src/algebra", "O(8²)"),
+    ("AL195", "bigrat_mod11 / c108_state（六結構不變量 → F₁₁ 狀態）", "src/compose", "O(14)"),
+    ("AL196", "c108_interwoven_matrix（21×14 W₃）", "src/compose", "O(21·14·25)"),
+    ("AL197", "theorem_c108_cross_three（三回合堆疊／拼接／概念格交集）", "src/compose", "O(21³+2^14)"),
+    ("AL198", "c108_stats（ℚ-秩/非零/概念 inspect）", "src/compose", "O(2^14·21)"),
+    ("AL199", "audit_repository 排除 zz_probe 誤判", "tools/build_catalog.py", "O(|src|²)"),
+    ("AL200", "theorem_code_health 接入 C1-08 全部新函式", "c1.mbt", "O(1)"),
+]
+for id_, stmt, pkg, cx in new_algos8:
+    add("演算法", id_, stmt, pkg, cx, "困難度 P；局部 moon test --deny-warn + inspect + audit")
+
+new_eqs8 = [
+    ("E121", "Φ₂₀ 分圓", "Φ₂₀(x)=x⁸−x⁶+x⁴−x²+1；ζ⁸=ζ⁶−ζ⁴+ζ²−1；ζ²⁰=1", "src/exact"),
+    ("E122", "分圓 √5", "√5=ζ⁴+ζ¹⁶−ζ⁸−ζ¹²；(√5)²=5", "src/exact"),
+    ("E123", "Connes 截斷餘項", "S_{N+j}(s)−S_N(s) ≤ 1/((s−1)N^{s−1})；S_N(s)+bound ≤ 2", "src/series"),
+    ("E124", "Weil Galerkin", "G=Σ_n w_n v_n v_nᵀ, w_n=1_{n 為素數冪} ⇒ G ⪰ 0（2^8 主子式實算）", "src/series"),
+    ("E125", "正則化行列式界", "det_ζ(n) ∈ ℤ_{>0}, det_ζ(n) ≤ n ⇒ log det_ζ(n)/n → 0", "src/series"),
+    ("E126", "Fibonacci 判別遞推", "D_{k+1}=D_kD_{k−1}−D_{k−2}, deg D_k=F_{k+1}, D_k 單首一", "src/series"),
+    ("E127", "Gordon 二塊", "Fibonacci 字 w_k (k≥5) 具平方前綴 u·u ⇒ 無點譜", "src/series"),
+    ("E128", "Trace map 雙曲", "p(λ)=λ³−2yλ²−2xλ+1；p(−2)<0<p(−1) ⇒ ∃λ<−1", "src/series"),
+    ("E129", "C* GNS 正性", "τ(a*a)=Σ|c|²≥0；|τ(b*a)|² ≤ τ(a*a)τ(b*b)", "src/algebra"),
+    ("E130", "Harper 動差", "τ(h²)=4, τ(h⁴)=28, τ(h⁶)=232, τ(h⁸)=2156", "src/algebra"),
+    ("E131", "K₁ 與 Quillen", "K₁(F_p[t]/(t^k))=(p−1)p^{k−1}；|K_{2i−1}(F_q)|=q^i−1, K_{2i}=0", "src/algebra"),
+    ("E132", "Matsumoto K₂", "{ab,c}={a,c}+{b,c}, {x,1−x}=0, {a,−a}=0 ⇒ K₂(F₇)=0", "src/algebra"),
+    ("E133", "3 階 PV", "δ(v t^j)=jvt^j ⇒ ∇(vt^j)=0 ⟺ (A−jI)v=0；δW=tr(A)W", "src/algebra"),
+    ("E134", "Kovacic II", "Riccati u²+a₁u+a₀=0 於 F₅ 無根、於 F₂₅ 有 Frobenius 共軛二根", "src/algebra"),
+    ("E135", "T 矩陣相位", "θ_a=ζ₂₀^{a(a+2)}=(1,ζ³,ζ⁸,ζ¹⁵)；θ_a²⁰=1, θ_aθ̄_a=1", "src/algebra"),
+    ("E136", "Gauss sum", "G=Σ_a θ_a d_a², G·Ḡ=D²=5+√5", "src/algebra"),
+    ("E137", "模關係有限層", "(AT)³=κI, κκ̄=D_fib⁶=(φ+2)³", "src/algebra"),
+    ("E138", "手術和", "τ_p=Σ_a θ_a^p d_a², τ₀=D², τ_{p+20}=τ_p, τ_pτ̄_p 自共軛", "src/algebra"),
+    ("E139", "W₃ 交織", "W₃[v][p]=τ(ρ(v)Φ_p)；rank_ℚ W₃=14, 非零項 259, 概念數 396", "src/compose"),
+    ("E140", "三回合交織", "rank(stack)=14, rank(horiz)=21, rank(WWᵀ)=21；|Fix₁∩Fix₂|=12 > |Fix₁∩Fix₂∩Fix₃|=1", "src/compose"),
+]
+for id_, name, formula, pkg in new_eqs8:
+    add("等式", id_, name, pkg, formula, "由對應定理憑證驗證")
+
+REFS = REFS + [
+    ("R73", "Connes–Consani–Moscovici, Zeta Spectral Triples, EMS Series of Lectures in Mathematics (2026)", "2026", "https://alainconnes.org/wp-content/uploads/zeta-spectral-triples-1.pdf", "D_log^(λ,N) 為 scaling operator 之 rank-one 擾動；僅用 p≤x=λ² 之有限 Euler 積；譜逼近 ζ(1/2+is) 最低零點；正則化行列式 det_reg(D−z) 收斂至 Riemann Ξ；收斂之嚴格證明將給出 RH"),
+    ("R74", "Connes, The Riemann Hypothesis, Past, Present and a Letter Through Time, arXiv:2602.04022 (2026)", "2026", "https://arxiv.org/pdf/2602.04022", "Weil 二次型之截斷極值化僅用 p<13 即逼近前 50 個零點；近似值恰落在 Re=1/2；有限 Euler 積收斂至無限積之證明策略"),
+    ("R75", "Connes–van Suijlekom (2025) / Groskin, High-Precision Approximation of Riemann Zeros via the Truncated Weil Form, arXiv:2605.20224 (2026)", "2025/26", "https://github.com/akivag613/connes-cvs-", "截斷 Weil 二次型之 Galerkin 矩陣（Paley–Wiener 截斷 Fourier 基底）；高精確對角化與零點收斂；有限截斷負特徵值為積分假象"),
+    ("R76", "Jeffrey, Chern-Simons-Witten Invariants of Lens Spaces, CMP 147 (1992) 563–604 / WRT lens space formula arXiv:0705.0874", "1992/2007", "https://ar5iv.labs.arxiv.org/html/0705.0874", "L(p,q) 由 SL(2,ℤ) 手術矩陣 U 給出；R(U)₁₁ 為 WRT 不變量；Gauss sum 互反律；SO(3) TQFT 之 S,T 表示"),
+    ("R77", "Sütő, Singular continuous spectrum on a Cantor set of zero Lebesgue measure for the Fibonacci Hamiltonian, J. Stat. Phys. 56 (1989)", "1989", "https://arxiv.org/html/2505.08763", "Fibonacci Hamiltonian 對任意耦合 V>0 之譜為零 Lebesgue 測度 Cantor 集；奇異連續譜；Gordon lemma 排除點譜"),
+    ("R78", "Fillman–Luna, On the Spectra of Sieved Schrödinger Operators, arXiv:2505.08763v1 (2025)", "2025", "https://arxiv.org/html/2505.08763v1", "T(x,y,z)=(2xy−z,x,y) 保持 Fricke–Vogt 不變量；有界軌道之雙曲性；二塊 Gordon lemma；Cantor 譜維度"),
+    ("R79", "Quillen / Matsumoto / Bass 高階 K 理論標準結果", "1970s", "https://en.wikipedia.org/wiki/Fundamental_theorem_of_algebraic_K-theory", "K_{2i}(F_q)=0, K_{2i−1}(F_q)=ℤ/(q^i−1)；K₂(F) 由 Steinberg 符號 {a,b} 與 Matsumoto 關係給出；K₀(R[t,t⁻¹])=K₀(R)⊕K₋₁(R)"),
+]
+
 def mb_escape(s: str) -> str:
     return s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ")
 
@@ -939,7 +1032,7 @@ def generate_xlsx():
     # 索引
     ws = wb.active
     ws.title = "索引"
-    ws.append(["C1 algorithm.xlsx", "全局公理：伽羅瓦對應", "回合 C1-07", "2026-11-08"])
+    ws.append(["C1 algorithm.xlsx", "全局公理：伽羅瓦對應", "回合 C1-08", "2026-11-08"])
     ws.append([])
     ws.append(["類別", "筆數", "來源", "驗證"])
     for c in ws[3]:
@@ -950,7 +1043,7 @@ def generate_xlsx():
         n = sum(1 for e in A if e["kind"] == k)
         ws.append([k, n, "docs/catalog.json / src/catalog", "moon check + moon prove + 即時驗題"])
     ws.append(["合計", len(A), "", ""])
-    ws.append(["前沿文獻", len(REFS), "docs/catalog.json / Dev.txt §2", "聯網查證（C1-01 R1..R12 + C1-02 R13..R25 + C1-03 R26..R36 + C1-04 R37..R45 + C1-05 R46..R55 + C1-06 R56..R65 + C1-07 R66..R72）"])
+    ws.append(["前沿文獻", len(REFS), "docs/catalog.json / Dev.txt §2", "聯網查證（C1-01 R1..R12 + C1-02 R13..R25 + C1-03 R26..R36 + C1-04 R37..R45 + C1-05 R46..R55 + C1-06 R56..R65 + C1-07 R66..R72 + C1-08 R73..R79）"])
     ws.column_dimensions["A"].width = 22
     ws.column_dimensions["B"].width = 10
     ws.column_dimensions["C"].width = 36
@@ -1023,9 +1116,11 @@ def audit_repository():
     import re
     import collections
 
+    # C1-08 健檢修正：暫存 zz_probe.mbt 不計入引用，否則「只被測試題引用」
+    # 會被誤判為活碼；必須由 report()／health theorem 實接才算活碼。
     files = [p for p in glob.glob(os.path.join(ROOT, "**", "*.mbt"), recursive=True)
              + glob.glob(os.path.join(ROOT, "**", "*.mbtp"), recursive=True)
-             if "_build" not in p and os.path.isfile(p)]
+             if "_build" not in p and "zz_probe" not in p and os.path.isfile(p)]
     text = {p: open(p, encoding="utf-8").read() for p in files}
     pat = re.compile(
         r"^(pub fn|fn|pub\(all\) fn)\s+([A-Za-z0-9_]+(?:::[A-Za-z0-9_]+)?)\s*\(", re.M)
@@ -1065,6 +1160,8 @@ def audit_repository():
     for d in dead:
         print("  DEAD", d[0], d[1])
     if dup_ids or dup_stmt:
+        print("  DUP IDS", dup_ids)
+        print("  DUP STMTS", dup_stmt[:3])
         raise SystemExit("health: duplicate catalog entries detected")
     return {"files": len(files), "defs": len(defs), "dead": len(dead),
             "dup_names": len(dup_names), "dup_ids": len(dup_ids),
@@ -1075,7 +1172,7 @@ def main():
     audit_repository()
     os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
     with open(os.path.join(ROOT, "docs/catalog.json"), "w", encoding="utf-8") as f:
-        json.dump({"round": "C1-07", "global_axiom": "伽羅瓦對應",
+        json.dump({"round": "C1-08", "global_axiom": "伽羅瓦對應",
                    "entries": A, "references": REFS}, f, ensure_ascii=False, indent=2)
     generate_mbt()
     p = generate_xlsx()

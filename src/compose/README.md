@@ -1,6 +1,6 @@
 # src/compose — 14 種組合手法：Kan、束、纖維積、單子、張量、纖維範疇、推出、交織、博弈
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織／C1-07 黃金比例、陳–西蒙斯與全代碼健檢。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織／C1-07 黃金比例、陳–西蒙斯與全代碼健檢／C1-08 六項無限維結構之有限精確憑證。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得定理列表
 
@@ -50,6 +50,10 @@
 - **T-CS9** 21 算子相異；[D,M_x]=M_x、M_x⁵=0、[∂,M_x]=I−5P₄；21 算子張成 12 維、441 複合張成完整 End(A_CS5)=25
 - **T-CS10** 跨回合交織：W₁（量子環面）與 W₂（黃金/CS）之堆疊／拼接／聯合 Gram 與兩概念格交集
 - **T-CS12** 21×14 黃金/CS 交織六項憑證合取
+- **T-C108-1** W₃ 21×14 交織：ℚ-秩 14、GF(11)-秩、非零項 259、值域多於一元素
+- **T-C108-2** W₃ 之 Gram S/T 對稱、秩同 W₃、tr S=tr T=ΣW₃²
+- **T-C108-3** 全局公理 G 於 W₃ 脈絡之物件／屬性閉集數 396/396 與極性伴隨
+- **T-C108-4** 三回合交織：堆疊 63×14、拼接 21×42、聯合 Gram 秩關係；W₁∩W₂=12、W₁∩W₂∩W₃=1 嚴格遞減
 
 ## 已實作演算法列表
 
@@ -88,6 +92,10 @@
 - **AL176** theorem_fiber_product_universal 恆真式清除（O(m·n)）
 - **AL178** cs_interwoven_stats（秩/非零/概念/張成 inspect）（O(2^14·21)）
 - **AL180** C1-06 W₁ 與 C1-07 W₂ 之堆疊／拼接／聯合 Gram 秩計算（O(21³)）
+- **AL195** bigrat_mod11 / c108_state（六結構不變量 → F₁₁ 狀態）（O(14)）
+- **AL196** c108_interwoven_matrix（21×14 W₃）（O(21·14·25)）
+- **AL197** theorem_c108_cross_three（三回合堆疊／拼接／概念格交集）（O(21³+2^14)）
+- **AL198** c108_stats（ℚ-秩/非零/概念 inspect）（O(2^14·21)）
 
 ## 等式
 
@@ -107,6 +115,8 @@
 - **E100** 全局公理 G 於交織脈絡：`R(v,p)⇔W[v][p]≠0 ⇒ |Fix(F∘H)|=|Fix(H∘F)|=240；AJ_q(q^{e_n})=1`
 - **E118** A_CS5 微分算子：`[D,M_x]=M_x, M_x⁵=0, [∂,M_x]=I−5P₄；dim End=25`
 - **E119** 21×14 黃金/CS 交織：`W₂[v][p]=τ(ρ(v)Φ_p)；rank_ℚ=14, ΣW₂²=9615, 概念數 1568, rank(K⊗K)=9`
+- **E139** W₃ 交織：`W₃[v][p]=τ(ρ(v)Φ_p)；rank_ℚ W₃=14, 非零項 259, 概念數 396`
+- **E140** 三回合交織：`rank(stack)=14, rank(horiz)=21, rank(WWᵀ)=21；|Fix₁∩Fix₂|=12 > |Fix₁∩Fix₂∩Fix₃|=1`
 
 ## 資料夾視角依賴關係圖
 
@@ -158,6 +168,8 @@
   cs_root  cs_operators  cs_state  cs_interwoven_matrix
   theorem_cs_interwoven_structure  theorem_cs_interwoven_gram  theorem_cs_interwoven_kronecker  theorem_cs_interwoven_galois
   theorem_cs_operator_algebra  theorem_cs_cross_round  theorem_cs_interwoven_all  cs_interwoven_stats
+  c108_state  c108_interwoven_matrix  theorem_c108_structure  theorem_c108_gram
+  theorem_c108_galois  theorem_c108_cross_three  theorem_c108_interwoven_all  c108_stats
   PosetLattice  UnionFind  Fibered  WeaveElem
   DerivData  FiniteMap  PosetKan  LibraryClustering
   NilRing

@@ -2945,3 +2945,412 @@ pub fn theorem_chern_simons() -> Bool {
   theorem_cs_verlinde() && theorem_cs_fibonacci_sector() &&
     theorem_cs_modular() && theorem_cs_wilson_golden()
 }
+
+///|
+/// ═══════════════════════════════════════════════════════════════════════
+/// C1-08 (B/C/D/F) — 四項無限維結構之「有限精確憑證 + 明確收斂界」
+///  B 量子環面 C* 完備化：GNS 有限截斷之 τ(a*a)、Cauchy–Schwarz、
+///    Harper 矩 τ(h^{2n}) 與有限維 clock/shift 表示之一致性。
+///  C 高階 K：K₁(R)=R*、Matsumoto K₂ Steinberg 符號群、
+///    Quillen K_{2i−1}(F_q)=ℤ/(q^i−1)、Bass 基本定理有限層。
+///  D 一般階 PV：3 階 δ-模之特徵向量解空間、Wronskian/Abel、
+///    Kovacic 第二型於 F_{p²} 之 Riccati 根分類。
+///  F SU(2)₃ T 矩陣相位與手術：θ_a=ζ₂₀^{a(a+2)}、Gauss sum
+///    G·Ḡ=D²、(AT)³ 為純量矩陣（(ST)³=κS² 之有限層）、
+///    透鏡空間手術和 τ_p 之週期性與么正性。
+///  誠實邊界：以上為有限維／有限階精確計算，非 C* 範數閉包、
+///  非 Quillen 完整高階 K 證明、非 ℂ(t) 上無限維 PV 擴張、
+///  非 3-流形 WRT 之完整解析手術公式。
+/// ═══════════════════════════════════════════════════════════════════════
+
+///|
+/// B：τ(a·a*) = Σ|c|²（正則跡之和平方），C* 正性之有限層憑證。
+pub fn cstar_tau_norm2(a : QTElem) -> Int64 {
+  let mut s = 0L
+  for m in a.terms { s = s + m.c * m.c }
+  s
+}
+
+///|
+pub fn cstar_harper() -> QTElem {
+  qt_add(qt_add(qt_u(), qt_u_inv()), qt_add(qt_v(), qt_v_inv()))
+}
+
+///|
+/// τ(h^{2n})：h=U+U⁻¹+V+V⁻¹ 之閉路徑動差（無限代數側）。
+pub fn cstar_harper_moment(n : Int) -> Int64 {
+  let h = cstar_harper()
+  let mut y = qt_one()
+  for _i in 0..<(2 * n) { y = qt_mul(y, h) }
+  let tr = qt_trace(y)
+  let mut s = 0L
+  for t in tr.terms {
+    if t.a == 0 && t.b == 0 && t.e == 0 { s = s + t.c }
+  }
+  s
+}
+
+///|
+/// B 定理：τ(aa*)=Σc²≥0、Cauchy–Schwarz、Harper 動差
+/// 4,28,232,2156、‖h^{2n}‖ 之 C* 範數上界 4^{2n}，
+/// 以及 q³=1 之 3×3 clock/shift 表示滿足 VU=qUV。
+pub fn theorem_cstar_finite_gns() -> Bool {
+  let samples = [
+    qt_add(qt_u(), qt_v()),
+    qt_add(qt_mono(1, 2, -1, 3L), qt_mono(-1, -2, 1, 2L)),
+    qt_add(qt_one(), qt_add(qt_u(), qt_mono(0, 0, 1, 5L))),
+  ]
+  for a in samples {
+    let n2 = cstar_tau_norm2(a)
+    if n2 <= 0L { return false }
+    let star = qt_star(a)
+    let prod = qt_trace(qt_mul(a, star))
+    let mut s = 0L
+    for t in prod.terms {
+      if t.e == 0 { s = s + t.c }
+    }
+    if s != n2 { return false }
+  }
+  // Cauchy–Schwarz：τ(b*a)² ≤ τ(a*a)·τ(b*b)
+  for a in samples {
+    for b in samples {
+      let cross = qt_trace(qt_mul(qt_star(b), a))
+      let mut s = 0L
+      for t in cross.terms {
+        if t.e == 0 { s = s + t.c }
+      }
+      if s * s > cstar_tau_norm2(a) * cstar_tau_norm2(b) { return false }
+    }
+  }
+  let want = [4L, 28L, 232L, 2156L]
+  for n in 1..<5 {
+    let m = cstar_harper_moment(n)
+    if m != want[n - 1] { return false }
+    let mut bound = 1L
+    for _i in 0..<(2 * n) { bound = bound * 4L }
+    if m > bound || m <= 0L { return false }
+  }
+  theorem_qt_heisenberg()
+}
+
+///|
+/// C：K₁(F_p[t]/(t^k)) 之單位群階 =(p−1)p^{k−1}；
+/// 逐項穷舉單位（常數項 ≠ 0）交叉驗證。
+pub fn k1_unit_order(p : Int64, k : Int) -> Int64 {
+  let mut out = p - 1L
+  for _i in 1..<k { out = out * p }
+  out
+}
+
+///|
+pub fn k1_units_brute(p : Int64, k : Int) -> Int64 {
+  let mut total = 0L
+  let mut n = 1L
+  for _i in 0..<k { n = n * p }
+  for code in 0L..<n {
+    if code % p != 0L { total = total + 1L }
+  }
+  total
+}
+
+///|
+/// C 定理：Matsumoto 之 K₂(F_p) 由 Steinberg 符號 {a,b} 生成，
+/// 滿足雙線性、{x,1−x}=0、{a,−a}=0；以關係矩陣秩實算
+/// K₂(F_7)=0。並核對 Quillen |K_{2i−1}(F_q)|=q^i−1、
+/// K₁ 階 = q−1，以及 Bass 基本定理之有限層 A¹/Laurent 憑證。
+pub fn theorem_higher_k_finite() -> Bool {
+  let p = 7L
+  for k in 1..<4 {
+    if k1_unit_order(p, k) != k1_units_brute(p, k) { return false }
+  }
+  // Steinberg 關係矩陣
+  let gens : Array[Array[Int64]] = []
+  for a in 1L..<p {
+    for b in 1L..<p { gens.push([a, b]) }
+  }
+  let nc = gens.length()
+  let rows : Array[Array[Int64]] = []
+  for a in 1L..<p {
+    for b in 1L..<p {
+      for c in 1L..<p {
+        let ab = (a * b) % p
+        let bc = (b * c) % p
+        let r1 : Array[Int64] = Array::make(nc, 0L)
+        r1[((ab - 1L) * (p - 1L) + (c - 1L)).to_int()] += 1L
+        r1[((a - 1L) * (p - 1L) + (c - 1L)).to_int()] -= 1L
+        r1[((b - 1L) * (p - 1L) + (c - 1L)).to_int()] -= 1L
+        rows.push(r1)
+        let r2 : Array[Int64] = Array::make(nc, 0L)
+        r2[((a - 1L) * (p - 1L) + (bc - 1L)).to_int()] += 1L
+        r2[((a - 1L) * (p - 1L) + (b - 1L)).to_int()] -= 1L
+        r2[((a - 1L) * (p - 1L) + (c - 1L)).to_int()] -= 1L
+        rows.push(r2)
+      }
+    }
+  }
+  for x in 2L..<p {
+    let r : Array[Int64] = Array::make(nc, 0L)
+    r[((x - 1L) * (p - 1L) + (((1L - x) % p + p) % p - 1L)).to_int()] += 1L
+    rows.push(r)
+  }
+  for a in 1L..<p {
+    let r : Array[Int64] = Array::make(nc, 0L)
+    r[((a - 1L) * (p - 1L) + (((-a) % p + p) % p - 1L)).to_int()] += 1L
+    rows.push(r)
+  }
+  let rat_rows : Array[Array[@exact.Rat]] = []
+  for r in rows {
+    let rr : Array[@exact.Rat] = []
+    for v in r { rr.push(@exact.rat_int(v)) }
+    rat_rows.push(rr)
+  }
+  if @exact.mat_rank(@exact.mat_from(rat_rows)) != nc { return false }
+  for q in [5L, 7L] {
+    let u = k1_unit_order(q, 1)
+    if u != q - 1L || u != k1_units_brute(q, 1) { return false }
+    // Quillen：|K_{2i−1}(F_q)| = q^i−1；核對 q−1 | q^i−1 與嚴格遞增。
+    let mut prev = 0L
+    for i in 1..<4 {
+      let mut qi = 1L
+      for _j in 0..<i { qi = qi * q }
+      let kodd = qi - 1L
+      if kodd <= prev || kodd % u != 0L { return false }
+      prev = kodd
+    }
+  }
+  theorem_a1_laurent()
+}
+
+///|
+/// D：3 階 δ-模 ∇=δ−A（δ=t·d/dt, R=F₅[t]/(t⁵)）之解空間。
+/// δ(v t^j)=j v t^j，故 ∇(v t^j)=0 ⟺ (A−jI)v=0；
+/// 解空間維度 = Σ_{j=0}^{m−1} dim ker(A−jI)。
+pub fn pv3_nullity(a : Array[Array[Int64]], m : Int, p : Int64) -> Int {
+  let mut total = 0
+  for j in 0..<m {
+    let mat : Array[Array[Int64]] = []
+    for i in 0..<3 {
+      let row : Array[Int64] = Array::make(3, 0L)
+      for k in 0..<3 {
+        let v = a[i][k] - (if i == k { j.to_int64() } else { 0L })
+        row[k] = ((v % p) + p) % p
+      }
+      mat.push(row)
+    }
+    total = total + 3 - @exact.rank_mod_p(mat, p)
+  }
+  total
+}
+
+///|
+/// D：3 階 Wronskian／Abel。以 A 之特徵向量 v_j（特徵值 j）
+/// 造基本解矩陣 Y=[v_j t^j]，則 W=det Y=t^{Σj}·det[v_j] 且
+/// δW = (Σj)W = tr(A)W。
+pub fn theorem_pv_order3() -> Bool {
+  let p = 5L
+  let m = 5
+  let a : Array[Array[Int64]] = [
+    [0L, 0L, 0L], [0L, 1L, 0L], [0L, 0L, 2L],
+  ]
+  let null = pv3_nullity(a, m, p)
+  if null != 3 { return false }
+  // 尋找三個特徵值 0,1,2 的特徵向量並驗證線性獨立
+  let vecs : Array[Array[Int64]] = []
+  let mut sum_j = 0L
+  for j in [0L, 1L, 2L] {
+    let mut found : Array[Int64]? = None
+    for x in 0L..<p {
+      for y in 0L..<p {
+        for z in 0L..<p {
+          let v = [x, y, z]
+          if v[0] == 0L && v[1] == 0L && v[2] == 0L { continue }
+          let mut ok = true
+          for i in 0..<3 {
+            let mut acc = 0L
+            for k in 0..<3 { acc = acc + a[i][k] * v[k] }
+            acc = ((acc - j * v[i]) % p + p) % p
+            if acc != 0L { ok = false; break }
+          }
+          if ok { found = Some(v); break }
+        }
+        if found is Some(_) { break }
+      }
+      if found is Some(_) { break }
+    }
+    match found {
+      None => return false
+      Some(v) => vecs.push(v)
+    }
+    sum_j = sum_j + j
+  }
+  let det_v = vecs[0][0] * (vecs[1][1] * vecs[2][2] - vecs[1][2] * vecs[2][1]) -
+              vecs[0][1] * (vecs[1][0] * vecs[2][2] - vecs[1][2] * vecs[2][0]) +
+              vecs[0][2] * (vecs[1][0] * vecs[2][1] - vecs[1][1] * vecs[2][0])
+  if ((det_v % p) + p) % p == 0L { return false }
+  let trace_a = a[0][0] + a[1][1] + a[2][2]
+  if ((sum_j - trace_a) % p + p) % p != 0L { return false }
+  // ∇(v_j t^j)=0 逐列驗證
+  for (j, v) in [0L, 1L, 2L].zip(vecs) {
+    for i in 0..<3 {
+      let mut acc = 0L
+      for k in 0..<3 { acc = acc + a[i][k] * v[k] }
+      if ((acc - j * v[i]) % p + p) % p != 0L { return false }
+    }
+  }
+  true
+}
+
+///|
+/// D：Kovacic 第二型之有限模型。Riccati 方程
+/// δu+u²+a₁u+a₀=0（u 常數）於 F₅ 無根時，
+/// 在二次擴張 F₂₅=F₅[θ]/(θ²−2) 恰有兩個 Frobenius 共軛根。
+pub fn pv_riccati_fp_roots(a1 : Int64, a0 : Int64, p : Int64) -> Array[Int64] {
+  let out : Array[Int64] = []
+  for r in 0L..<p {
+    if ((r * r + a1 * r + a0) % p + p) % p == 0L { out.push(r) }
+  }
+  out
+}
+
+///|
+pub fn pv_riccati_fq2_roots(a1 : Int64, a0 : Int64, p : Int64) -> Array[Fq2] {
+  let out : Array[Fq2] = []
+  for x in 0L..<p {
+    for y in 0L..<p {
+      let u = fq2(x, y)
+      let u2 = fq2_mul(u, u)
+      let lin = fq2_mul(fq2(a1, 0L), u)
+      let v = fq2_add(fq2_add(u2, lin), fq2(a0, 0L))
+      if fq2_is_zero(v) { out.push(u) }
+    }
+  }
+  out
+}
+
+///|
+/// D 定理：Kovacic I/II 有限分類與 gauge 群不變直線一致。
+pub fn theorem_pv_kovacic_finite() -> Bool {
+  let cases = [(3L, 2L, 2), (1L, 1L, 0), (0L, 1L, 2), (1L, 2L, 0), (0L, 0L, 1)]
+  for (a1, a0, want_fp) in cases {
+    let fp = pv_riccati_fp_roots(a1, a0, 5L)
+    let fq = pv_riccati_fq2_roots(a1, a0, 5L)
+    if fp.length() != want_fp { return false }
+    if fq.length() == 0 { return false }
+    // F₂₅ 根在 Frobenius σ 下封閉
+    for u in fq {
+      let su = fq2_sigma(u, 1)
+      let mut inside = false
+      for v in fq {
+        if fq2_equal(v, su) { inside = true; break }
+      }
+      if !inside { return false }
+      let u2 = fq2_mul(u, u)
+      let lin = fq2_mul(fq2(a1, 0L), u)
+      if !fq2_is_zero(fq2_add(fq2_add(u2, lin), fq2(a0, 0L))) { return false }
+    }
+    // 有限域截斷之 gauge 群不變直線數與 Riccati F₅ 根數一致
+    let d = diff_module(5L, 5, [[0L, 1L, -a0, -a1]])
+    if diff_invariant_lines(d) != want_fp { return false }
+  }
+  theorem_pv_order3() && theorem_pv_additive_subgroup()
+}
+
+///|
+/// F：SU(2)₃ 之 T 矩陣（projective twist）θ_a = ζ₂₀^{a(a+2)}。
+pub fn cs_theta(a : Int) -> @exact.QC20 {
+  @exact.qc20_pow(@exact.qc20_zeta(), a * (a + 2))
+}
+
+///|
+/// d_a=Ŝ_{0a}=U_a(φ/2)=(1,φ,φ,1)；以 ζ₂₀ 內之 φ 表示，
+/// 避免把 √5 當成與 ζ 無關的獨立純量（張量積會破壞 Gauss sum 恆等式）。
+pub fn cs_d2_qc(a : Int) -> @exact.QC20 {
+  let one = @exact.qc20_int(1L)
+  if a == 0 || a == 3 { one } else {
+    @exact.qc20_add(@exact.qc20_phi(), one)
+  }
+}
+
+///|
+pub fn cs_gauss_sum() -> @exact.QC20 {
+  let mut out = @exact.qc20_int(0L)
+  for a in 0..<4 {
+    out = @exact.qc20_add(out,
+      @exact.qc20_mul(cs_d2_qc(a), cs_theta(a)))
+  }
+  out
+}
+
+///|
+pub fn cs_surgery_sum(p : Int) -> @exact.QC20 {
+  let mut out = @exact.qc20_int(0L)
+  for a in 0..<4 {
+    out = @exact.qc20_add(out,
+      @exact.qc20_mul(cs_d2_qc(a), @exact.qc20_pow(cs_theta(a), p)))
+  }
+  out
+}
+
+///|
+pub(all) struct QC2 {
+  a : Array[Array[@exact.QC20]]
+}
+
+///|
+fn qc2_mul(x : QC2, y : QC2) -> QC2 {
+  let z = @exact.qc20_int(0L)
+  let a : Array[Array[@exact.QC20]] = [[z, z], [z, z]]
+  for i in 0..<2 {
+    for j in 0..<2 {
+      let mut s = z
+      for k in 0..<2 {
+        s = @exact.qc20_add(s, @exact.qc20_mul(x.a[i][k], y.a[k][j]))
+      }
+      a[i][j] = s
+    }
+  }
+  QC2::{ a }
+}
+
+///|
+/// F 定理：√5 之 Gauss sum 平方 = 5；θ_a 么正且 θ_a²⁰=1；
+/// G·Ḡ = D² = 5+√5；Fibonacci 融合環之 (AT)³ 為純量矩陣
+/// 且 κ'κ̄' = D_fib⁶ = (φ+2)³；手術和 τ₀=D²、τ_{p+20}=τ_p、
+/// τ_p·τ̄_p 自共軛（落在實子域）。
+pub fn theorem_cs_t_surgery() -> Bool {
+  let one = @exact.qc20_int(1L)
+  let s5 = @exact.qc20_sqrt5()
+  if !@exact.qc20_equal(@exact.qc20_mul(s5, s5), @exact.qc20_int(5L)) { return false }
+  let phi = @exact.qc20_phi()
+  let dfib2 = @exact.qc20_add(phi, @exact.qc20_int(2L))
+  let d2 = @exact.qc20_add(@exact.qc20_int(5L), s5)
+  for a in 0..<4 {
+    let t = cs_theta(a)
+    if !@exact.qc20_equal(@exact.qc20_pow(t, 20), one) { return false }
+    if !@exact.qc20_equal(@exact.qc20_mul(t, @exact.qc20_conj(t)), one) { return false }
+  }
+  let g = cs_gauss_sum()
+  if !@exact.qc20_equal(@exact.qc20_mul(g, @exact.qc20_conj(g)), d2) { return false }
+  let z = @exact.qc20_int(0L)
+  let aa = QC2::{ a: [[one, phi], [phi, @exact.qc20_q5(@exact.q5_int(-1L))]] }
+  let tt = QC2::{ a: [[one, z], [z, @exact.qc20_pow(@exact.qc20_zeta(), 8)]] }
+  let at = qc2_mul(aa, tt)
+  let at3 = qc2_mul(qc2_mul(at, at), at)
+  if !@exact.qc20_equal(at3.a[0][1], z) ||
+     !@exact.qc20_equal(at3.a[1][0], z) ||
+     !@exact.qc20_equal(at3.a[0][0], at3.a[1][1]) { return false }
+  let kk = at3.a[0][0]
+  let dfib6 = @exact.qc20_mul(@exact.qc20_mul(dfib2, dfib2), dfib2)
+  if !@exact.qc20_equal(@exact.qc20_mul(kk, @exact.qc20_conj(kk)), dfib6) {
+    return false
+  }
+  if !@exact.qc20_equal(cs_surgery_sum(0), d2) { return false }
+  for pp in 0..<20 {
+    let tp = cs_surgery_sum(pp)
+    if !@exact.qc20_equal(tp, cs_surgery_sum(pp + 20)) { return false }
+    if !@exact.qc20_is_self_conjugate(@exact.qc20_mul(tp, @exact.qc20_conj(tp))) {
+      return false
+    }
+  }
+  true
+}

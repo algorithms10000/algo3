@@ -1,6 +1,6 @@
 # src/series — 局部公理 L1/L2/L3：多項式、形式冪級數、洛朗、狄利克雷、商環、全純
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織／C1-07 黃金比例、陳–西蒙斯與全代碼健檢。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織／C1-07 黃金比例、陳–西蒙斯與全代碼健檢／C1-08 六項無限維結構之有限精確憑證。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得公理
 
@@ -51,6 +51,8 @@
 - **T-GOLD3** Fibonacci 矩陣譜：x²−x−1、譜投影冪等／正交／完備、Qⁿ=[[F_{n+1},F_n],[F_n,F_{n−1}]]、Cassini、fast doubling、Lucas、Zeckendorf
 - **T-GOLD4** Fibonacci trace map 保持 Fricke–Vogt 不變量且可逆；字長=F_{k+1}；轉移矩陣滿足 x_{k+1}=2x_kx_{k−1}−x_{k−2}
 - **T-GOLD5** 黃金比例／Fibonacci 矩陣譜四項憑證合取
+- **T-AN1** Connes 截斷譜極限：s=2,3,4 之單調、Cauchy 餘項、上界 2、餘項嚴格遞減；有限 Galerkin PSD；det_ζ(n)≤n
+- **T-FIBSPEC** D_k 單首一、deg=F_{k+1}、D_{k+1}=D_kD_{k−1}−D_{k−2}；Gordon 平方前綴；Jacobian 特徵多項式 (−2,−1) 變號 ⇒ 雙曲
 
 ## 已實作演算法列表
 
@@ -98,6 +100,10 @@
 - **AL162** fib_word / word_matrix（Fibonacci 字轉移矩陣）（O(F_k)）
 - **AL163** fricke_vogt / fib_trace_map（O(1)）
 - **AL173** rat_coeffs_equal（Fps/Dirichlet::equal 共用）（O(n)）
+- **AL184** connes_spectral_zeta / connes_tail_bound（BigRat 無溢位）（O(N log‖·‖)）
+- **AL185** connes_galerkin / connes_psd（BigInt Bareiss 主子式）（O(2^8·8³)）
+- **AL186** fib_discriminant（多項式矩陣轉移）（O(F_k²)）
+- **AL187** fib_square_prefix（Gordon 二塊）（O(F_k²)）
 
 ## 等式
 
@@ -139,6 +145,12 @@
 - **E108** 快速倍增：`F_{2n}=F_n(2F_{n+1}−F_n), F_{2n+1}=F_{n+1}²+F_n²`
 - **E109** Fricke–Vogt：`I(x,y,z)=x²+y²+z²−2xyz−1，T(x,y,z)=(2xy−z,x,y)，I∘T=I`
 - **E110** Fibonacci 跡遞推：`x_{k+1}=2x_kx_{k−1}−x_{k−2}，|w_k|=F_{k+1}`
+- **E123** Connes 截斷餘項：`S_{N+j}(s)−S_N(s) ≤ 1/((s−1)N^{s−1})；S_N(s)+bound ≤ 2`
+- **E124** Weil Galerkin：`G=Σ_n w_n v_n v_nᵀ, w_n=1_{n 為素數冪} ⇒ G ⪰ 0（2^8 主子式實算）`
+- **E125** 正則化行列式界：`det_ζ(n) ∈ ℤ_{>0}, det_ζ(n) ≤ n ⇒ log det_ζ(n)/n → 0`
+- **E126** Fibonacci 判別遞推：`D_{k+1}=D_kD_{k−1}−D_{k−2}, deg D_k=F_{k+1}, D_k 單首一`
+- **E127** Gordon 二塊：`Fibonacci 字 w_k (k≥5) 具平方前綴 u·u ⇒ 無點譜`
+- **E128** Trace map 雙曲：`p(λ)=λ³−2yλ²−2xλ+1；p(−2)<0<p(−1) ⇒ ∃λ<−1`
 
 ## 資料夾視角依賴關係圖
 
@@ -204,10 +216,12 @@
   qmat_add  qmat_sub  qmat_smul  qmat_equal
   qmat_pow  fibonacci_matrix  fib_pair  fib_number
   lucas_number  zeckendorf  theorem_fib_spectrum  fricke_vogt
-  fib_trace_map  theorem_fib_trace_map  theorem_golden_fibonacci  Poly
-  Fps  Laurent  Dirichlet  Quot
-  DivMod  ConvAlg  WeilCurve  ECPoint
-  AJTerm  AJDivisor  QMat
+  fib_trace_map  theorem_fib_trace_map  theorem_golden_fibonacci  connes_spectral_zeta
+  connes_tail_bound  connes_galerkin  theorem_connes_finite_limit  fib_discriminant
+  fib_square_prefix  theorem_fib_spectral_finite  Poly  Fps
+  Laurent  Dirichlet  Quot  DivMod
+  ConvAlg  WeilCurve  ECPoint  AJTerm
+  AJDivisor  QMat
 ```
 
 ## 驗證

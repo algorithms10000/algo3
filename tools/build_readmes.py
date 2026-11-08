@@ -86,8 +86,8 @@ INTERFACES = {
     "src/graphs": "接入：n,k 或位元遮罩鄰接列。輸出：chromatic_number、max_clique、betti_numbers、tutte_coeffs、theorem_*。",
     "src/compose": "接入：布爾格、布林矩陣、矩陣、Context。輸出：lan_poset/ran_poset、kronecker、relation_tensor、theorem_C*。",
     "src/catalog": "接入：docs/catalog.json。輸出：catalog()、catalog_size()、count_kind()、theorem_catalog_consistent()。",
-    "cmd/main": "接入：root @c1.report()。輸出：stdout inspect 報表（65 行憑證）。",
-    "docs": "接入：tools/build_catalog.py。輸出：catalog.json（571 筆）。",
+    "cmd/main": "接入：root @c1.report()。輸出：stdout inspect 報表（69 行憑證）。",
+    "docs": "接入：tools/build_catalog.py。輸出：catalog.json（631 筆）。",
     "tools": "接入：Python 標準庫 + openpyxl。輸出：catalog.json、catalog.mbt、algorithm.xlsx、各 README.md。",
 }
 
@@ -99,7 +99,7 @@ def folder_readme(folder):
     eq = [e for e in E if e["package"] == folder and e["kind"] == "等式"]
     ax = [e for e in E if e["package"] == folder and e["kind"] == "公理"]
     L = ["# " + folder + " — " + ROLES[folder], ""]
-    L += ["> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織／C1-07 黃金比例、陳–西蒙斯與全代碼健檢。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。", ""]
+    L += ["> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織／C1-07 黃金比例、陳–西蒙斯與全代碼健檢／C1-08 六項無限維結構之有限精確憑證。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。", ""]
     if ax:
         L += ["## 已獲得公理", ""] + ["- **{}** {}".format(e["id"], e["statement"]) for e in ax] + [""]
     L += ["## 已獲得定理列表", ""]
@@ -130,11 +130,11 @@ def folder_readme(folder):
     return "\n".join(L)
 
 
-ROOT_README = """# C1 — 全局公理伽羅瓦對應（C1-01..C1-07 累積切片）
+ROOT_README = """# C1 — 全局公理伽羅瓦對應（C1-01..C1-08 累積切片）
 
 > 依 `工程內容03.md`／`工程約束.md`／`作業規範.md`／`組合範例.md` 建立之首次切片。
 > 全局公理 **G = 伽羅瓦對應（極性伴隨）**；局部公理 L1..L5 由本回合代理決定。
-> C1-01 為**首次開發**；C1-02..C1-07 逐回合補回前沿待辦。尚未達成 5,000,000 行／10,000 條演算法之最終目標；未完成部分不列為已完成。
+> C1-01 為**首次開發**；C1-02..C1-08 逐回合補回前沿待辦。尚未達成 5,000,000 行／10,000 條演算法之最終目標；未完成部分不列為已完成。
 
 ## 全局公理
 
@@ -172,7 +172,7 @@ src/exact    ──► src/axioms ──► src/galois ──► src/series ─�
 - `src/algebra`：歪多項式環（Ore）、Hilbert–Poincaré 級數、局部化、Ext¹、Morita
 - `src/graphs`：克內澤圖、Lovász/EKR、Ramsey、擬陣 Tutte、單純複形 Betti
 - `src/compose`：14 種組合手法（Kan、束、纖維積、單子、張量、纖維範疇、推出、交織、博弈管線等）
-- `src/catalog`：571 筆定理／演算法／等式登錄
+- `src/catalog`：631 筆定理／演算法／等式登錄
 - `algorithm.xlsx`：由 `docs/catalog.json` 單一來源產生之活頁簿
 - `Dev.txt`：流水式帳本；`AGENT.md` 與 `工程約束.md` 為同一份文件
 
@@ -197,8 +197,8 @@ moon run cmd/main
 | `moon check --deny-warn`（全域） | Finished，21 tasks |
 | `moon prove --deny-warn` | `1 of 1 packages proved, 17 goals proved` |
 | `moon build` | wasm artifact 生成 |
-| `moon run cmd/main` | 65 行真實 inspect 憑證，全數 OK |
-| 登錄表 | 6 公理／62 定義／8 命題／14 引理／181 定理／180 演算法／120 等式 = 571 筆；前沿文獻 72 筆 |
+| `moon run cmd/main` | 69 行真實 inspect 憑證，全數 OK |
+| 登錄表 | 6 公理／70 定義／8 命題／14 引理／193 定理／200 演算法／140 等式 = 631 筆；前沿文獻 79 筆 |
 | CI | `.github/workflows/c1-ci.yml` 推送全域編譯與形式化驗證 |
 
 ## C1-02：前沿查證與 §6 待辦補回
@@ -351,20 +351,52 @@ anyon 編織測得 φ、2026 Golden Bridge 之 Z[ζ₅] 代數整數、Kac–Pet
 21 算子張成 12 維／441 複合張成 81→25 維（完整 End）；`moon run cmd/main`
 之 inspect 報表 65 行全數 OK。
 
+## C1-08：六項無限維結構之有限精確憑證與三回合 21×14 交織
+
+依《作業規範》「不時聯網搜查及查證最前沿論文」，本回合查證 R73..R79 共 7 組
+（Connes–Consani–Moscovici 2026《Zeta Spectral Triples》之 `D_log^(λ,N)`
+rank-one 擾動與有限 Euler 積／正則化行列式逼近 Ξ、Connes 2026
+《RH: Past, Present and a Letter Through Time》之截斷 Weil 二次型、
+Connes–van Suijlekom Galerkin 矩陣與 2026 高精確重算、Jeffrey / WRT
+lens space 手術公式與 Gauss sum 互反律、Sütő 1989 零測度 Cantor 譜、
+Fillman–Luna 2025 之二塊 Gordon lemma 與 trace map 雙曲性、Quillen/Matsumoto/Bass
+高階 K 標準結果）。完整書目見 `algorithm.xlsx`「前沿文獻」與 `docs/catalog.json`。
+本回合僅修改既有檔案，未新增文檔。
+
+**方針**：無限維解析極限不得冒充已證明；每項皆給「有限精確計算 + 明確收斂餘項」，
+並在未完成章節保留真正的無限維命題。
+
+| 待辦主題 | 本回合補回的有限憑證 | 憑證 |
+| --- | --- | --- |
+| Connes 無限維解析極限／RH | `QC20=ℚ[ζ]/(Φ₂₀)⊗ℚ(√5)` 精確分圓環；截斷譜 zeta `S_N(s)` 之單調、Cauchy 餘項 `1/((s−1)N^{s−1})`、上界 2；Connes–van Suijlekom 有限 Galerkin（素數冪權重）之 2⁸ 個 BigInt 主子式全數 ≥0；正則化行列式 `det_ζ(n)≤n` | T-AN0, T-AN1 |
+| 量子環面 C* 完備化 | 有限 GNS：`τ(a*a)=Σ\\|c\\|²`、Cauchy–Schwarz、Harper 動差 `4/28/232/2156`、`‖h^{2n}‖≤4^{2n}`、q³=1 之 clock/shift 表示 `VU=qUV` | T-CSTAR |
+| 高階 K | `K₁(F_p[t]/(t^k))=(p−1)p^{k−1}`（穷舉交叉驗證）、Matsumoto Steinberg 關係矩陣滿秩 ⇒ `K₂(F₇)=0`、Quillen `q^i−1`、Bass A¹/Laurent | T-K |
+| 無限維 PV／一般階 | 3 階 δ-模 `∇=δ−A` 之特徵向量解空間與 `δW=tr(A)W`；Kovacic I/II 之 `F₅`/`F₂₅` Riccati 根與 gauge 不變直線一致 | T-PV6 |
+| Fibonacci Hamiltonian 無限維奇異連續譜 | 判別多項式 `D_k(E)` 單首一、`deg=F_{k+1}`、`D_{k+1}=D_kD_{k−1}−D_{k−2}` 多項式恆等式；Gordon 二塊平方前綴；Jacobian 特徵多項式在 `(−2,−1)` 變號 ⇒ 雙曲 | T-FIBSPEC |
+| SU(2)₃ 完整 T 相位與手術公式 | `θ_a=ζ₂₀^{a(a+2)}`、`G·Ḡ=D²=5+√5`、`(AT)³=κI` 且 `κκ̄=(φ+2)³`、手術和 `τ₀=D²`、`τ_{p+20}=τ_p`、`τ_pτ̄_p` 自共軛 | T-CS-T |
+| 依舊 21×14 方法 | `W₃[v][p]=τ(ρ(v)Φ_p)`，狀態由 `deriv_invariant`、`F_{p+1}+L_{p+1}`、K₁ 階、3 階 PV 零空間、判別多項式次數、BigRat 截斷譜 zeta 實算交織；與 W₁（C1-06）、W₂（C1-07）三回合堆疊／拼接／聯合 Gram 交織 | T-C108-1..4 |
+
+實測：`W₃` ℚ-秩 14／非零項 259／概念數 396；三回合堆疊 63×14 秩 14、
+拼接 21×42 秩 21、聯合 Gram 秩 21；概念格交集 `\\|Fix₁∩Fix₂\\|=12` 嚴格大於
+`\\|Fix₁∩Fix₂∩Fix₃\\|=1`；`moon run cmd/main` 69 行全數 OK。
+`audit_repository()` 終測：`dead=0, dup_names=0, dup_ids=0, dup_statements=0`。
+
 ## 未完成（誠實標記）
 
-- 5,000,000 行程式碼、10,000 條中階以上演算法：目前 **180 / 10,000** 條演算法、
-  14,786 行，仍為早期切片；「集庫成群」已建立聚類演算法與憑證，但庫規模本身未達最終目標。
-- Connes 譜 triple 之無限維解析極限／RH 一般證明、Spec Z 之 archimedean
-  adelic Abel–Jacobi 解析：目前為有限域曲線、有理餘項界與 q-商之有限精確憑證。
-- 量子環面之 C*-範數完備化、無理 θ 之 Powers–Rieffel 投影、q 非單位根之無限維
-  Γ-bundle：目前為 qⁿ=1 之有限 root algebra 與精確 q-指數配對。
-- 高階 K 理論、導出方案之 ∞-範疇極限、higher motives、無限維複數域 PV 擴張、
-  Kovacic II/III：沿用 §6'''' 之誠實標記。
-- Fibonacci Hamiltonian 之無限維奇異連續譜與 Hausdorff 維度：本回合為有限階
-  trace map／Fricke–Vogt 不變量之精確有理憑證（k≥6 超出 Int64 Rat 範圍，未冒充）。
-- SU(2)₃ 之完整 T 矩陣相位、非零 genus 之 WRT 不變量與 3-流形手術公式：
-  本回合為融合環／模 S 矩陣／量子維度之有限精確憑證。
+- 5,000,000 行程式碼、10,000 條中階以上演算法：目前 **200 / 10,000** 條演算法、
+  15,948 行，仍為早期切片；「集庫成群」已建立聚類演算法與憑證，但庫規模本身未達最終目標。
+- **RH 本身、Connes 譜 triple 之無限維收斂證明**：本回合為有限截斷 zeta 的
+  Cauchy 餘項、有限 Galerkin 正性與正則化行列式增長界；Conner 2026 明確指出
+  `D_log^(λ,N)` 譜收斂之嚴格證明才等價於 RH，此處未宣稱完成。
+- **量子環面 C* 範數閉包**：本回合為有限 GNS 表示與 Harper 動差，未構造範數完備化。
+- **Quillen 完整高階 K 證明、K₂ 以上之一般環計算**：本回合為有限域之
+  K₁/Matsumoto K₂/Quillen 階數之有限精確驗證。
+- **ℂ(t) 上無限維 PV 擴張、Kovacic 第三型（4/6/12 次代數解）**：
+  本回合為 F_p[t]/(t^p) 之 3 階 δ-模與 F_{p²} Riccati 第二型分類。
+- **Fibonacci Hamiltonian 零 Lebesgue 測度 Cantor 譜與奇異連續譜之無限維定理**
+  （Sütő 1989）：本回合為有限階判別多項式、Gordon 平方與 trace map 雙曲性憑證。
+- **3-流形 WRT 完整解析手術公式**（Jeffrey / Gauss sum 互反律）：本回合為
+  SU(2)₃ T 相位、Gauss sum、模關係純量性與透鏡空間手術和之有限精確代數。
 - `docs/` 其餘設計文件：依《工程約束》「非首次開發、創建新文檔前需先獲准」，
   本回合不另建新文檔，改以既有 `Dev.txt`、`README.md` 與各資料夾 README 記錄。
 - git 仍無 remote：CI workflow 與 commit 僅本機落地，**未 push**。

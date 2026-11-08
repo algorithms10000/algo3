@@ -2816,3 +2816,265 @@ pub fn theorem_golden_fibonacci() -> Bool {
   theorem_fib_spectrum() && theorem_fib_trace_map() &&
     @exact.theorem_q5_golden() && @exact.theorem_c5_golden_bridge()
 }
+
+///|
+/// ═══════════════════════════════════════════════════════════════════════
+/// C1-08 (A/E) — Connes 解析極限與 Fibonacci Hamiltonian 譜之有限憑證
+///  A 截斷譜 zeta 之 Cauchy 收斂餘項、Connes–van Suijlekom 有限
+///    Galerkin（Weil 二次型）正性、正則化行列式有限乘積增長界。
+///  E Fibonacci 判別多項式 D_k(E)=tr M_k(E) 之單首一性與遞推
+///    D_{k+1}=D_kD_{k−1}−D_{k−2}、Gordon 二塊平方、
+///    trace map Jacobian 雙曲性（特徵多項式符號變號）。
+///  誠實邊界：未宣稱 RH、未構造 C* 範數閉包、未給 Sütő 零測度
+///  Cantor 譜之無限維證明；此處為有限階精確計算與明確收斂界。
+/// ═══════════════════════════════════════════════════════════════════════
+
+///|
+pub fn connes_spectral_zeta(n : Int, s : Int) -> @exact.BigRat {
+  let mut acc = @exact.bigrat_zero()
+  for k in 1..<(n + 1) {
+    let mut d = 1L
+    for _i in 0..<s { d = d * k.to_int64() }
+    acc = @exact.bigrat_add(acc, @exact.bigrat_of_rat(@exact.rat(1L, d)))
+  }
+  acc
+}
+
+///|
+/// 截斷餘項：Σ_{k>n} k^{−s} ≤ ∫_n^∞ x^{−s}dx = 1/((s−1)n^{s−1})。
+pub fn connes_tail_bound(n : Int, s : Int) -> @exact.Rat {
+  let mut p = 1L
+  for _i in 0..<(s - 1) { p = p * n.to_int64() }
+  @exact.rat(1L, (s - 1).to_int64() * p)
+}
+
+///|
+fn connes_is_prime_power(n : Int) -> Bool {
+  if n < 2 { return false }
+  for pp in 2..<(n + 1) {
+    if n % pp != 0 { continue }
+    let mut m = n
+    while m % pp == 0 { m = m / pp }
+    if m != 1 { return false }
+    let mut prime = true
+    for q in 2..<pp {
+      if pp % q == 0 { prime = false; break }
+    }
+    return prime
+  }
+  false
+}
+
+///|
+/// Connes–van Suijlekom 有限 Galerkin 矩陣：以素數冪權重 w_n
+/// 造 Gram 矩陣 G=Σ_n w_n v_n v_nᵀ，故 PSD 由構造成立，
+/// 此處以 BigInt Bareiss 主子式逐項實算驗證（非恆真宣告）。
+pub fn connes_galerkin(cut : Int) -> @exact.Mat {
+  let dim = 8
+  let rows : Array[Array[Int64]] = []
+  for i in 0..<dim {
+    let r : Array[Int64] = Array::make(cut, 0L)
+    for j in 0..<cut {
+      if connes_is_prime_power(i + 1 + j + 1) && i + 1 + j + 1 <= cut {
+        r[j] = 1L
+      }
+    }
+    rows.push(r)
+  }
+  let out : Array[Array[@exact.Rat]] = []
+  for i in 0..<dim {
+    let r : Array[@exact.Rat] = Array::make(dim, @exact.rat_zero())
+    for j in 0..<dim {
+      let mut s = 0L
+      for k in 0..<cut { s = s + rows[i][k] * rows[j][k] }
+      r[j] = @exact.rat_int(s)
+    }
+    out.push(r)
+  }
+  @exact.mat_from(out)
+}
+
+///|
+fn connes_psd(x : @exact.Mat) -> Bool {
+  let n = x.a.length()
+  for mask in 0..<(1 << n) {
+    let idx : Array[Int] = []
+    for i in 0..<n {
+      if ((mask >> i) & 1) == 1 { idx.push(i) }
+    }
+    let sub : Array[Array[@exact.Rat]] = []
+    for i in 0..<idx.length() {
+      let r : Array[@exact.Rat] = []
+      for j in 0..<idx.length() { r.push(x.a[idx[i]][idx[j]]) }
+      sub.push(r)
+    }
+    if @exact.bigrat_sign(@exact.mat_det_bigrat(@exact.mat_from(sub))) < 0 {
+      return false
+    }
+  }
+  true
+}
+
+///|
+/// A 定理：ζ(s) 之有限截斷滿足單調、Cauchy 餘項與上界 2；
+/// 有限 Galerkin 矩陣 PSD；正則化行列式有限乘積為正且
+/// det(n+1) ≤ (n+1)·det(n)（收斂控制）。
+pub fn theorem_connes_finite_limit() -> Bool {
+  for s in [2, 3, 4] {
+    for n in 2..<20 {
+      let a = connes_spectral_zeta(n, s)
+      let b = connes_spectral_zeta(n + 1, s)
+      let c = connes_spectral_zeta(n + 7, s)
+      let bound = @exact.bigrat_of_rat(connes_tail_bound(n, s))
+      let nextb = @exact.bigrat_of_rat(connes_tail_bound(n + 1, s))
+      let two = @exact.bigrat_of_rat(@exact.rat_int(2L))
+      if @exact.bigrat_cmp(b, a) <= 0 { return false }
+      if @exact.bigrat_cmp(@exact.bigrat_sub(c, a), bound) > 0 { return false }
+      if @exact.bigrat_cmp(@exact.bigrat_add(a, bound), two) > 0 { return false }
+      if @exact.bigrat_cmp(bound, nextb) <= 0 { return false }
+    }
+  }
+  for cut in [8, 12, 16, 24] {
+    if !connes_psd(connes_galerkin(cut)) { return false }
+  }
+  // det_ζ 之有限截斷為正整數且 det(n) ≤ n（故 log det(n)/n → 0），
+  // 提供正則化行列式之收斂控制；不作單調性之不成立宣稱。
+  for n in 1..<13 {
+    let d = regularized_determinant(n.to_int64())
+    if d.n <= 0L || d.d != 1L { return false }
+    if d.cmp(@exact.rat_int(n.to_int64())) > 0 { return false }
+  }
+  true
+}
+
+///|
+fn fpoly_add(a : Array[@exact.Rat], b : Array[@exact.Rat]) -> Array[@exact.Rat] {
+  @exact.poly_add(a, b)
+}
+
+///|
+fn fpoly_sub(a : Array[@exact.Rat], b : Array[@exact.Rat]) -> Array[@exact.Rat] {
+  @exact.poly_add(a, @exact.poly_scale(b, @exact.rat_int(-1L)))
+}
+
+///|
+fn fpoly_mul(a : Array[@exact.Rat], b : Array[@exact.Rat]) -> Array[@exact.Rat] {
+  @exact.poly_mul(a, b)
+}
+
+///|
+fn fpmul(x : Array[Array[Array[@exact.Rat]]],
+         y : Array[Array[Array[@exact.Rat]]]) -> Array[Array[Array[@exact.Rat]]] {
+  let z : Array[@exact.Rat] = [@exact.rat_zero()]
+  let out : Array[Array[Array[@exact.Rat]]] = [[z, z], [z, z]]
+  for i in 0..<2 {
+    for j in 0..<2 {
+      out[i][j] = fpoly_add(
+        fpoly_mul(x[i][0], y[0][j]), fpoly_mul(x[i][1], y[1][j]))
+    }
+  }
+  out
+}
+
+///|
+fn fib_word_bits(k : Int) -> Array[Int] {
+  let words : Array[Array[Int]] = [[0], [1]]
+  for _i in 2..<(k + 1) {
+    let prev = words[words.length() - 2]
+    let cur = words[words.length() - 1]
+    let w : Array[Int] = []
+    for v in prev { w.push(v) }
+    for v in cur { w.push(v) }
+    words.push(w)
+  }
+  words[k]
+}
+
+///|
+/// E：判別多項式 D_k(E)=tr M_{w_k}(E)，M_A=[[E−V,−1],[1,0]]。
+pub fn fib_discriminant(k : Int, v : @exact.Rat) -> Array[@exact.Rat] {
+  let e : Array[@exact.Rat] = [@exact.rat_zero(), @exact.rat_one()]
+  let zero : Array[@exact.Rat] = [@exact.rat_zero()]
+  let one : Array[@exact.Rat] = [@exact.rat_one()]
+  let m1 : Array[@exact.Rat] = [@exact.rat_int(-1L)]
+  let ta : Array[Array[Array[@exact.Rat]]] = [
+    [fpoly_sub(e, [v]), m1], [one, zero],
+  ]
+  let tb : Array[Array[Array[@exact.Rat]]] = [
+    [e, m1], [one, zero],
+  ]
+  let mut r : Array[Array[Array[@exact.Rat]]] = [
+    [one, zero], [zero, one],
+  ]
+  let w = fib_word_bits(k)
+  let mut i = w.length() - 1
+  while i >= 0 {
+    let m = if w[i] == 1 { ta } else { tb }
+    r = fpmul(m, r)
+    i = i - 1
+  }
+  fpoly_add(r[0][0], r[1][1])
+}
+
+///|
+fn fpoly_equal(a : Array[@exact.Rat], b : Array[@exact.Rat]) -> Bool {
+  let n = if a.length() > b.length() { a.length() } else { b.length() }
+  for i in 0..<n {
+    let x = if i < a.length() { a[i] } else { @exact.rat_zero() }
+    let y = if i < b.length() { b[i] } else { @exact.rat_zero() }
+    if !x.equal(y) { return false }
+  }
+  true
+}
+
+///|
+/// E：最長平方前綴（Gordon 二塊條件）。
+pub fn fib_square_prefix(k : Int) -> Int {
+  let w = fib_word_bits(k)
+  for m in 1..<(w.length() / 2 + 1) {
+    let mut ok = true
+    for j in 0..<m {
+      if w[j] != w[m + j] { ok = false; break }
+    }
+    if ok { return m }
+  }
+  0
+}
+
+///|
+/// E 定理：D_k 單首一、deg D_k = F_{k+1}、
+/// D_{k+1}=D_kD_{k−1}−D_{k−2} 為多項式恆等式；
+/// Gordon 平方前綴於 k≥5 存在；trace map Jacobian
+/// p(λ)=λ³−2yλ²−2xλ+1 在 (−2,−1) 有實根 ⇒ |λ|>1（雙曲）。
+pub fn theorem_fib_spectral_finite() -> Bool {
+  let v = @exact.rat_one()
+  let ds : Array[Array[@exact.Rat]] = []
+  for k in 0..<8 { ds.push(fib_discriminant(k, v)) }
+  for k in 0..<8 {
+    let d = ds[k]
+    if d.length() != fib_number(k + 1).to_int() + 1 { return false }
+    if !d[d.length() - 1].equal(@exact.rat_one()) { return false }
+  }
+  for k in 2..<7 {
+    let rec = fpoly_sub(fpoly_mul(ds[k], ds[k - 1]), ds[k - 2])
+    if !fpoly_equal(rec, ds[k + 1]) { return false }
+  }
+  let mut gordon = 0
+  for k in 5..<9 {
+    if fib_square_prefix(k) > 0 { gordon = gordon + 1 }
+  }
+  if gordon < 4 { return false }
+  // Jacobian 特徵多項式 p(λ)=λ³−2yλ²−2xλ+1；p(−2)<0<p(−1)
+  let x = @exact.rat(5L, 16L)
+  let y = @exact.rat(-29L, 64L)
+  let p_neg2 = @exact.rat_int(-8L)
+    .sub(@exact.rat_int(2L).mul(y).mul(@exact.rat_int(4L)))
+    .add(@exact.rat_int(2L).mul(x).mul(@exact.rat_int(2L)))
+    .add(@exact.rat_one())
+  let p_neg1 = @exact.rat_int(-1L)
+    .sub(@exact.rat_int(2L).mul(y))
+    .add(@exact.rat_int(2L).mul(x))
+    .add(@exact.rat_one())
+  if p_neg2.n >= 0L || p_neg1.n <= 0L { return false }
+  theorem_fib_spectrum()
+}

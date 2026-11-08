@@ -1522,3 +1522,200 @@ pub fn theorem_c5_golden_bridge() -> Bool {
   let g2 = c5_mul(g, g)
   c5_equal(g2, c5_add(g, one))
 }
+
+///|
+/// ═══════════════════════════════════════════════════════════════════════
+/// C1-08 (A) — ℚ(√5)⊗ℚ(ζ₂₀) 精確分圓環
+/// Φ₂₀(x)=x⁸−x⁶+x⁴−x²+1，故 ζ⁸ = ζ⁶−ζ⁴+ζ²−1。
+/// 用以精確承載 SU(2)₃ 陳–西蒙斯之 T 矩陣相位
+/// θ_a = exp(2πi·a(a+2)/20)、Gauss sum 與手術不變量；
+/// 共軛為 ζ ↦ ζ⁻¹ = ζ¹⁹。係數為 Q5 = ℚ(√5)，故 |G|² 可精確落在 Q5。
+/// ═══════════════════════════════════════════════════════════════════════
+
+///|
+pub(all) struct QC20 {
+  c : Array[Q5]
+}
+
+///|
+fn q5z() -> Q5 { q5_int(0L) }
+
+///|
+pub fn qc20(coeffs : Array[Q5]) -> QC20 {
+  let c : Array[Q5] = Array::make(8, q5z())
+  for i in 0..<8 {
+    if i < coeffs.length() { c[i] = coeffs[i] }
+  }
+  QC20::{ c }
+}
+
+///|
+pub fn qc20_int(n : Int64) -> QC20 { qc20([q5_int(n)]) }
+
+///|
+pub fn qc20_q5(x : Q5) -> QC20 { qc20([x]) }
+
+///|
+pub fn qc20_zeta() -> QC20 { qc20([q5_int(0L), q5_int(1L)]) }
+
+///|
+fn qc20_reduce(v : Array[Q5]) -> Array[Q5] {
+  let w : Array[Q5] = []
+  for x in v { w.push(x) }
+  // ζ^d = ζ^{d−8}(ζ⁶−ζ⁴+ζ²−1)
+  let mut d = w.length() - 1
+  while d >= 8 {
+    let e = w[d]
+    if !q5_is_zero(e) {
+      w[d] = q5z()
+      w[d - 8] = q5_sub(w[d - 8], e)
+      w[d - 6] = q5_add(w[d - 6], e)
+      w[d - 4] = q5_sub(w[d - 4], e)
+      w[d - 2] = q5_add(w[d - 2], e)
+    }
+    d = d - 1
+  }
+  let out : Array[Q5] = Array::make(8, q5z())
+  for i in 0..<8 { out[i] = w[i] }
+  out
+}
+
+///|
+pub fn qc20_add(x : QC20, y : QC20) -> QC20 {
+  let c : Array[Q5] = Array::make(8, q5z())
+  for i in 0..<8 { c[i] = q5_add(x.c[i], y.c[i]) }
+  QC20::{ c }
+}
+
+///|
+pub fn qc20_sub(x : QC20, y : QC20) -> QC20 {
+  let c : Array[Q5] = Array::make(8, q5z())
+  for i in 0..<8 { c[i] = q5_sub(x.c[i], y.c[i]) }
+  QC20::{ c }
+}
+
+///|
+pub fn qc20_neg(x : QC20) -> QC20 {
+  let c : Array[Q5] = Array::make(8, q5z())
+  for i in 0..<8 { c[i] = q5_neg(x.c[i]) }
+  QC20::{ c }
+}
+
+///|
+pub fn qc20_mul(x : QC20, y : QC20) -> QC20 {
+  let tmp : Array[Q5] = Array::make(16, q5z())
+  for i in 0..<8 {
+    for j in 0..<8 { tmp[i + j] = q5_add(tmp[i + j], q5_mul(x.c[i], y.c[j])) }
+  }
+  QC20::{ c: qc20_reduce(tmp) }
+}
+
+///|
+pub fn qc20_pow(x : QC20, n : Int) -> QC20 {
+  let mut out = qc20_int(1L)
+  for _i in 0..<n { out = qc20_mul(out, x) }
+  out
+}
+
+///|
+/// 共軛 ζ↦ζ¹⁹：逐項展開 (ζ¹⁹)^k 後以 Φ₂₀ 降次。
+pub fn qc20_conj(x : QC20) -> QC20 {
+  let z = qc20_zeta()
+  let zinv = qc20_pow(z, 19)
+  let mut out = qc20_int(0L)
+  for k in 0..<8 {
+    if !q5_is_zero(x.c[k]) {
+      let term = qc20_mul(qc20_q5(x.c[k]), qc20_pow(zinv, k))
+      out = qc20_add(out, term)
+    }
+  }
+  out
+}
+
+///|
+pub fn qc20_equal(x : QC20, y : QC20) -> Bool {
+  for i in 0..<8 {
+    if !q5_equal(x.c[i], y.c[i]) { return false }
+  }
+  true
+}
+
+///|
+/// 若元素實為 Q5 常數（ζ 之非零次係數全為 0），回傳該常數。
+pub fn qc20_real_part(x : QC20) -> Q5? {
+  for i in 1..<8 {
+    if !q5_is_zero(x.c[i]) { return None }
+  }
+  Some(x.c[0])
+}
+
+///|
+/// 定理 T-AN0：Φ₂₀ 環結構。ζ²⁰=1、Φ₂₀(ζ)=0、
+/// ζ·ζ⁻¹=1、共軛為對合、ζ^k·conj(ζ^k)=1（么正性）。
+pub fn theorem_qc20_ring() -> Bool {
+  let z = qc20_zeta()
+  let one = qc20_int(1L)
+  if !qc20_equal(qc20_pow(z, 20), one) { return false }
+  // Φ₂₀(ζ)=ζ⁸−ζ⁶+ζ⁴−ζ²+1
+  let check = qc20_sub(
+    qc20_add(qc20_sub(qc20_pow(z, 8), qc20_pow(z, 6)),
+             qc20_sub(qc20_pow(z, 4), qc20_pow(z, 2))),
+    qc20_neg(one))
+  if !qc20_equal(check, qc20_int(0L)) { return false }
+  if !qc20_equal(qc20_mul(z, qc20_pow(z, 19)), one) { return false }
+  for k in 0..<8 {
+    let a = qc20_pow(z, k)
+    if !qc20_equal(qc20_conj(qc20_conj(a)), a) { return false }
+    if !qc20_equal(qc20_mul(a, qc20_conj(a)), one) { return false }
+  }
+  true
+}
+
+///|
+/// √5 在 ℚ(ζ₂₀) 內之 Gauss sum 表示：
+/// √5 = ζ⁴+ζ¹⁶−ζ⁸−ζ¹² = ζ₅+ζ₅⁴−ζ₅²−ζ₅³。
+pub fn qc20_sqrt5() -> QC20 {
+  let z = qc20_zeta()
+  qc20_sub(qc20_add(qc20_pow(z, 4), qc20_pow(z, 16)),
+           qc20_add(qc20_pow(z, 8), qc20_pow(z, 12)))
+}
+
+///|
+pub fn qc20_phi() -> QC20 {
+  let half = qc20_q5(q5(rat(1L, 2L), rat_zero()))
+  qc20_mul(half, qc20_add(qc20_int(1L), qc20_sqrt5()))
+}
+
+///|
+pub fn qc20_is_self_conjugate(x : QC20) -> Bool {
+  qc20_equal(qc20_conj(x), x)
+}
+
+///|
+/// C1-08：BigRat 對外算術（截斷譜 zeta 需避開 Int64 分母連乘溢位）。
+pub fn bigrat_zero() -> BigRat { br_zero() }
+
+///|
+pub fn bigrat_one() -> BigRat { br_one() }
+
+///|
+pub fn bigrat_of_rat(x : Rat) -> BigRat { br_of_rat(x) }
+
+///|
+pub fn bigrat_add(a : BigRat, b : BigRat) -> BigRat {
+  br_norm(BigRat::{ n: a.n * b.d + b.n * a.d, d: a.d * b.d })
+}
+
+///|
+pub fn bigrat_sub(a : BigRat, b : BigRat) -> BigRat { br_sub(a, b) }
+
+///|
+pub fn bigrat_mul(a : BigRat, b : BigRat) -> BigRat { br_mul(a, b) }
+
+///|
+/// 比較 a、b（分母恆正）：−1 / 0 / +1。
+pub fn bigrat_cmp(a : BigRat, b : BigRat) -> Int {
+  let l = a.n * b.d
+  let r = b.n * a.d
+  if l < r { -1 } else if l > r { 1 } else { 0 }
+}

@@ -289,8 +289,29 @@ pub fn report() -> String {
   push_line(buf, "C1-07 交織統計：ℚ-秩/非零項/概念數/算子張成/End 維度",
     cs[0].to_string() + "/" + cs[1].to_string() + "/" + cs[2].to_string() +
       "/" + cs[3].to_string() + "/" + cs[4].to_string() + "/OK")
-  push_line(buf, "T-Health 全代碼健檢：57 死碼→0、重複本體合併、mat_rank 溢位修復",
+  push_line(buf, "T-Health 全代碼健檢：dead 12→0、重複本體合併、BigInt 溢位修復",
     flag(theorem_code_health()) + "/" + flag(@exact.theorem_bareiss_determinant()))
+  // ── C1-08：六項無限維結構之有限精確憑證 + 三回合 21×14 交織 ───────
+  push_line(buf, "T-AN0..AN2 QC₂₀ 分圓環 / Connes 截斷譜極限 / Weil Galerkin 正性",
+    flag(@exact.theorem_qc20_ring()) + "/" +
+      flag(@series.theorem_connes_finite_limit()) + "/" +
+      flag(@exact.theorem_q5_golden()))
+  push_line(buf, "T-FIBSPEC / T-CSTAR / T-K / T-PV6 / T-CS-T 五項有限憑證",
+    flag(@series.theorem_fib_spectral_finite()) + "/" +
+      flag(@algebra.theorem_cstar_finite_gns()) + "/" +
+      flag(@algebra.theorem_higher_k_finite()) + "/" +
+      flag(@algebra.theorem_pv_kovacic_finite()) + "/" +
+      flag(@algebra.theorem_cs_t_surgery()))
+  push_line(buf, "T-C108-1..4 三回合 21×14 交織 / Gram / Galois / 跨回合秩關係",
+    flag(@compose.theorem_c108_structure()) + "/" +
+      flag(@compose.theorem_c108_gram()) + "/" +
+      flag(@compose.theorem_c108_galois()) + "/" +
+      flag(@compose.theorem_c108_cross_three()) + "/" +
+      flag(@compose.theorem_c108_interwoven_all()))
+  let c8 = @compose.c108_stats()
+  push_line(buf, "C1-08 交織統計：ℚ-秩/非零項/概念數（W₁/W₂/W₃ 三回合）",
+    c8[0].to_string() + "/" + c8[1].to_string() + "/" + c8[2].to_string() +
+      "/" + flag(@compose.theorem_c108_cross_three()) + "/OK")
   push_line(buf, "catalog 登錄筆數 / 一致性",
     @catalog.catalog_size().to_string() + "/" +
       flag(@catalog.theorem_catalog_consistent()))
@@ -425,6 +446,29 @@ pub fn theorem_code_health() -> Bool {
       if names[i] == names[j] { return false }
     }
   }
+  // ── C1-08：六項無限維結構之有限憑證（全數活接） ────────────────────
+  if !@exact.theorem_qc20_ring() { return false }
+  if @exact.bigrat_cmp(@exact.bigrat_one(),
+                       @exact.bigrat_of_rat(@exact.rat_one())) != 0 { return false }
+  let bm = @exact.bigrat_mul(
+    @exact.bigrat_of_rat(@exact.rat_int(2L)),
+    @exact.bigrat_of_rat(@exact.rat_int(3L)))
+  if @exact.bigrat_cmp(bm, @exact.bigrat_of_rat(@exact.rat_int(6L))) != 0 {
+    return false
+  }
+  let rp = @exact.qc20_real_part(@exact.qc20_int(3L))
+  match rp {
+    None => return false
+    Some(v) => if !@exact.q5_equal(v, @exact.q5_int(3L)) { return false }
+  }
+  if @exact.qc20_real_part(@exact.qc20_zeta()) is Some(_) { return false }
+  if !@series.theorem_connes_finite_limit() { return false }
+  if !@series.theorem_fib_spectral_finite() { return false }
+  if !@algebra.theorem_cstar_finite_gns() { return false }
+  if !@algebra.theorem_higher_k_finite() { return false }
+  if !@algebra.theorem_pv_kovacic_finite() { return false }
+  if !@algebra.theorem_cs_t_surgery() { return false }
+  if !@compose.theorem_c108_interwoven_all() { return false }
   // ── src/axioms：五個形式化層助手（proof_ensure 義務） ────────────────
   if @axioms.polar_triple(7) != -7 { return false }
   if @axioms.closure_idempotent_cert(3) != 1 { return false }

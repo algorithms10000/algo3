@@ -1,6 +1,6 @@
 # src/algebra — Ore 歪多項式環、Hilbert–Poincaré、局部化、Ext¹、Morita
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織／C1-07 黃金比例、陳–西蒙斯與全代碼健檢。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織／C1-07 黃金比例、陳–西蒙斯與全代碼健檢／C1-08 六項無限維結構之有限精確憑證。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得定理列表
 
@@ -55,6 +55,10 @@
 - **T-CS3** SU(2)₃ 模數據：Ŝ 對稱、Ŝ²=(1/c₀)I、Ŝ⁴=(1/c₀²)I、dim H_{g=2}=20
 - **T-CS4** Wilson loop d=sin(2π/5)/sin(π/5)=φ；WRT(S³)²=c₀=(5−√5)/20
 - **T-CS11** 陳–西蒙斯四項憑證合取
+- **T-CSTAR** C* 有限 GNS：τ(aa*)=Σc²、Cauchy–Schwarz、Harper 動差 4/28/232/2156、‖h^{2n}‖≤4^{2n}、clock/shift 表示
+- **T-K** 高階 K 有限層：K₁ 單位群階、Matsumoto 關係矩陣滿秩 ⇒ K₂(F₇)=0、Quillen q^i−1、Bass A¹/Laurent
+- **T-PV6** 3 階 δ-模特徵向量解空間、Wronskian/Abel 恆等式；Kovacic I/II 之 F₅/F₂₅ Riccati 根與 gauge 不變直線一致
+- **T-CS-T** SU(2)₃ T 相位 θ_a=ζ₂₀^{a(a+2)}、Gauss sum G·Ḡ=D²、(AT)³ 純量且 κκ̄=D_fib⁶、手術和 τ₀=D²／週期 20／自共軛
 
 ## 已實作演算法列表
 
@@ -94,6 +98,13 @@
 - **AL155** qt_root_qshift_matrix / qt_root_trace_projection（O(n⁴)）
 - **AL164** cs_chebyshev_u / cs_shat（Kac–Peterson S 之 ℚ(√5) 精確化）（O(n)）
 - **AL165** cs_verlinde / cs_comb / cs_c0（O(k³)）
+- **AL188** cstar_tau_norm2 / cstar_harper_moment（O(n·|a|²)）
+- **AL189** k1_unit_order / k1_units_brute（O(p^k)）
+- **AL190** Matsumoto Steinberg 關係矩陣與秩（O(p³)）
+- **AL191** pv3_nullity（3 階 δ-模 GF(p) 秩）（O(m·3³)）
+- **AL192** pv_riccati_fp_roots / pv_riccati_fq2_roots（O(p²)）
+- **AL193** cs_theta / cs_d2_qc / cs_gauss_sum / cs_surgery_sum（O(k·8²)）
+- **AL194** QC2 2×2 分圓矩陣乘法與 (AT)³ 純量判定（O(8²)）
 
 ## 等式
 
@@ -128,6 +139,16 @@
 - **E115** Fibonacci 融合：`τ⊗τ=1⊕τ；N_τ=[[0,1],[1,1]]，χ=x²−x−1`
 - **E116** 模關係：`Ŝ²=(1/c₀)I, Ŝ⁴=(1/c₀²)I, (ST)³=S², S⁴=I`
 - **E117** WRT 與 Wilson：`WRT(S³)²=S₀₀²=c₀=(5−√5)/20；sin(2π/5)/sin(π/5)=φ`
+- **E129** C* GNS 正性：`τ(a*a)=Σ|c|²≥0；|τ(b*a)|² ≤ τ(a*a)τ(b*b)`
+- **E130** Harper 動差：`τ(h²)=4, τ(h⁴)=28, τ(h⁶)=232, τ(h⁸)=2156`
+- **E131** K₁ 與 Quillen：`K₁(F_p[t]/(t^k))=(p−1)p^{k−1}；|K_{2i−1}(F_q)|=q^i−1, K_{2i}=0`
+- **E132** Matsumoto K₂：`{ab,c}={a,c}+{b,c}, {x,1−x}=0, {a,−a}=0 ⇒ K₂(F₇)=0`
+- **E133** 3 階 PV：`δ(v t^j)=jvt^j ⇒ ∇(vt^j)=0 ⟺ (A−jI)v=0；δW=tr(A)W`
+- **E134** Kovacic II：`Riccati u²+a₁u+a₀=0 於 F₅ 無根、於 F₂₅ 有 Frobenius 共軛二根`
+- **E135** T 矩陣相位：`θ_a=ζ₂₀^{a(a+2)}=(1,ζ³,ζ⁸,ζ¹⁵)；θ_a²⁰=1, θ_aθ̄_a=1`
+- **E136** Gauss sum：`G=Σ_a θ_a d_a², G·Ḡ=D²=5+√5`
+- **E137** 模關係有限層：`(AT)³=κI, κκ̄=D_fib⁶=(φ+2)³`
+- **E138** 手術和：`τ_p=Σ_a θ_a^p d_a², τ₀=D², τ_{p+20}=τ_p, τ_pτ̄_p 自共軛`
 
 ## 資料夾視角依賴關係圖
 
@@ -197,10 +218,15 @@
   theorem_qt_weil_pairing  theorem_qt_morita_sl2  theorem_quantum_torus  cs_chebyshev_u
   cs_shat  cs_c0  cs_comb  cs_verlinde
   theorem_cs_verlinde  theorem_cs_fibonacci_sector  theorem_cs_modular  theorem_cs_wilson_golden
-  theorem_chern_simons  SkewPoly  OreDiv  Fq2
-  SkewFq  SFqDiv  OreGCL  F5pDiv
-  SkewGB  FuDiv  FuBezout  DiffModule
-  QTMon  QTElem  QTRoot
+  theorem_chern_simons  cstar_tau_norm2  cstar_harper  cstar_harper_moment
+  theorem_cstar_finite_gns  k1_unit_order  k1_units_brute  theorem_higher_k_finite
+  pv3_nullity  theorem_pv_order3  pv_riccati_fp_roots  pv_riccati_fq2_roots
+  theorem_pv_kovacic_finite  cs_theta  cs_d2_qc  cs_gauss_sum
+  cs_surgery_sum  theorem_cs_t_surgery  SkewPoly  OreDiv
+  Fq2  SkewFq  SFqDiv  OreGCL
+  F5pDiv  SkewGB  FuDiv  FuBezout
+  DiffModule  QTMon  QTElem  QTRoot
+  QC2
 ```
 
 ## 驗證

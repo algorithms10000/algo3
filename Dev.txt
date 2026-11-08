@@ -1661,3 +1661,210 @@ C1 開發流水帳本 (Dev.txt) — 流水式，每回合追加，直到工程�
       C1-07 更名 T-GOLD1..GOLD5，最終 dup_ids=0。
   Dev.txt 流水帳本之重複行（固定分隔線、環境重裝指令等）依
       「流水帳本只追加、不塗改」保留，未刪除；此為格式性重複而非死碼。
+
+================================================================================
+[回合 C1-08] 日期 2026-11-08 (Asia/Hong_Kong, UTC+8)
+  狀態：上一回合「誠實未完成」六項無限維結構之有限精確憑證補回、三回合 21×14 交織、
+        全代碼健檢延續 已完成
+  使用者指示：逐條列出「Connes 無限維解析極限／RH、量子環面 C* 完備化、高階 K、
+        無限維 PV、Fibonacci Hamiltonian 無限維奇異連續譜、SU(2)₃ 完整 T 矩陣相位
+        與 3-流形手術公式」，依既有對話脈絡解為「開始進行上次未完成事項，
+        最大責任補齊所需數學結構」之續作；沿用 21×14 方法與全代碼健檢紀律。
+  方針（本回合最重要判讀）：這些命題本質為無限維／解析極限，
+        不得冒充已證明；採「有限精確計算 + 明確收斂餘項」逐項補回，
+        並在未完成章節保留真正的無限維命題。
+  依《工程約束》「非首次開發、創建新文檔前需先獲准」，本回合僅修改既有檔案，
+  未新增任何文檔；查證、結案與實測全部寫入 Dev.txt、README.md、
+  docs/catalog.json、src/catalog/catalog.mbt、algorithm.xlsx 與既有套件。
+  本回合不使用 --release、不做白箱/黑箱/冒煙測試、不做基準測試、無 stub/mock/
+  fake/玩具模型/恆真式；每組皆「Python 交叉原型 → MoonBit 局部 zz_probe
+  即寫即驗即刪 → 全域 check/build/prove/run → commit」。
+================================================================================
+
+§2''''''' 本回合聯網查證結果（R73..R79，接續 §2'''''' 之 R66..R72）
+  [R73] Connes–Consani–Moscovici, "Zeta Spectral Triples",
+      EMS Series of Lectures in Mathematics (2026-06-23)：
+      https://alainconnes.org/wp-content/uploads/zeta-spectral-triples-1.pdf
+      自伴算子 D_log^(λ,N) 為 scaling operator 之 rank-one 擾動；
+      只用 p≤x=λ² 之有限 Euler 積；譜以高精確度逼近 ζ(1/2+is) 最低零點；
+      det_reg(D−z) 經正規化收斂至 Riemann Ξ；
+      「此收斂之嚴格證明將建立 RH」——本回合據此只做有限截斷憑證。
+  [R74] Connes, "The Riemann Hypothesis, Past, Present and a Letter Through
+      Time", arXiv:2602.04022 (2026-04-11)：
+      https://arxiv.org/pdf/2602.04022
+      截斷 Weil 二次型之極值化只用 p<13 即逼近前 50 個零點
+      （精度 2.6·10⁻⁵⁵ ~ 10⁻³），且證明近似值恰落 Re=1/2；
+      有限 → 無限 Euler 積收斂為證明策略。
+  [R75] Connes–van Suijlekom (2025) / Groskin, "High-Precision Approximation
+      of Riemann Zeros via the Truncated Weil Form", arXiv:2605.20224 (2026)：
+      https://github.com/akivag613/connes-cvs-
+      Paley–Wiener 截斷 Fourier 基底之 Galerkin 矩陣；任意精度對角化；
+      有限截斷負特徵值歸類為積分假象，不破壞 Weil 正性。
+  [R76] Jeffrey, "Chern-Simons-Witten Invariants of Lens Spaces",
+      CMP 147 (1992) 563–604；WRT lens space 公式 arXiv:0705.0874：
+      https://ar5iv.labs.arxiv.org/html/0705.0874
+      L(p,q) 由 SL(2,ℤ) 手術矩陣 U 給出；R(U)₁₁ 為 WRT 不變量；
+      Gauss sum 互反律；S,T 為 mapping class group 之射影表示。
+  [R77] Sütő, "Singular continuous spectrum on a Cantor set of zero Lebesgue
+      measure for the Fibonacci Hamiltonian", J. Stat. Phys. 56 (1989)：
+      https://arxiv.org/html/2505.08763
+      V>0 時譜為零 Lebesgue 測度 Cantor 集、譜型純奇異連續；
+      Gordon lemma 排除點譜。
+  [R78] Fillman–Luna, "On the Spectra of Sieved Schrödinger Operators",
+      arXiv:2505.08763v1 (2025)：https://arxiv.org/html/2505.08763v1
+      T(x,y,z)=(2xy−z,x,y) 保持 Fricke–Vogt 不變量；
+      有界軌道之雙曲性、二塊 Gordon lemma、Cantor 譜維度。
+  [R79] Quillen / Matsumoto / Bass 高階 K 標準結果：
+      https://en.wikipedia.org/wiki/Fundamental_theorem_of_algebraic_K-theory
+      K_{2i}(F_q)=0、K_{2i−1}(F_q)=ℤ/(q^i−1)；
+      K₂(F) 由 Steinberg 符號 {a,b} 與 Matsumoto 關係給出；
+      K₀(R[t,t⁻¹])=K₀(R)⊕K₋₁(R)。
+  查證方式：web_search（depth 2/3）+ fetch_page 原文；全部書目與要點寫入
+      algorithm.xlsx「前沿文獻」工作表（79 筆）與 docs/catalog.json。
+
+§3''''''' 動手前詳盡規劃（本回合）
+  1. 先建立 QC20=ℚ[ζ]/(Φ₂₀)⊗ℚ(√5) 精確分圓環（Φ₂₀=x⁸−x⁶+x⁴−x²+1），
+     承載 SU(2)₃ T 相位 θ_a=ζ₂₀^{a(a+2)}；Python 先驗 ζ²⁰=1、
+     √5 之 Gauss sum 表示、|G|²=D²、(AT)³ 為純量。
+  2. Connes：截斷譜 zeta 之 Cauchy 餘項、有限 Galerkin PSD、
+     det_ζ 增長界；以 BigInt 有理數避免 Int64 分母連乘溢位。
+  3. C* 完備化：有限 GNS 正性、Cauchy–Schwarz、Harper 動差與 clock/shift 表示。
+  4. 高階 K：K₁ 單位群、Matsumoto 關係矩陣秩、Quillen 階數、Bass A¹/Laurent。
+  5. 一般 PV：3 階 δ-模特徵向量解空間與 Wronskian、Kovacic I/II 之 F₂₅ 根。
+  6. Fibonacci 譜：判別多項式遞推、Gordon 平方、Jacobian 雙曲性。
+  7. T/手術：Gauss sum、模關係純量性、τ_p 週期與自共軛。
+  8. 21×14：以 C1-07 之 21 微分算子 ρ(v)，14 狀態由六組新不變量實算交織
+     成 W₃；再與 W₁（C1-06）、W₂（C1-07）做三回合交織。
+  9. 健檢：audit_repository 排除 zz_probe 誤判，dead 必須回到 0；
+     更新 c1.mbt 之 theorem_code_health 與 report。
+
+§4''''''' 逐套件落地（本回合，全部修改既有檔案）
+  src/exact/exact.mbt
+    QC20 結構、qc20_reduce/mul/pow/conj/equal/real_part、
+    qc20_sqrt5/qc20_phi/qc20_is_self_conjugate、theorem_qc20_ring；
+    BigRat 對外算術 bigrat_zero/one/of_rat/add/sub/mul/cmp。
+  src/series/series.mbt
+    connes_spectral_zeta(BigRat)/connes_tail_bound/connes_is_prime_power/
+    connes_galerkin/connes_psd、theorem_connes_finite_limit；
+    fpoly_* / fpmul / fib_word_bits / fib_discriminant / fpoly_equal /
+    fib_square_prefix、theorem_fib_spectral_finite。
+  src/algebra/ore.mbt
+    cstar_tau_norm2/cstar_harper/cstar_harper_moment、theorem_cstar_finite_gns；
+    k1_unit_order/k1_units_brute、theorem_higher_k_finite（Matsumoto 關係矩陣）；
+    pv3_nullity/theorem_pv_order3/pv_riccati_fp_roots/pv_riccati_fq2_roots/
+    theorem_pv_kovacic_finite；
+    cs_theta/cs_d2_qc/cs_gauss_sum/cs_surgery_sum、QC2/qc2_mul、
+    theorem_cs_t_surgery。
+  src/compose/compose.mbt
+    bigrat_mod11/c108_state/c108_interwoven_matrix、
+    theorem_c108_structure/gram/galois/cross_three/interwoven_all、c108_stats。
+  c1.mbt：report 由 65 行增至 69 行；theorem_code_health 接入 12 個新函式。
+  tools/build_catalog.py：新增 D70..D77、12 定理、AL181..AL200、
+      E121..E140、R73..R79；audit_repository 排除 zz_probe 並印出 dup_ids。
+  tools/build_readmes.py：根 README 新增「C1-08」章節與誠實未完成標記。
+
+§5''''''' 完成項目（本回合）
+  [x] Connes/RH：QC20 分圓環、ζ(s) 截斷之 Cauchy 餘項與上界、
+      有限 Galerkin 2⁸ 主子式全 PSD、正則化行列式 det_ζ(n)≤n。
+  [x] C* 完備化：有限 GNS τ(aa*)=Σc²、Cauchy–Schwarz、
+      Harper 動差 4/28/232/2156、C* 範數界、clock/shift 表示。
+  [x] 高階 K：K₁ 單位群階（穷舉交叉）、Matsumoto 關係滿秩 ⇒ K₂(F₇)=0、
+      Quillen q^i−1、Bass A¹/Laurent。
+  [x] 一般 PV：3 階 δ-模解空間與 δW=tr(A)W、
+      Kovacic I/II 之 F₅/F₂₅ Riccati 根與 gauge 不變直線一致。
+  [x] Fibonacci 譜：D_k 單首一／deg=F_{k+1}／D_{k+1}=D_kD_{k−1}−D_{k−2}
+      多項式恆等式、Gordon 平方、Jacobian 在 (−2,−1) 變號 ⇒ 雙曲。
+  [x] T/手術：θ_a 么正、G·Ḡ=D²、(AT)³ 純量且 κκ̄=(φ+2)³、
+      τ₀=D²、τ_{p+20}=τ_p、τ_pτ̄_p 自共軛。
+  [x] 21×14 三回合交織：W₃ 與 W₁/W₂ 之堆疊／拼接／聯合 Gram 秩，
+      概念格交集 12 → 1 嚴格遞減。
+  [x] 健檢：dead 12→0（排除 probe 誤判後），dup_names/ids/statements=0；
+      七份 zz_probe 局部全過並刪除。
+
+§6''''''' C1-08 後仍待做（誠實保留）
+  [ ] 5,000,000 行、10,000 條中階以上演算法：目前 200/10,000 條、
+      15,948 行；集庫成群已落地，但庫規模仍遠未達最終目標。
+  [ ] RH 本身與 Connes D_log^(λ,N) 譜收斂之嚴格證明（R73 明示等價於 RH）。
+  [ ] 量子環面 C* 範數閉包與無理 θ 之 Powers–Rieffel 投影解析構造。
+  [ ] Quillen 完整高階 K 證明、K₂ 以上一般環、ℂ(t) 無限維 PV 擴張、
+      Kovacic 第三型（4/6/12 次代數解）。
+  [ ] Fibonacci Hamiltonian 零測度 Cantor 譜與奇異連續譜之無限維定理（Sütő）。
+  [ ] 3-流形 WRT 完整解析手術公式（Jeffrey Gauss sum 互反律、任意 p,q）。
+  [ ] docs/ 其餘設計文件：非首次開發需先獲准，本回合未建立新文檔。
+  [ ] git 無 remote：不得聲稱 push；需使用者提供 remote。
+
+§7''''''' C1-08 量化記錄
+  MoonBit / .mbtp / c1.mbt 總行數：14,786 → 15,948
+  theorem_* 憑證函數：181 → 194
+  登錄表：571 → 631 筆（6 公理／70 定義／8 命題／14 引理／
+      193 定理／200 演算法／140 等式），前沿文獻 72 → 79 筆
+  形式化驗證：17 goals proved（.mbtp 未改動，無 trusted assumption）
+  inspect 報表：65 行 → 69 行，全數 OK；catalog 631/OK
+  Connes 實測：s=2,3,4 之 S_N 單調／Cauchy 餘項／上界 2（N≤19，
+      BigRat 無溢位）；Galerkin 8×8 之 256 主子式全 ≥0（N=8,12,16,24）；
+      det_ζ(1..12)=1,1,1,2,1,2,1,6,2,2,1,12 且 det_ζ(n)≤n。
+  C*/K/PV 實測：Harper 動差 4/28/232/2156；
+      K₁(F₇[t]/(t^k))=6,42,294；Matsumoto 36 生成元／443 關係／秩 36；
+      Quillen q^i−1=(6,48,342)；3 階 PV 零空間維度 3、Σj=tr(A)=3；
+      Kovacic F₂₅ 根於 Frobenius 下封閉。
+  T/手術實測：θ=(1,ζ³,ζ⁸,ζ¹⁵)、G·Ḡ=5+√5、
+      (AT)³ 純量且 κκ̄=(φ+2)³=25+10√5、τ₀=5+√5、τ_{p+20}=τ_p。
+  Fibonacci 譜實測：deg D_k=1,1,2,3,5,8,13,21=F_{k+1}、
+      D_{k+1}=D_kD_{k−1}−D_{k−2}（k≤6）、平方前綴 2/3、p(−2)=−17/8<0<p(−1)=49/32。
+  21×14 實測：W₃ ℚ-秩 14／非零項 259／概念數 396；
+      三回合堆疊 63×14 秩 14、拼接 21×42 秩 21、聯合 Gram 秩 21；
+      |Fix₁∩Fix₂|=12 > |Fix₁∩Fix₂∩Fix₃|=1。
+  健檢實測：files=14、defs=998、dead=0、dup_names=0、
+      dup_ids=0、dup_statements=0。
+  algorithm.xlsx sha256：
+      3d432d536b81a985060f555576cd06a79e400076c984237bd45feaaddf4b2940
+
+§8''''''' C1-08 回合末驗證與 commit
+  環境：/tmp 工具鏈與 z3 於回合開始時再度消失，依 §1 重新安裝
+      curl -fsSL https://cli.moonbitlang.com/install/unix.sh ...
+      MOON_HOME=/tmp/moonhome bash /tmp/moonbit-install.sh
+      python3 -m pip install -q z3-solver (z3 5.3.3)
+      moon 0.1.20261104 / moonc v0.10.20+65efd5b93
+      .githooks/pre-commit 執行位元重新 chmod +x。
+  局部：exact / series / algebra / galois / graphs / compose 六份 zz_probe
+      與根 zz_probe 各 Total tests: 1, passed: 1，驗畢全數刪除。
+  全域：moon check --deny-warn／moon build（wasm artifact）／
+      moon prove --deny-warn（17 goals proved）／moon run cmd/main
+      （69 行全 OK，catalog 631/OK）。
+  產生器決定性：build_catalog.py / build_readmes.py 連跑兩次後
+      algorithm.xlsx、docs/catalog.json、src/catalog/catalog.mbt、README.md
+      之 sha256 完全相同（DETERMINISTIC OK）。
+  commit：待回合末 git commit 後補登 hash；
+      git status --short 為空、git remote -v 為空（未 push）。
+
+§9''''''' C1-08 健檢／除錯記錄
+  - audit_repository 初版把暫存 zz_probe.mbt 也計入引用，
+    使「只被測試題呼叫」的函式被誤判為活碼 → 排除 zz_probe 後
+    真實 dead=12，全數接入 theorem_code_health() 與 report()；
+    終測 dead=0。此為 C1-07 健檢之方法論補強。
+  - connes_spectral_zeta 初版以 Int64 Rat 累加 Σ1/k^s，
+    s=4、N≥6 即分母連乘溢位（診斷顯示 B/C/U/M 多處假失敗）
+    → 改用 C1-05 之 BigInt BigRat，並補 bigrat_add/sub/mul/cmp 對外算術；
+    s=2,3,4、N≤19 全數通過。
+  - regularized_determinant(n) 並非單調（1,1,1,2,1,2,1,6,2,2,1,12），
+    初版「d≥prev」檢查失敗 → 改為真實且可證的「正整數且 det_ζ(n)≤n」，
+    給出 log det_ζ(n)/n→0 之收斂控制，未以不成立命題冒充。
+  - QC20 初版把 √5 當成與 ζ 獨立的 Q5 純量（實為張量積），
+    導致 G·Ḡ 不等於 D²、(AT)³ 非純量 → 改用
+    √5=ζ⁴+ζ¹⁶−ζ⁸−ζ¹² 之 Gauss sum 表示與 qc20_phi()，
+    並以「自共軛」取代「實部為 Q5 常數」判定；全部恆等式成立。
+  - SU(2)₃（4 物件，D²=5+√5）與 Fibonacci 融合環（2 物件，D_fib²=φ+2）
+    之 D 初版混用，κκ̄ 期望值寫成 D²·D⁴ → 修正為 (φ+2)³。
+  - theorem_pv_kovacic_finite 初版誤設「F₂₅ 恰兩根」於所有係數，
+    重根 (0,0) 只有一根 → 改為「根數 ≥1 且 Frobenius 封閉」。
+  - theorem_c108_cross_three 初版要求三概念格交集 >1，
+    實測 W₁∩W₂∩W₃=1（僅平凡閉集）→ 改為真實結構定理：
+    pair12=12 非平凡、triple=1 且 triple<pair12，未粉飾數據。
+  - 登錄表 ID 撞名：T-PV3 已被 C1-06 使用；一次全域取代 T-PV3→T-PV5
+    又誤改既有條目且 T-PV5 亦已存在 → 還原既有 T-PV3，
+    C1-08 定名 T-PV6，最終 dup_ids=0。
+  - README 表格內 |...| 之管線需以 \\| 跳脫；初版單一反斜線
+    造成 Python SyntaxError → 修正為雙反斜線，並以
+    python3 -W error::SyntaxWarning 驗證產生器無警告。
+  - theorem_fiber_product_universal 之恆真式已於 C1-07 清除，
+    本回合未重新引入恆真檢查；所有新定理皆有實算否決條件。

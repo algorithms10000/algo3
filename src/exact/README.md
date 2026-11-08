@@ -1,6 +1,6 @@
 # src/exact — 精確算術層：Rat、gcd/egcd、模算術、GF(2) 秩、Smith 標準型
 
-> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織／C1-07 黃金比例、陳–西蒙斯與全代碼健檢。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
+> C1-01 首次開發切片／C1-02 補回／C1-03 數學結構落地／C1-04 前沿待辦補齊／C1-05 §6''' 剩餘結構補回／C1-06 量子環面與 21×14 交織／C1-07 黃金比例、陳–西蒙斯與全代碼健檢／C1-08 六項無限維結構之有限精確憑證。本檔由 `tools/build_readmes.py` 自實際程式與登錄表產生。
 
 ## 已獲得公理
 
@@ -18,6 +18,7 @@
 - **T-X6** BigInt Bareiss 行列式無溢位：6×6 中介量 1.5·10¹⁹ 仍給 det=16231235440
 - **T-GOLD1** ℚ(√5)：φ²=φ+1、φ⁻¹=φ−1、φ+ψ=1、φψ=−1、φⁿ=F_nφ+F_{n−1}、L_n=φⁿ+ψⁿ∈ℤ
 - **T-GOLD2** ℚ(ζ₅)：ζ⁵=1、Φ₅(ζ)=0；t=ζ+ζ⁴ 滿足 t²+t−1=0 ⇒ 1+t=φ
+- **T-AN0** QC20 環：ζ²⁰=1、Φ₂₀(ζ)=0、共軛對合與 ζ^k ζ̄^k=1；√5 之 Gauss sum 平方=5
 
 ## 已實作演算法列表
 
@@ -44,6 +45,9 @@
 - **AL157** c5_reduce/c5_mul/c5_pow（Φ₅ 分圓環降次）（O(n²)）
 - **AL158** mat_rank_big（BigInt Bareiss 有理消去求秩，無溢位）（O(n³ log‖·‖)）
 - **AL172** vec_equal_i64 / vec_equal_int（三處重複本體合併）（O(n)）
+- **AL181** qc20_reduce/qc20_mul/qc20_conj/qc20_pow（Φ₂₀ 降次）（O(n²)）
+- **AL182** qc20_sqrt5/qc20_phi/qc20_is_self_conjugate（O(n)）
+- **AL183** bigrat_zero/one/of_rat/add/sub/mul/cmp（BigInt 有理比較）（O(log‖·‖)）
 
 ## 等式
 
@@ -56,6 +60,8 @@
 - **E102** φⁿ 與 Lucas：`φⁿ=F_nφ+F_{n−1}；L_n=φⁿ+ψⁿ∈ℤ`
 - **E103** Φ₅ 分圓環：`Φ₅(z)=1+z+z²+z³+z⁴=0；z⁵=1`
 - **E104** 分圓黃金橋：`t=ζ+ζ⁴ ⇒ t²+t−1=0；1+t=φ`
+- **E121** Φ₂₀ 分圓：`Φ₂₀(x)=x⁸−x⁶+x⁴−x²+1；ζ⁸=ζ⁶−ζ⁴+ζ²−1；ζ²⁰=1`
+- **E122** 分圓 √5：`√5=ζ⁴+ζ¹⁶−ζ⁸−ζ¹²；(√5)²=5`
 
 ## 資料夾視角依賴關係圖
 
@@ -105,8 +111,14 @@ Int64/UInt64 位元 → gcd/Rat/矩陣秩 → 供所有上層套件做精確係�
   q5_pow  c5  c5_int  c5_zeta
   c5_add  c5_sub  c5_neg  c5_mul
   c5_pow  c5_equal  c5_is_zero  theorem_q5_golden
-  theorem_c5_golden_bridge  Rat  Bezout  Mat
-  Q5  C5
+  theorem_c5_golden_bridge  qc20  qc20_int  qc20_q5
+  qc20_zeta  qc20_add  qc20_sub  qc20_neg
+  qc20_mul  qc20_pow  qc20_conj  qc20_equal
+  qc20_real_part  theorem_qc20_ring  qc20_sqrt5  qc20_phi
+  qc20_is_self_conjugate  bigrat_zero  bigrat_one  bigrat_of_rat
+  bigrat_add  bigrat_sub  bigrat_mul  bigrat_cmp
+  Rat  Bezout  Mat  Q5
+  C5  QC20
 ```
 
 ## 驗證
