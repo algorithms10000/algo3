@@ -23,7 +23,7 @@ build_catalog.py → catalog.json/catalog.mbt/algorithm.xlsx；build_readmes.py 
 
 ## 接入／輸出接口
 
-接入：Python 標準庫 + openpyxl。輸出：catalog.json、catalog.mbt、algorithm.xlsx、各 README.md。
+接入：Python 標準庫 + openpyxl==3.1.5（CI 固定版本；XML 後端固定為標準庫 etree，zip 以 ZIP_STORED 寫入以達跨環境 byte-identical）。輸出：catalog.json、catalog.mbt、algorithm.xlsx、各 README.md。
 
 ## 驗證
 

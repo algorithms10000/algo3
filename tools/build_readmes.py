@@ -88,7 +88,7 @@ INTERFACES = {
     "src/catalog": "接入：docs/catalog.json。輸出：catalog()、catalog_size()、count_kind()、theorem_catalog_consistent()。",
     "cmd/main": "接入：root @c1.report()。輸出：stdout inspect 報表（69 行憑證）。",
     "docs": "接入：tools/build_catalog.py。輸出：catalog.json（631 筆）。",
-    "tools": "接入：Python 標準庫 + openpyxl。輸出：catalog.json、catalog.mbt、algorithm.xlsx、各 README.md。",
+    "tools": "接入：Python 標準庫 + openpyxl==3.1.5（CI 固定版本；XML 後端固定為標準庫 etree，zip 以 ZIP_STORED 寫入以達跨環境 byte-identical）。輸出：catalog.json、catalog.mbt、algorithm.xlsx、各 README.md。",
 }
 
 

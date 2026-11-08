@@ -1017,6 +1017,12 @@ def generate_mbt():
 
 
 def generate_xlsx():
+    # 固定 XML 後端：若執行環境安裝 lxml，openpyxl 會改用 lxml.etree，
+    # 使相同資料在不同 runner 上產生不同 XML byte。於首次匯入 openpyxl 前
+    # 遮蔽 lxml，強制使用 Python 標準庫 xml.etree，令 xlsx 成為跨環境
+    # byte-identical 之建置產物（C1-09 遠端 CI 修正）。
+    import sys as _sys
+    _sys.modules["lxml"] = None
     from openpyxl import Workbook
     from openpyxl.styles import Font, PatternFill, Alignment
     from openpyxl.utils import get_column_letter
@@ -1093,7 +1099,9 @@ def generate_xlsx():
     # openpyxl 於 save 時會以當下時間覆寫 dcterms:modified；此處正規化為
     # 固定值，確保整個 xlsx 為 byte-identical 之可重現建置產物。
     fixed_stamp = b"2026-11-08T00:00:00Z"
-    with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as zout:
+    # 改用 ZIP_STORED：deflate 輸出隨 zlib 版本而變，stored 僅取決於 XML
+    # 內容，確保不同 runner 之 byte-identical（C1-09 遠端 CI 修正）。
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_STORED) as zout:
         with zipfile.ZipFile(buf) as zin:
             for item in zin.infolist():
                 data = zin.read(item.filename)
@@ -1104,7 +1112,8 @@ def generate_xlsx():
                         data,
                     )
                 zi = zipfile.ZipInfo(item.filename, date_time=(2026, 11, 8, 0, 0, 0))
-                zi.compress_type = zipfile.ZIP_DEFLATED
+                zi.compress_type = zipfile.ZIP_STORED
+                zi.create_system = 0
                 zi.external_attr = item.external_attr
                 zout.writestr(zi, data)
     return path
